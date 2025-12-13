@@ -4,6 +4,7 @@ import com.mysql.cj.jdbc.Blob;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -11,11 +12,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Burger {
+public class Menu {
     private int id;
     private String nom;
-    private int prix;
-    private LocalDate createdAt;
-    private String image_url;
-
+    private int burgerId;
+    private Burger burger;
+    private List<Complement> complements;
+    private int prixTotal;
+    private LocalDate date;
+    private String image;
 }

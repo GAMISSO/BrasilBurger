@@ -11,11 +11,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Burger {
+public class MenuItem {
     private int id;
-    private String nom;
-    private int prix;
-    private LocalDate createdAt;
-    private String image_url;
+    private int BurgerId;
+    private Burger burger;
+    private int menuId;
+    private Menu menu;
+    private int complementId;
+    private Complement complement;
 
 }
