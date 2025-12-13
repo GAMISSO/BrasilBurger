@@ -20,17 +20,16 @@ public class BurgerServiceImpl implements BurgerService {
     private  BurgerServiceImpl(BurgerRepository burgerRepository) {
         this.burgerRepository = burgerRepository;
     }
-
+    /*
     @Override
     public int createBurger(Burger burger) {
         return burgerRepository.insert(burger);
-    }
-    /*
+    }*/
     @Override
     public List<Burger> getAllBurgers() {
         return burgerRepository.selectAll();
     }
-
+    /*
     @Override
     public Optional<Burger> getBurgerById(int id) {
         List<Burger> burgers = burgerRepository.selectAll();

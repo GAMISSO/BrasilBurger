@@ -20,7 +20,7 @@ public class MenuVue extends Vue{
             ServiceFactory.getInstance(EntityName.Burger, BurgerService.class);
     private final ComplementService complementService=
             ServiceFactory.getInstance(EntityName.Complement,ComplementService.class);
-
+    /*
     public void creerMenu(){
         Menu menu =new Menu();
         menu.setNom(saisieChampOblig("Nom du menu: "));
@@ -39,6 +39,7 @@ public class MenuVue extends Vue{
         }
         int choice;
         List<Complement> newComplements=new ArrayList<>();
+        int sommeTotal=0;
         while(true){
             System.out.println("Voulez vous ajoutez des complement [O/N]: ");
             choice = sc.nextInt();
@@ -49,6 +50,7 @@ public class MenuVue extends Vue{
                 for(Complement complement:complements){
                     if(complement.getId()==complement_id){
                         newComplements.add(complement);
+                        sommeTotal=sommeTotal+complement.getPrix();
                     }
                 }
             }if (choice=='N'){
@@ -57,22 +59,24 @@ public class MenuVue extends Vue{
                 System.out.println("veuillez ecrire O ou N");
             }
         }
+        menu.setPrixTotal(menu.getBurger().getPrix()+sommeTotal);
         menu.setComplements(newComplements);
         menu.setImage(saisieChampOblig("Entrer l'url de l'image: "));
         menuService.createMenu(menu);
-    }
+    }*/
 
-    public void listerMenu(){
-        List<Menu> menus=menuService.getAllMenus();
-        for(Menu menu:menus){
-            System.out.print("Id: "+menu.getId());
-            System.out.print("Nom: "+menu.getNom());
-            System.out.print("Prix: "+menu.getPrixTotal());
-            System.out.print("Date: "+menu.getDate());
+    public void listerMenu() {
+        List<Menu> menus = menuService.getAllMenus();
+        for (Menu menu : menus) {
+            System.out.print("Id: " + menu.getId());
+            System.out.print("Nom: " + menu.getNom());
+            System.out.print("Prix: " + menu.getPrixTotal());
+            System.out.print("Date: " + menu.getDate());
             System.out.println("============================================================");
         }
     }
 
+    /*
     public void modifierMenu(){
         List<Menu> menus=menuService.getAllMenus();
         System.out.print("Veuillez entrez le numéro du menu qui vous voulez modifier ?");
@@ -102,5 +106,5 @@ public class MenuVue extends Vue{
             }
         }
 
-    }
+    }*/
 }

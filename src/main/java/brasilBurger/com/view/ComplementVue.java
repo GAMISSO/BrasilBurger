@@ -15,7 +15,7 @@ import java.util.List;
 public class ComplementVue extends Vue {
     private final ComplementService complementService =
             ServiceFactory.getInstance(EntityName.Complement, ComplementService.class);
-
+    /*
     public void creerComplement() {
         Complement complement = new Complement();
         complement.setNom(saisieChampOblig("Nom complement:"));
@@ -31,9 +31,9 @@ public class ComplementVue extends Vue {
         complement.setCreatedAt(LocalDate.now());
         complement.setImage(saisieChampOblig("Entrer l'url de limage: "));
         complementService.createComplement(complement);
-    }
+    }*/
 
-    /*
+
     public void listerComplement(){
         List<Complement> complements=complementService.getAllComplements();
         for(Complement complement:complements){
@@ -45,7 +45,7 @@ public class ComplementVue extends Vue {
             System.out.println("============================================================");
         }
 
-    }*/
+    }
 
     /*
     public void modifierComplement(){

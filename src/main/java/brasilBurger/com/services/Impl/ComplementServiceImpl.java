@@ -22,17 +22,16 @@ public class ComplementServiceImpl implements ComplementService {
     private  ComplementServiceImpl(ComplementRepository complementRepository) {
         this.complementRepository = complementRepository;
     }
-
+    /*
     @Override
     public int createComplement(Complement complement) {
         return complementRepository.insert(complement);
-    }
-    /*
+    }*/
     @Override
     public List<Complement> getAllComplements() {
         return complementRepository.selectAll();
     }
-
+    /*
     @Override
     public Optional<Complement> getComplementById(int id) {
         List<Complement> complements = complementRepository.selectAll();

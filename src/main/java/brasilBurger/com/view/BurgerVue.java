@@ -16,8 +16,7 @@ public class BurgerVue extends Vue {
     private final BurgerService burgerService =
             ServiceFactory.getInstance(EntityName.Burger, BurgerService.class);
 
-
-    //creer un burger
+    /*
     public void creerBurger(){
         Burger burger=new Burger();
         burger.setNom(saisieChampOblig("Nom du burger: "));
@@ -25,9 +24,8 @@ public class BurgerVue extends Vue {
         burger.setCreatedAt(LocalDate.now());
         burger.setImage_url(saisieChampOblig("Entrer l'url de l'image: "));
         burgerService.createBurger(burger);
-    }
+    }*/
 
-    /*
     public void listerBurger(){
         List<Burger> burgers=burgerService.getAllBurgers();
         for(Burger burger:burgers){
@@ -38,7 +36,7 @@ public class BurgerVue extends Vue {
             System.out.println("============================================================");
         }
 
-    }*/
+    }
 
     /*
     public void supprimerBurger(){

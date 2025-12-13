@@ -26,16 +26,16 @@ public class MenuBurger {
         while(true){
             switch (menuGestion()){
                 case 1:
-                    burgerVue.creerBurger();
+                    //burgerVue.creerBurger();
                     break;
                 case 2:
-                    System.out.println("2-Lister un burger");
+                    burgerVue.listerBurger();
                     break;
                 case 3:
-                    System.out.println("3-Modifier un burger");
+                    //burgerVue.modifieBurger();
                     break;
                 case 4:
-                    System.out.println("4-Supprimer un burger");
+                    //burgerVue.deleteBurger();
                     break;
                 case 5:
                     System.exit(0);

@@ -25,7 +25,7 @@ public class BurgerRepositoryImpl implements BurgerRepository {
     private BurgerRepositoryImpl(Database database) {
         this.database = database;
     }
-
+    /*
     @Override
     public int insert(Burger burger) {
         try{
@@ -46,8 +46,8 @@ public class BurgerRepositoryImpl implements BurgerRepository {
             e.printStackTrace();
         }
         return 0;
-    }
-    /*
+    }*/
+
     private Burger mapToBurger(ResultSet rs) throws SQLException {
         Burger burger = new Burger();
         burger.setId(rs.getInt("id"));
@@ -73,7 +73,7 @@ public class BurgerRepositoryImpl implements BurgerRepository {
         }
         return Collections.emptyList();
     }
-
+    /*
     @Override
     public int update(Burger burger) {
         try{

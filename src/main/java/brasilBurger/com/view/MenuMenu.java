@@ -12,17 +12,16 @@ public class MenuMenu {
         while(true){
             switch (menuGestion()){
                 case 1:
-                    System.out.println("1-Creer un Menu");
-                    menuVue.creerMenu();
+                    //menuVue.creerMenu();
                     break;
                 case 2:
-                    System.out.println("2-Lister un Menu");
+                    menuVue.listerMenu();
                     break;
                 case 3:
-                    System.out.println("3-Modifier un Menu");
+                    //menuVue.modifierMenu();
                     break;
                 case 4:
-                    System.out.println("4-Supprimer un Menu");
+                    //menuVue.supprimerMenu();
                     break;
                 case 5:
                     System.exit(0);

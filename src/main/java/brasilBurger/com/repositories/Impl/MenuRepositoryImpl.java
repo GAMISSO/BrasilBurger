@@ -1,8 +1,6 @@
 package brasilBurger.com.repositories.Impl;
 
 import brasilBurger.com.config.database.Database;
-import brasilBurger.com.entities.Complement;
-import brasilBurger.com.entities.Enum.TypeComplement;
 import brasilBurger.com.entities.Menu;
 import brasilBurger.com.repositories.MenuRepository;
 
@@ -24,7 +22,7 @@ public class MenuRepositoryImpl implements MenuRepository {
     private MenuRepositoryImpl(Database database) {
         this.database = database;
     }
-
+    /*
     @Override
     public int insert(Menu menu) {
         try{
@@ -50,8 +48,8 @@ public class MenuRepositoryImpl implements MenuRepository {
             e.printStackTrace();
         }
         return 0;
-    }
-    /*
+    }*/
+
     private Menu mapToBurger(ResultSet rs) throws SQLException {
         Menu menu = new Menu();
         menu.setId(rs.getInt("id"));
@@ -78,7 +76,7 @@ public class MenuRepositoryImpl implements MenuRepository {
         }
         return Collections.emptyList();
     }
-
+    /*
     @Override
     public int update(Menu menu) {
         try{

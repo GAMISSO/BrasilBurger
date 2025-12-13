@@ -23,17 +23,17 @@ public class MenuServiceImpl implements MenuService {
     private  MenuServiceImpl(MenuRepository menuRepository) {
         this.menuRepository = menuRepository;
     }
-
+    /*
     @Override
     public int createMenu(Menu menu) {
         return menuRepository.insert(menu);
-    }
-    /*
+    }*/
+
     @Override
     public List<Menu> getAllMenus() {
         return menuRepository.selectAll();
     }
-
+    /*
     @Override
     public Optional<Menu> getMenuById(int id) {
         List<Menu> menus = menuRepository.selectAll();

@@ -25,7 +25,7 @@ public class ComplementRepositoryImpl implements ComplementRepository {
         this.database = database;
     }
 
-
+    /*
     @Override
     public int insert(Complement complement) {
         try{
@@ -47,8 +47,8 @@ public class ComplementRepositoryImpl implements ComplementRepository {
             e.printStackTrace();
         }
         return 0;
-    }
-    /*
+    }*/
+
     private Complement mapToBurger(ResultSet rs) throws SQLException {
         Complement complement = new Complement();
         complement.setId(rs.getInt("id"));
@@ -74,7 +74,7 @@ public class ComplementRepositoryImpl implements ComplementRepository {
         }
         return Collections.emptyList();
     }
-
+    /*
     @Override
     public int update(Complement complement) {
         try{

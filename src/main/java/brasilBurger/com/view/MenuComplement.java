@@ -13,16 +13,16 @@ public class MenuComplement {
         while(true){
             switch (menuGestion()){
                 case 1:
-                    complementVue.creerComplement();
+                    //complementVue.creerComplement();
                     break;
                 case 2:
-                    System.out.println("2-Lister un complement");
+                    complementVue.listerComplement();
                     break;
                 case 3:
-                    System.out.println("3-Modifier un complement");
+                    //complementVue.modifierComplement();
                     break;
                 case 4:
-                    System.out.println("4-Supprimer un complement");
+                    //complementVue.supprimerComplement();
                     break;
                 case 5:
                     System.exit(0);
