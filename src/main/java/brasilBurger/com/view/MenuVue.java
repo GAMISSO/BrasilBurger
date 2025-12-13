@@ -63,7 +63,7 @@ public class MenuVue extends Vue{
         menu.setComplements(newComplements);
         menu.setImage(saisieChampOblig("Entrer l'url de l'image: "));
         menuService.createMenu(menu);
-    }*/
+    }
 
     public void listerMenu() {
         List<Menu> menus = menuService.getAllMenus();
@@ -74,9 +74,9 @@ public class MenuVue extends Vue{
             System.out.print("Date: " + menu.getDate());
             System.out.println("============================================================");
         }
-    }
+    }*/
 
-    /*
+
     public void modifierMenu(){
         List<Menu> menus=menuService.getAllMenus();
         System.out.print("Veuillez entrez le numéro du menu qui vous voulez modifier ?");
@@ -106,5 +106,5 @@ public class MenuVue extends Vue{
             }
         }
 
-    }*/
+    }
 }

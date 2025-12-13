@@ -8,6 +8,6 @@ import java.util.Optional;
 public interface BurgerRepository {
     /*int insert(Burger burger);*/
     List<Burger> selectAll();
-    /*int update(Burger burger);
-    int delete(Burger burger);*/
+    int update(Burger burger);
+    //int delete(Burger burger);
 }

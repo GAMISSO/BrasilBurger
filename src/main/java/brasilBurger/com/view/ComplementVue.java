@@ -31,7 +31,7 @@ public class ComplementVue extends Vue {
         complement.setCreatedAt(LocalDate.now());
         complement.setImage(saisieChampOblig("Entrer l'url de limage: "));
         complementService.createComplement(complement);
-    }*/
+    }
 
 
     public void listerComplement(){
@@ -45,9 +45,9 @@ public class ComplementVue extends Vue {
             System.out.println("============================================================");
         }
 
-    }
+    }*/
 
-    /*
+
     public void modifierComplement(){
         List<Complement> complemnts=complementService.getAllComplements();
         System.out.print("Veuillez entrez le numéro du burger qui vous voulez modifier ?");
@@ -84,5 +84,5 @@ public class ComplementVue extends Vue {
             }
         }
 
-    }*/
+    }
 }

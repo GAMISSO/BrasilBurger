@@ -16,10 +16,10 @@ public class MenuComplement {
                     //complementVue.creerComplement();
                     break;
                 case 2:
-                    complementVue.listerComplement();
+                    //complementVue.listerComplement();
                     break;
                 case 3:
-                    //complementVue.modifierComplement();
+                    complementVue.modifierComplement();
                     break;
                 case 4:
                     //complementVue.supprimerComplement();

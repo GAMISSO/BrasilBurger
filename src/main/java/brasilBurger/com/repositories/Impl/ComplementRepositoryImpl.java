@@ -74,7 +74,7 @@ public class ComplementRepositoryImpl implements ComplementRepository {
         }
         return Collections.emptyList();
     }
-    /*
+
     @Override
     public int update(Complement complement) {
         try{
@@ -94,7 +94,7 @@ public class ComplementRepositoryImpl implements ComplementRepository {
         }
         return 0;
     }
-
+    /*
     @Override
     public int delete(Complement complement) {
         try{

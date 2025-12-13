@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface ComplementService {
     /*int createComplement(Complement complement);*/
-    List<Complement> getAllComplements();
+    //List<Complement> getAllComplements();
     /*Optional<Complement> getComplementById(int id);
-    int deleteComplementById(int id);
-    int updateComplement(Complement complement);*/
+    int deleteComplementById(int id);*/
+    int updateComplement(Complement complement);
 }

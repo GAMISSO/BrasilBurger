@@ -10,6 +10,6 @@ public interface MenuService {
     /*int createMenu(Menu menu);*/
     List<Menu> getAllMenus();
     /*Optional<Menu> getMenuById(int id);
-    int deleteMenuById(int id);
-    int updateMenu(Menu menu);*/
+    int deleteMenuById(int id);*/
+    int updateMenu(Menu menu);
 }

@@ -24,7 +24,7 @@ public class BurgerServiceImpl implements BurgerService {
     @Override
     public int createBurger(Burger burger) {
         return burgerRepository.insert(burger);
-    }*/
+    }
     @Override
     public List<Burger> getAllBurgers() {
         return burgerRepository.selectAll();
@@ -51,10 +51,10 @@ public class BurgerServiceImpl implements BurgerService {
             }
         }
         return 0;
-    }
+    }*/
 
     @Override
     public int updateBurger(Burger burger) {
         return burgerRepository.update(burger);
-    }*/
+    }
 }

@@ -76,7 +76,7 @@ public class MenuRepositoryImpl implements MenuRepository {
         }
         return Collections.emptyList();
     }
-    /*
+
     @Override
     public int update(Menu menu) {
         try{
@@ -96,7 +96,7 @@ public class MenuRepositoryImpl implements MenuRepository {
         }
         return 0;
     }
-
+    /*
     @Override
     public int delete(Menu menu) {
         try{

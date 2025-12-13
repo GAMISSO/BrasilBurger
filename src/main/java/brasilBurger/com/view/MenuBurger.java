@@ -29,10 +29,10 @@ public class MenuBurger {
                     //burgerVue.creerBurger();
                     break;
                 case 2:
-                    burgerVue.listerBurger();
+                    //burgerVue.listerBurger();
                     break;
                 case 3:
-                    //burgerVue.modifieBurger();
+                    burgerVue.modifierBurger();
                     break;
                 case 4:
                     //burgerVue.deleteBurger();

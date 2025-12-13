@@ -73,7 +73,7 @@ public class BurgerRepositoryImpl implements BurgerRepository {
         }
         return Collections.emptyList();
     }
-    /*
+
     @Override
     public int update(Burger burger) {
         try{
@@ -93,7 +93,7 @@ public class BurgerRepositoryImpl implements BurgerRepository {
         }
         return 0;
     }
-
+    /*
     @Override
     public int delete(Burger burger) {
         try{
