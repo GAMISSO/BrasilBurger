@@ -32,10 +32,10 @@ public class MenuBurger {
                     //burgerVue.listerBurger();
                     break;
                 case 3:
-                    burgerVue.modifierBurger();
+                    //burgerVue.modifierBurger();
                     break;
                 case 4:
-                    //burgerVue.deleteBurger();
+                    burgerVue.supprimerBurger();
                     break;
                 case 5:
                     System.exit(0);

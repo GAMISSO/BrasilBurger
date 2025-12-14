@@ -24,7 +24,7 @@ public class BurgerVue extends Vue {
         burger.setCreatedAt(LocalDate.now());
         burger.setImage_url(saisieChampOblig("Entrer l'url de l'image: "));
         burgerService.createBurger(burger);
-    }
+    }*/
 
     public void listerBurger(){
         List<Burger> burgers=burgerService.getAllBurgers();
@@ -38,15 +38,16 @@ public class BurgerVue extends Vue {
 
     }
 
-    /*
+
     public void supprimerBurger(){
         List<Burger> burgers=burgerService.getAllBurgers();
+        listerBurger();
         System.out.print("Veuillez entrez le numéro du burger qui vous voulez supprimer ?");
         int choice=sc.nextInt();
         burgerService.deleteBurgerById(choice);
-    }*/
+    }
 
-    //modifier un burger
+    /*
     public void modifierBurger(){
         List<Burger> burgers=burgerService.getAllBurgers();
         System.out.print("Veuillez entrez le numéro du burger qui vous voulez modifier ?");
@@ -83,5 +84,5 @@ public class BurgerVue extends Vue {
             }
         }
 
-    }
+    }*/
 }

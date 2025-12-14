@@ -13,10 +13,12 @@ public class MenuPrincipal {
                     menuBurger.menuBurgerGestion();
                     break;
                 case 2:
-                    MenuComplement.menuComplementGestion();
+                    MenuComplement  menuComplement = new MenuComplement();
+                    menuComplement.menuComplementGestion();
                     break;
                 case 3:
-                    MenuMenu.menuMenuGestion();
+                    MenuMenu menuMenu = new MenuMenu();
+                    menuMenu.menuMenuGestion();
                     break;
                 case 4:
                     System.exit(0);

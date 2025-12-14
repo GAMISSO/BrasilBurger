@@ -5,8 +5,13 @@ import java.util.Scanner;
 public class MenuMenu {
 
     private static final Scanner sc = new Scanner(System.in);
+    private final MenuVue menuVue;
 
-    public static void menuMenuGestion(){
+    public MenuMenu() {
+        this.menuVue = new MenuVue();
+    }
+
+    public void menuMenuGestion(){
         Vue.setSc(sc);
         MenuVue menuVue = new MenuVue();
         while(true){
@@ -15,13 +20,13 @@ public class MenuMenu {
                     //menuVue.creerMenu();
                     break;
                 case 2:
-                    menuVue.listerMenu();
+                    //menuVue.listerMenu();
                     break;
                 case 3:
                     //menuVue.modifierMenu();
                     break;
                 case 4:
-                    //menuVue.supprimerMenu();
+                    menuVue.supprimerMenu();
                     break;
                 case 5:
                     System.exit(0);

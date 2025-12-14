@@ -26,7 +26,7 @@ public class ComplementServiceImpl implements ComplementService {
     @Override
     public int createComplement(Complement complement) {
         return complementRepository.insert(complement);
-    }
+    }*/
     @Override
     public List<Complement> getAllComplements() {
         return complementRepository.selectAll();
@@ -41,7 +41,7 @@ public class ComplementServiceImpl implements ComplementService {
             }
         }
         return Optional.empty();
-    }
+    }*/
 
     @Override
     public int deleteComplementById(int id) {
@@ -53,10 +53,10 @@ public class ComplementServiceImpl implements ComplementService {
             }
         }
         return 0;
-    }*/
-
+    }
+    /*
     @Override
     public int updateComplement(Complement complement) {
         return complementRepository.update(complement);
-    }
+    }*/
 }

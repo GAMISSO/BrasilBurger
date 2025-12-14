@@ -5,8 +5,12 @@ import java.util.Scanner;
 public class MenuComplement {
 
     private static final Scanner sc = new Scanner(System.in);
+    private final ComplementVue complementVue;
 
-    public static void menuComplementGestion(){
+    public MenuComplement() {
+        this.complementVue = new ComplementVue(); // BurgerVue récupère le service via la factory
+    }
+    public void menuComplementGestion(){
         Vue.setSc(sc);
         ComplementVue complementVue = new ComplementVue();
 
@@ -19,10 +23,10 @@ public class MenuComplement {
                     //complementVue.listerComplement();
                     break;
                 case 3:
-                    complementVue.modifierComplement();
+                    //complementVue.modifierComplement();
                     break;
                 case 4:
-                    //complementVue.supprimerComplement();
+                    complementVue.supprimerComplement();
                     break;
                 case 5:
                     System.exit(0);

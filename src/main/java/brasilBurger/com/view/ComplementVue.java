@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class ComplementVue extends Vue {
+    private static Object listerComplement;
     private final ComplementService complementService =
             ServiceFactory.getInstance(EntityName.Complement, ComplementService.class);
     /*
@@ -31,7 +32,7 @@ public class ComplementVue extends Vue {
         complement.setCreatedAt(LocalDate.now());
         complement.setImage(saisieChampOblig("Entrer l'url de limage: "));
         complementService.createComplement(complement);
-    }
+    }*/
 
 
     public void listerComplement(){
@@ -45,9 +46,9 @@ public class ComplementVue extends Vue {
             System.out.println("============================================================");
         }
 
-    }*/
+    }
 
-
+    /*
     public void modifierComplement(){
         List<Complement> complemnts=complementService.getAllComplements();
         System.out.print("Veuillez entrez le numéro du burger qui vous voulez modifier ?");
@@ -84,5 +85,19 @@ public class ComplementVue extends Vue {
             }
         }
 
+    }*/
+
+
+    public void supprimerComplement(){
+        List<Complement> complements = complementService.getAllComplements();
+        System.out.print("Veuillez entrez le numéro du burger qui vous voulez supprimer ?");
+        int choice=sc.nextInt();
+        for (Complement complement:complements){
+            listerComplement=complement;
+            if(complement.getId()==choice){
+                complementService.deleteComplementById(complement.getId());
+                break;
+            }
+        }
     }
 }
