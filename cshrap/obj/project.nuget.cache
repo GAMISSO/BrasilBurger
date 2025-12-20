@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HpalgH+7ad8=",
+  "dgSpecHash": "fsXDM+YcqmA=",
   "success": true,
-  "projectFilePath": "d:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj",
+  "projectFilePath": "D:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\REMCOM\\.nuget\\packages\\cloudinarydotnet\\1.27.9\\cloudinarydotnet.1.27.9.nupkg.sha512",
     "C:\\Users\\REMCOM\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

@@ -13,8 +13,7 @@ var cloudinary = new Cloudinary(new Account(
 builder.Services.AddControllersWithViews();
 
 // Configure Entity Framework DbContext (PostgreSQL / Neon)
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                       ?? "Host=ep-gentle-butterfly-adkh4hrn-pooler.c-2.us-east-1.aws.neon.tech; Database=neondb; Username=neondb_owner; Password=npg_2oRBjgh1YVcb; SSL Mode=VerifyFull; Channel Binding=Require;";
+var connectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<Data.ApplicationDbContext>(options =>
 {
     // Use Npgsql (PostgreSQL). Replace the default string by your actual Neon connection string

@@ -96,7 +96,6 @@ D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cs
 D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\scopedcss\bundle\cshrap.styles.css
 D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\scopedcss\projectbundle\cshrap.bundle.scp.css
 D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\i7gha2je8r-1lda8ginvt.gz
-D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\o265fcml04-beycp40ghi.gz
 D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\fjrhjwqqip-61n19gt1b8.gz
 D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\gyuzkr31ed-vdqhuqe9cv.gz
 D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\lxkebbqjhn-xtxxf3hu2r.gz
@@ -175,3 +174,4 @@ d:\BrasilBurger\cshrap\cshrap\bin\Debug\net9.0\Npgsql.dll
 d:\BrasilBurger\cshrap\cshrap\bin\Debug\net9.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
 d:\BrasilBurger\cshrap\cshrap\bin\Debug\net9.0\CloudinaryDotNet.dll
 d:\BrasilBurger\cshrap\cshrap\bin\Debug\net9.0\Newtonsoft.Json.dll
+D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\o265fcml04-xm0faorj42.gz
