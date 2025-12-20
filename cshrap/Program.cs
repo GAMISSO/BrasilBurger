@@ -38,6 +38,14 @@ catch (Exception ex)
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+// Session support (used by controllers/views)
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.IdleTimeout = TimeSpan.FromHours(2);
+});
 
 // Configure Entity Framework DbContext (PostgreSQL / Neon)
 // Resolve connection string (try common keys)
@@ -73,7 +81,27 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+// Serve static files from wwwroot (images, css, js)
+app.UseStaticFiles();
 app.UseRouting();
+
+// Add session middleware
+app.UseSession();
+
+// Global exception logging for requests (helps capture errors in Render logs)
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        var logger = context.RequestServices.GetService(typeof(ILogger<Program>)) as ILogger;
+        logger?.LogError(ex, "Unhandled exception while processing request {Path}", context.Request.Path);
+        throw;
+    }
+});
 
 app.UseAuthorization();
 
