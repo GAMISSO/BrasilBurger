@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj": {}
+    "d:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj": {}
   },
   "projects": {
-    "D:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj": {
+    "d:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj",
+        "projectUniqueName": "d:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj",
         "projectName": "cshrap",
-        "projectPath": "D:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj",
+        "projectPath": "d:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj",
         "packagesPath": "C:\\Users\\REMCOM\\.nuget\\packages\\",
-        "outputPath": "D:\\BrasilBurger\\cshrap\\cshrap\\obj\\",
+        "outputPath": "d:\\BrasilBurger\\cshrap\\cshrap\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\REMCOM\\AppData\\Roaming\\NuGet\\NuGet.Config"

@@ -28,10 +28,10 @@ namespace Services.Impl
         public List<Complement> GetComplements()
             => _context.Complements.ToList();
 
-        public Burger GetBurger(int id)
+        public Burger? GetBurger(int id)
             => _context.Burgers.Find(id);
 
-        public Menu GetMenu(int id)
+        public Menu? GetMenu(int id)
             => _context.Menus
                 .Include(m => m.Burger)
                 .Include(m => m.MenuComplements)

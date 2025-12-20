@@ -17,24 +17,24 @@ namespace Models
         [Column("order_id")]
         public int OrderId { get; set; }
 
-        public Order Order { get; set; }
+        public Order? Order { get; set; }
 
         // =========================
         // TYPE D’ITEM
         // =========================
         [Column("item_type")]
-        public string ItemType { get; set; } // Burger | Menu
+        public string ItemType { get; set; } = string.Empty; // Burger | Menu
 
         // =========================
         // BURGER / MENU
         // =========================
         [Column("burger_id")]
         public int? BurgerId { get; set; }
-        public Burger Burger { get; set; }
+        public Burger? Burger { get; set; }
 
         [Column("menu_id")]
         public int? MenuId { get; set; }
-        public Menu Menu { get; set; }
+        public Menu? Menu { get; set; }
 
         // =========================
         // QUANTITÉ & PRIX

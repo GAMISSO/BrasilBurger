@@ -4,7 +4,7 @@ namespace Services
 {
     public interface IAuthService
     {
-        User Login(string login, string password);
+        User? Login(string login, string password);
         ClientProfil Register(ClientProfil client);
     }
 }

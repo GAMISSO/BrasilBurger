@@ -15,7 +15,7 @@ namespace Services.Impl
             _context = context;
         }
 
-        public User Login(string login, string password)
+        public User? Login(string login, string password)
         {
             string hash = HashPassword(password);
 

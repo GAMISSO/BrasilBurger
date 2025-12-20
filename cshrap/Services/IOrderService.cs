@@ -15,6 +15,6 @@ namespace Services
         );
 
         List<Order> GetClientOrders(int clientId);
-        Order GetOrderDetails(int orderId, int clientId);
+        Order? GetOrderDetails(int orderId, int clientId);
     }
 }

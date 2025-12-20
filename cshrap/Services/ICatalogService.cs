@@ -9,7 +9,7 @@ namespace Services
         List<Menu> GetMenus();
         List<Complement> GetComplements();
 
-        Burger GetBurger(int id);
-        Menu GetMenu(int id);
+        Burger? GetBurger(int id);
+        Menu? GetMenu(int id);
     }
 }

@@ -26,10 +26,18 @@ namespace Services.Impl
             int prix = 0;
 
             if (itemType == "Burger")
-                prix = _context.Burgers.Find(itemId).Prix;
+            {
+                var burger = _context.Burgers.Find(itemId);
+                if (burger == null) throw new InvalidOperationException($"Burger {itemId} not found");
+                prix = burger.Prix;
+            }
 
             if (itemType == "Menu")
-                prix = _context.Menus.Find(itemId).PrixTotal;
+            {
+                var menu = _context.Menus.Find(itemId);
+                if (menu == null) throw new InvalidOperationException($"Menu {itemId} not found");
+                prix = menu.PrixTotal;
+            }
 
             var order = new Order
             {
@@ -66,7 +74,7 @@ namespace Services.Impl
                 .Where(o => o.ClientProfilId == clientId)
                 .ToList();
 
-        public Order GetOrderDetails(int orderId, int clientId)
+        public Order? GetOrderDetails(int orderId, int clientId)
             => _context.Orders
                 .FirstOrDefault(o => o.Id == orderId && o.ClientProfilId == clientId);
     }

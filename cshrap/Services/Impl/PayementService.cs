@@ -16,6 +16,8 @@ namespace Services.Impl
         public Payement Pay(int orderId, string methode)
         {
             var order = _context.Orders.Find(orderId);
+            if (order == null)
+                throw new InvalidOperationException($"Order with id {orderId} not found.");
 
             var payement = new Payement
             {
