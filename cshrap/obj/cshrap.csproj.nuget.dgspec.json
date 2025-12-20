@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj": {}
+    "d:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj": {}
   },
   "projects": {
-    "D:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj": {
+    "d:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj",
+        "projectUniqueName": "d:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj",
         "projectName": "cshrap",
-        "projectPath": "D:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj",
+        "projectPath": "d:\\BrasilBurger\\cshrap\\cshrap\\cshrap.csproj",
         "packagesPath": "C:\\Users\\REMCOM\\.nuget\\packages\\",
-        "outputPath": "D:\\BrasilBurger\\cshrap\\cshrap\\obj\\",
+        "outputPath": "d:\\BrasilBurger\\cshrap\\cshrap\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\REMCOM\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -43,6 +43,36 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "CloudinaryDotNet": {
+              "target": "Package",
+              "version": "[1.27.9, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

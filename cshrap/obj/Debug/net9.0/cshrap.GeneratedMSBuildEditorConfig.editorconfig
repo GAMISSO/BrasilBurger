@@ -9,41 +9,53 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = cshrap
 build_property.RootNamespace = cshrap
-build_property.ProjectDir = D:\BrasilBurger\cshrap\cshrap\
+build_property.ProjectDir = d:\BrasilBurger\cshrap\cshrap\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\BrasilBurger\cshrap\cshrap
+build_property.MSBuildProjectDirectory = d:\BrasilBurger\cshrap\cshrap
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[D:/BrasilBurger/cshrap/cshrap/Views/Home/Index.cshtml]
+[d:/BrasilBurger/cshrap/cshrap/Views/Catalogue/BurgerDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ3VlXEJ1cmdlckRldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[d:/BrasilBurger/cshrap/cshrap/Views/Catalogue/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ3VlXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[d:/BrasilBurger/cshrap/cshrap/Views/Catalogue/MenuDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ3VlXE1lbnVEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[d:/BrasilBurger/cshrap/cshrap/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/BrasilBurger/cshrap/cshrap/Views/Home/Privacy.cshtml]
+[d:/BrasilBurger/cshrap/cshrap/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/BrasilBurger/cshrap/cshrap/Views/Shared/Error.cshtml]
+[d:/BrasilBurger/cshrap/cshrap/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/BrasilBurger/cshrap/cshrap/Views/Shared/_ValidationScriptsPartial.cshtml]
+[d:/BrasilBurger/cshrap/cshrap/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/BrasilBurger/cshrap/cshrap/Views/_ViewImports.cshtml]
+[d:/BrasilBurger/cshrap/cshrap/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/BrasilBurger/cshrap/cshrap/Views/_ViewStart.cshtml]
+[d:/BrasilBurger/cshrap/cshrap/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/BrasilBurger/cshrap/cshrap/Views/Shared/_Layout.cshtml]
+[d:/BrasilBurger/cshrap/cshrap/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-s8scubknoc
