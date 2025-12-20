@@ -23,7 +23,7 @@ namespace Data
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseNpgsql(
-                    "Host=ep-gentle-butterfly-adkh4hrn-pooler.c-2.us-east-1.aws.neon.tech; Database=neondb; Username=neondb_owner; Password=npg_2oRBjgh1YVcb; SSL Mode=VerifyFull; Channel Binding=Require;"
+                    "DefaultConnection"
                 );
             }
         }
