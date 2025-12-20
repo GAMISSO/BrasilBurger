@@ -174,4 +174,4 @@ d:\BrasilBurger\cshrap\cshrap\bin\Debug\net9.0\Npgsql.dll
 d:\BrasilBurger\cshrap\cshrap\bin\Debug\net9.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
 d:\BrasilBurger\cshrap\cshrap\bin\Debug\net9.0\CloudinaryDotNet.dll
 d:\BrasilBurger\cshrap\cshrap\bin\Debug\net9.0\Newtonsoft.Json.dll
-D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\o265fcml04-xm0faorj42.gz
+d:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\o265fcml04-6hnalct0yx.gz

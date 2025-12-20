@@ -96,3 +96,19 @@
     cursor: pointer;
     font-size: 20px;
 }
+
+.the-categorie{
+    display: flex;
+    gap: 5 px;
+}
+
+.categorie-btn{
+    border: #FFD200 1px solid;
+    color: #FFD200;
+    background-color: white;
+}
+.categorie-btn:hover{
+    border: #fefefe 1px solid;
+    color: white;
+    background-color: #FFD200;
+}

@@ -84,5 +84,6 @@ app.MapControllerRoute(
     pattern: "{controller=Catalogue}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-app.MapGet("/", () => "hello Render");
+// Redirect root URL to the Catalogue Index
+app.MapGet("/", () => Results.Redirect("/Catalogue/Index"));
 app.Run();
