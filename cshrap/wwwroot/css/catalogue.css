@@ -7,7 +7,7 @@
 
 /* HEADER */
 .header {
-    background: #FFD200;
+    background: #ffd001ff;
     padding: 20px;
     display: flex;
     justify-content: space-between;
@@ -37,7 +37,7 @@
 }
 
 .btn-ajouter {
-    background: #FFD200;
+    background: #ffd001ff;
     border: none;
     padding: 8px 15px;
     border-radius: 20px;
@@ -80,7 +80,7 @@
 }
 
 .btn-login {
-    background: #FFD200;
+    background: #ffd001ff;
     border: none;
     padding: 10px;
     width: 100%;
@@ -99,16 +99,22 @@
 
 .the-categorie{
     display: flex;
-    gap: 5 px;
+    gap: 10 px;
 }
 
 .categorie-btn{
-    border: #FFD200 1px solid;
-    color: #FFD200;
+    border: #ffd001ff 1px solid;
+    color: #ffd001ff;
     background-color: white;
+    border-radius: 20px;
 }
 .categorie-btn:hover{
     border: #fefefe 1px solid;
     color: white;
-    background-color: #FFD200;
+    background-color: #ffd001ff;
+}
+
+.sous-header{
+    background-color:#ffd001ff;
+    color:white;
 }

@@ -122,7 +122,7 @@ body {
 }
 
 .order-card.unpaid {
-    border-left: 8px solid #f5c400;
+    border-left: 8px solid #ffd001ff;
 }
 
 .order-card.paid {
@@ -184,12 +184,12 @@ body {
 }
 
 .btn.primary {
-    background: #f5c400;
+    background: #ffd001ff;
     color: black;
 }
 
 .btn.success {
-    background: #4CAF50;
+    background: #16b01bff;
     color: white;
 }
 
@@ -198,7 +198,7 @@ body {
 }
 
 .badge {
-    background: #f5c400;
+    background: #ffd001ff;
     color: black;
     padding: 5px 10px;
     border-radius: 15px;
