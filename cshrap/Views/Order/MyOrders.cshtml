@@ -1,62 +1,59 @@
+@model IEnumerable<Models.Order>
 
-
-    <!-- TITRE -->
-    <div class="page-title">
-        <button class="back-btn">←</button>
-        <h1>Mon Panier</h1>
+<main class="main-content">
+    <div class="page-header">
+        <button class="back-btn" onclick="goBack()">←</button>
+        <h1 class="page-title">Mon Panier</h1>
+        <a class="btn btn-primary ml-auto" href="@Url.Action("Create", "Order")">Nouvelle commande</a>
     </div>
 
-    <!-- ALERT -->
-    <div class="alert">
-        *Si votre commande est à livrer veuillez payer avant d'appuyer sur le bouton commander
+    <div class="alert-box">
+        *Si votre commande est à livrer veuillez payer avant d'appuier sur le bouton commander
     </div>
 
-    <!-- COMMANDE NON PAYÉE -->
-    <div class="order-card unpaid fade-in">
-        <div class="order-header">
-            <span>Commande N°12345 <b class="danger">|| Commande pas encore payée</b></span>
-            <span class="badge">A livrer</span>
-        </div>
+    @if (!Model.Any())
+    {
+        <div class="empty-state">Vous n'avez aucune commande pour l'instant.</div>
+    }
 
-        <div class="order-content">
-            <p>Nbre de Menu : <b>1</b></p>
-            <p>Nbre de Boisson : <b>0</b></p>
-            <p>Nbre de Burger Simple : <b>0</b></p>
-
-            <h3>Total : <span>1200 FCFA</span></h3>
-        </div>
-
-        <div class="order-actions">
-            <div class="payment-icons">
-                <img src="orange.png" alt="Orange Money">
-                <img src="wave.png" alt="Wave">
+    @foreach (var order in Model)
+    {
+        var isPaid = order.StateOrder?.ToLower() == "payee" || order.StateOrder?.ToLower() == "payé" ||
+        order.StateOrder?.ToLower() == "paie";
+        <div class="order-card @(isPaid ? "paid" : "unpaid")">
+            <div class="order-header">
+                <div>
+                    <div class="order-number">Commande N° @order.Id || <span
+                            class="status-@order.StateOrder">@order.StateOrder</span></div>
+                    <div class="order-details">
+                        @* Count lines by ItemType for display *@
+                        @{
+                            var lines = ViewBag.LinesByOrder as Dictionary<int, List<Models.OrderLine>> ?? new Dictionary<int,
+                            List<Models.OrderLine>>();
+                            List<Models.OrderLine> thisLines = lines.ContainsKey(order.Id) ? lines[order.Id] : new
+                            List<Models.OrderLine>();
+                            var nbMenu = thisLines.Count(l => l.ItemType == "Menu");
+                            var nbBoisson = thisLines.Count(l => l.ItemType == "Complement");
+                            var nbBurgerSimple = thisLines.Count(l => l.ItemType == "Burger");
+                        }
+                        <div>Nbre de Menu: @nbMenu</div>
+                        <div>Nbre de Boisson: @nbBoisson</div>
+                        <div>Nbre de Burger Simple: @nbBurgerSimple</div>
+                    </div>
+                    <div class="total-price">Total: @order.TotalPrix FCFA</div>
+                </div>
+                <div class="order-actions">
+                    <a class="btn btn-secondary" href="@Url.Action("Details", "Order", new { id = order.Id })">Détails</a>
+                    <a class="btn btn-success" href="@Url.Action("Reorder", "Order", new { id = order.Id })">Commander à
+                        nouveau</a>
+                    @if (!isPaid)
+                    {
+                        <a class="btn btn-primary" href="@Url.Action("Details", "Order", new { id = order.Id })">Payer /
+                            Commander</a>
+                    }
+                </div>
             </div>
-
-            <button class="btn primary">Commander</button>
+            <div class="order-date">@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
         </div>
-    </div>
-
-    <!-- COMMANDE PAYÉE -->
-    <div class="order-card paid fade-in">
-        <div class="order-header">
-            <span>Commande N°12345 <b class="success">|| Commande payée</b></span>
-            <div>
-                <button class="btn success small">Terminer</button>
-                <span class="badge">A livrer</span>
-            </div>
-        </div>
-
-        <div class="order-content">
-            <p>Nbre de Menu : <b>1</b></p>
-            <p>Nbre de Boisson : <b>4</b></p>
-            <p>Nbre de Burger Simple : <b>0</b></p>
-
-            <h3>Total : <span>6200 FCFA</span></h3>
-        </div>
-
-        <div class="order-footer">
-            10 / 10 / 2025
-        </div>
-    </div>
-
-
+    }
+</main>

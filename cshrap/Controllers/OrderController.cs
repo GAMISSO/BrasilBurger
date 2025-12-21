@@ -31,6 +31,19 @@ namespace Controllers
                 .OrderByDescending(o => o.CreatedAt)
                 .ToList();
 
+            // Précharger les lignes associées pour affichage rapide
+            var orderIds = orders.Select(o => o.Id).ToList();
+            var lines = _context.OrderLines
+                .Where(l => orderIds.Contains(l.OrderId))
+                .Include(l => l.Burger)
+                .Include(l => l.Menu)
+                .ToList();
+
+            var dict = lines.GroupBy(l => l.OrderId)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            ViewBag.LinesByOrder = dict;
+
             return View(orders);
         }
 
@@ -174,6 +187,7 @@ namespace Controllers
                 .Where(l => l.OrderId == id)
                 .Include(l => l.Burger)
                 .Include(l => l.Menu)
+                .Include(l => l.Complement)
                 .ToList();
 
             ViewBag.Lines = lines;
@@ -205,6 +219,55 @@ namespace Controllers
             order.StateOrder = "Annulee";
             _context.SaveChanges();
 
+            return RedirectToAction("MyOrders");
+        }
+
+        // ==========================
+        // RECOMMANDER (dupliquer une commande existante)
+        // ==========================
+        public IActionResult Reorder(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("user_id");
+            if (userId == null)
+                return RedirectToAction("Index", "Catalogue");
+
+            var original = _context.Orders.FirstOrDefault(o => o.Id == id && o.ClientProfilId == userId);
+            if (original == null)
+                return NotFound();
+
+            var originalLines = _context.OrderLines.Where(l => l.OrderId == id).ToList();
+
+            var newOrder = new Order
+            {
+                StateOrder = "En_cours",
+                TypeLivraison = original.TypeLivraison,
+                AdresseLivraison = original.AdresseLivraison,
+                TotalPrix = original.TotalPrix,
+                CreatedAt = DateTime.Now,
+                ClientProfilId = userId
+            };
+
+            _context.Orders.Add(newOrder);
+            _context.SaveChanges();
+
+            foreach (var ln in originalLines)
+            {
+                var clone = new OrderLine
+                {
+                    OrderId = newOrder.Id,
+                    ItemType = ln.ItemType,
+                    BurgerId = ln.BurgerId,
+                    MenuId = ln.MenuId,
+                    ComplementId = ln.ComplementId,
+                    Quantity = ln.Quantity,
+                    Prix = ln.Prix,
+                    CreatedAt = DateTime.Now
+                };
+                _context.OrderLines.Add(clone);
+            }
+            _context.SaveChanges();
+
+            TempData["success"] = "Commande ré-enregistrée avec succès.";
             return RedirectToAction("MyOrders");
         }
     }

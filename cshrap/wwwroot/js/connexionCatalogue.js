@@ -91,3 +91,41 @@ document.addEventListener('keydown', (e) => {
         closeAllModals();
     }
 });
+
+
+let quantity = 1;
+        const unitPrice = 1200;
+
+        function updateTotal() {
+            const total = quantity * unitPrice;
+            document.getElementById('totalPrice').textContent = total + ' FCFA';
+            document.querySelectorAll('.total-amount').forEach(el => {
+                el.textContent = total + ' FCFA';
+            });
+        }
+
+        function increaseQuantity() {
+            quantity++;
+            document.getElementById('quantity').textContent = quantity;
+            updateTotal();
+        }
+
+        function decreaseQuantity() {
+            if (quantity > 1) {
+                quantity--;
+                document.getElementById('quantity').textContent = quantity;
+                updateTotal();
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function commander() {
+            alert('Veuillez d\'abord payer votre commande avant de valider !');
+        }
