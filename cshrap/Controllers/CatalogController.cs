@@ -71,22 +71,33 @@ namespace Controllers
         // ==========================
         public IActionResult Filter(string type)
         {
-            ViewBag.Complements = _context.Complements.ToList();
 
-            if (type == "burger")
+            // Default: empty
+            ViewBag.Burgers = new List<Burger>();
+            ViewBag.Menus = new List<Menu>();
+
+            if (string.IsNullOrWhiteSpace(type) || type == "all")
             {
                 ViewBag.Burgers = _context.Burgers.ToList();
-                ViewBag.Menus = new List<Menu>();
+                ViewBag.Menus = _context.Menus.Include(m => m.Burger).ToList();
+                ViewBag.Complements = _context.Complements.ToList();
+            }
+            else if (type == "burger")
+            {
+                ViewBag.Burgers = _context.Burgers.ToList();
+                ViewBag.Complements = new List<Complement>();
             }
             else if (type == "menu")
             {
-                ViewBag.Burgers = new List<Burger>();
                 ViewBag.Menus = _context.Menus.Include(m => m.Burger).ToList();
+                ViewBag.Complements = new List<Complement>();
             }
             else
             {
-                ViewBag.Burgers = _context.Burgers.ToList();
-                ViewBag.Menus = _context.Menus.Include(m => m.Burger).ToList();
+                // Treat other types as complement categories (boisson, frite, ...)
+                ViewBag.Complements = _context.Complements
+                    .Where(c => c.TypeComplement.ToLower() == type.ToLower())
+                    .ToList();
             }
 
             ViewBag.CurrentFilter = type ?? "all";

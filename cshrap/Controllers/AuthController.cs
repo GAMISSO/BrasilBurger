@@ -12,10 +12,12 @@ namespace Controllers
     public class AuthController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly Microsoft.Extensions.Logging.ILogger<AuthController> _logger;
 
-        public AuthController(ApplicationDbContext context)
+        public AuthController(ApplicationDbContext context, Microsoft.Extensions.Logging.ILogger<AuthController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // =====================
@@ -24,24 +26,33 @@ namespace Controllers
         [HttpPost]
         public IActionResult Login(string login, string password, string? returnUrl)
         {
-            string hash = HashPassword(password);
-
-            var user = _context.Users
-                .FirstOrDefault(u => u.Login == login && u.PasswordHash == hash);
-
-            if (user == null)
+            try
             {
-                TempData["error"] = "Login ou mot de passe incorrect";
+                string hash = HashPassword(password);
+
+                var user = _context.Users
+                    .FirstOrDefault(u => u.Login == login && u.PasswordHash == hash);
+
+                if (user == null)
+                {
+                    TempData["error"] = "Login ou mot de passe incorrect";
+                    return RedirectToAction("Index", "Catalogue");
+                }
+
+                HttpContext.Session.SetInt32("user_id", user.Id);
+                HttpContext.Session.SetString("role", user.RoleUsers);
+
+                if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl);
+
                 return RedirectToAction("Index", "Catalogue");
             }
-
-            HttpContext.Session.SetInt32("user_id", user.Id);
-            HttpContext.Session.SetString("role", user.RoleUsers);
-
-            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
-                return Redirect(returnUrl);
-
-            return RedirectToAction("Index", "Catalogue");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors du login pour {Login}", login);
+                TempData["error"] = "Une erreur est survenue lors de la connexion.";
+                return RedirectToAction("Index", "Catalogue");
+            }
         }
 
         // =====================
@@ -58,47 +69,56 @@ namespace Controllers
             string adresse,
             string? returnUrl)
         {
-            // Vérifier login unique
-            if (_context.Users.Any(u => u.Login == login))
+            try
             {
-                TempData["error"] = "Login déjà utilisé";
+                // Vérifier login unique
+                if (_context.Users.Any(u => u.Login == login))
+                {
+                    TempData["error"] = "Login déjà utilisé";
+                    return RedirectToAction("Index", "Catalogue");
+                }
+
+                // 1️⃣ Créer User
+                var user = new User
+                {
+                    Login = login,
+                    PasswordHash = HashPassword(password),
+                    RoleUsers = "Client"
+                };
+
+                _context.Users.Add(user);
+                _context.SaveChanges();
+
+                // 2️⃣ Créer ClientProfil (1–1)
+                var clientProfil = new ClientProfil
+                {
+                    Id = user.Id, // 👈 FK + PK
+                    Nom = nom,
+                    Prenom = prenom,
+                    Telephone = telephone,
+                    Email = email,
+                    Adresse = adresse,
+                    CreatedAt = DateTime.Now
+                };
+
+                _context.ClientProfiles.Add(clientProfil);
+                _context.SaveChanges();
+
+                // Auto login
+                HttpContext.Session.SetInt32("user_id", user.Id);
+                HttpContext.Session.SetString("role", "Client");
+
+                if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl);
+
                 return RedirectToAction("Index", "Catalogue");
             }
-
-            // 1️⃣ Créer User
-            var user = new User
+            catch (Exception ex)
             {
-                Login = login,
-                PasswordHash = HashPassword(password),
-                RoleUsers = "Client"
-            };
-
-            _context.Users.Add(user);
-            _context.SaveChanges();
-
-            // 2️⃣ Créer ClientProfil (1–1)
-            var clientProfil = new ClientProfil
-            {
-                Id = user.Id, // 👈 FK + PK
-                Nom = nom,
-                Prenom = prenom,
-                Telephone = telephone,
-                Email = email,
-                Adresse = adresse,
-                CreatedAt = DateTime.Now
-            };
-
-            _context.ClientProfiles.Add(clientProfil);
-            _context.SaveChanges();
-
-            // Auto login
-            HttpContext.Session.SetInt32("user_id", user.Id);
-            HttpContext.Session.SetString("role", "Client");
-
-            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
-                return Redirect(returnUrl);
-
-            return RedirectToAction("Index", "Catalogue");
+                _logger.LogError(ex, "Erreur lors de l'inscription pour {Login}", login);
+                TempData["error"] = "Une erreur est survenue lors de l'inscription.";
+                return RedirectToAction("Index", "Catalogue");
+            }
         }
 
         // =====================

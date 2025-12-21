@@ -7,7 +7,7 @@
 }
 
 <section class="hero">
-    <div class="hero-logo"><img src="/image/image_de_accueil.png" alt="">/div>
+    <div class="hero-logo"></div>
 </section>
 
 <section class="categories-section">
@@ -41,12 +41,42 @@
             <div class="empty-state">Aucun produit correspondant.</div>
         }
 
+        @* Complements (boisson, frite, etc.) *@
+        @{
+            var complements = ViewBag.Complements as List<Models.Complement> ?? new List<Models.Complement>();
+        }
+        @if (complements.Any())
+        {
+            <h3 class="section-subtitle">Compléments</h3>
+            @foreach (var c in complements)
+            {
+                <div class="product-card">
+                    <div class="product-image"
+                        style="background-image: url('@(c.Image ?? Url.Content("~/image/default-product.png"))')"></div>
+                    <div class="product-info">
+                        <div class="product-name">@c.Nom</div>
+                        <div class="product-footer">
+                            <span class="price">@c.Prix FCFA</span>
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <a class="add-btn" href="@Url.Action("Create", "Order")">Ajouter +</a>
+                            }
+                            else
+                            {
+                                <button class="add-btn" onclick="showLoginModal()">Ajouter +</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
         @* Burgers *@
         @foreach (var b in burgers)
         {
             <div class="product-card">
                 <a href="@Url.Action("BurgerDetails", "Catalogue", new { id = b.Id })" class="product-image"
-                    style="background-image: url('@(b.ImageUrl ?? Url.Content("~/image/default-product.png"))')"></a>
+                    style="background-image: url('@(b.ImageUrl ?? Url.Content("~/image/burger_image.png"))')"></a>
                 <div class="product-info">
                     <div class="product-name">@b.Nom</div>
                     <div class="product-footer">
