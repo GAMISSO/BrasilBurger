@@ -6,6 +6,23 @@
     var currentFilter = (ViewBag.CurrentFilter as string) ?? "all";
 }
 
+@functions {
+    public string ImgUrl(string? img)
+    {
+        if (string.IsNullOrWhiteSpace(img))
+            return Url.Content("~/image/burger_image.png");
+
+        if (img.StartsWith("http://", System.StringComparison.OrdinalIgnoreCase) || img.StartsWith("https://",
+        System.StringComparison.OrdinalIgnoreCase))
+            return img;
+
+        if (img.StartsWith("/"))
+            return img;
+
+        return Url.Content("~/" + img.TrimStart('/'));
+    }
+}
+
 <section class="hero">
     <div class="hero-logo"></div>
 </section>
@@ -47,12 +64,10 @@
         }
         @if (complements.Any())
         {
-            <h3 class="section-subtitle">Compléments</h3>
             @foreach (var c in complements)
             {
                 <div class="product-card">
-                    <div class="product-image"
-                        style="background-image: url('@(c.Image ?? Url.Content("~/image/default-product.png"))')"></div>
+                    <div class="product-image" style="background-image: url('@ImgUrl(c.Image)')"></div>
                     <div class="product-info">
                         <div class="product-name">@c.Nom</div>
                         <div class="product-footer">
@@ -76,7 +91,7 @@
         {
             <div class="product-card">
                 <a href="@Url.Action("BurgerDetails", "Catalogue", new { id = b.Id })" class="product-image"
-                    style="background-image: url('@(b.ImageUrl ?? Url.Content("~/image/burger_image.png"))')"></a>
+                    style="background-image: url('@ImgUrl(b.ImageUrl)')"></a>
                 <div class="product-info">
                     <div class="product-name">@b.Nom</div>
                     <div class="product-footer">
@@ -100,7 +115,7 @@
         {
             <div class="product-card">
                 <a href="@Url.Action("MenuDetails", "Catalogue", new { id = m.Id })" class="product-image"
-                    style="background-image: url('@(m.Image ?? Url.Content("~/image/default-product.png"))')"></a>
+                    style="background-image: url('@ImgUrl(m.Image)')"></a>
                 <div class="product-info">
                     <div class="product-name">@m.Nom</div>
                     <div class="product-footer">

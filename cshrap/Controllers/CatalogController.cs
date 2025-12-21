@@ -9,10 +9,12 @@ namespace Controllers
     public class CatalogueController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly Microsoft.Extensions.Logging.ILogger<CatalogueController> _logger;
 
-        public CatalogueController(ApplicationDbContext context)
+        public CatalogueController(ApplicationDbContext context, Microsoft.Extensions.Logging.ILogger<CatalogueController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // ==========================
@@ -71,38 +73,46 @@ namespace Controllers
         // ==========================
         public IActionResult Filter(string type)
         {
-
-            // Default: empty
-            ViewBag.Burgers = new List<Burger>();
-            ViewBag.Menus = new List<Menu>();
-
-            if (string.IsNullOrWhiteSpace(type) || type == "all")
+            try
             {
-                ViewBag.Burgers = _context.Burgers.ToList();
-                ViewBag.Menus = _context.Menus.Include(m => m.Burger).ToList();
-                ViewBag.Complements = _context.Complements.ToList();
-            }
-            else if (type == "burger")
-            {
-                ViewBag.Burgers = _context.Burgers.ToList();
-                ViewBag.Complements = new List<Complement>();
-            }
-            else if (type == "menu")
-            {
-                ViewBag.Menus = _context.Menus.Include(m => m.Burger).ToList();
-                ViewBag.Complements = new List<Complement>();
-            }
-            else
-            {
-                // Treat other types as complement categories (boisson, frite, ...)
-                ViewBag.Complements = _context.Complements
-                    .Where(c => c.TypeComplement.ToLower() == type.ToLower())
-                    .ToList();
-            }
+                // Default: empty
+                ViewBag.Burgers = new List<Burger>();
+                ViewBag.Menus = new List<Menu>();
 
-            ViewBag.CurrentFilter = type ?? "all";
+                if (string.IsNullOrWhiteSpace(type) || type == "all")
+                {
+                    ViewBag.Burgers = _context.Burgers.ToList();
+                    ViewBag.Menus = _context.Menus.Include(m => m.Burger).ToList();
+                    ViewBag.Complements = _context.Complements.ToList();
+                }
+                else if (type == "burger")
+                {
+                    ViewBag.Burgers = _context.Burgers.ToList();
+                    ViewBag.Complements = new List<Complement>();
+                }
+                else if (type == "menu")
+                {
+                    ViewBag.Menus = _context.Menus.Include(m => m.Burger).ToList();
+                    ViewBag.Complements = new List<Complement>();
+                }
+                else
+                {
+                    // Treat other types as complement categories (boisson, frite, ...)
+                    ViewBag.Complements = _context.Complements
+                        .Where(c => (c.TypeComplement ?? string.Empty).ToLower() == (type ?? string.Empty).ToLower())
+                        .ToList();
+                }
 
-            return View("Index");
+                ViewBag.CurrentFilter = type ?? "all";
+
+                return View("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors du filtrage du catalogue avec type={Type}", type);
+                TempData["error"] = "Impossible d'appliquer le filtre, veuillez réessayer.";
+                return RedirectToAction("Index");
+            }
         }
     }
 }

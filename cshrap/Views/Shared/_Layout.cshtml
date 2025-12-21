@@ -27,6 +27,19 @@
         <button class="commander-btn" onclick="showLoginModal('Order')">Commander</button>
     </header>
 
+    @if (TempData["error"] != null)
+    {
+        <div class="container mt-2">
+            <div class="alert alert-danger" role="alert">@TempData["error"]</div>
+        </div>
+    }
+    @if (TempData["success"] != null)
+    {
+        <div class="container mt-2">
+            <div class="alert alert-success" role="alert">@TempData["success"]</div>
+        </div>
+    }
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
