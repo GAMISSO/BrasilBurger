@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,28 +11,22 @@
     <link rel="stylesheet" href="~/css/catalogue.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/cshrap.styles.css" asp-append-version="true" />
     <link rel="icon" type="image/png" href="/image/logo.png" />
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Irish+Grover&family=Lavishly+Yours&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins&family=Sankofa+Display&family=Tektur:wght@400..900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Irish+Grover&family=Lavishly+Yours&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins&family=Sankofa+Display&family=Tektur:wght@400..900&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
-    <header class="bb-header">
-    <div class="bb-header-left">
-        <h1>Brasil Burger Senegal</h1>
-        <span class="status open">OUVERT</span>
-        <small>11:00AM - 11:25PM</small>
-    </div>
+    <header class="header">
+        <div class="restaurant-info">
+            <h1>Brasil Burger Senegal</h1>
+            <span class="status">OUVERT</span>
+            <div class="hours">11:00AM-11:25PM</div>
+        </div>
+        <div class="logo"><img src="/image/logo.png" alt="Logo"></div>
+        <button class="commander-btn" onclick="showLoginModal('Order')">Commander</button>
+    </header>
 
-    <div class="bb-header-center">
-        <img src="/image/logo.png" alt="Brasil Burger Logo" class="logo">
-    </div>
-
-    <div class="bb-header-right">
-        <button class="btn-commander"
-                onclick="openLogin()">
-            Commander
-        </button>
-    </div>
-</header>
-<img src= "/image/image_de_accueil.png" alt="Burger">
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -49,4 +44,5 @@
     <script src="~/js/connexionCatalogue.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

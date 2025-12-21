@@ -1,77 +1,175 @@
+@using Models
 
-<main class="catalogue">
-    <span class="sous-header">
-        <h2>Catégorie</h2>
-    </span>
-    <div class="the-categorie">
-        <a class="categorie-btn" asp-action="Filter" asp-route-type="burger">Burgers</a>
-        <a class="categorie-btn" asp-action="Filter" asp-route-type="menu">Menus</a>
-        <a class="categorie-btn" asp-action="Filter" asp-route-type="complement">Frites</a>
-        <a class="categorie-btn" asp-action="Filter" asp-route-type="boisson">Boissons</a>
+@{
+    var burgers = ViewBag.Burgers as List<Burger> ?? new List<Burger>();
+    var menus = ViewBag.Menus as List<Menu> ?? new List<Menu>();
+    var currentFilter = (ViewBag.CurrentFilter as string) ?? "all";
+}
+
+<section class="hero">
+    <div class="hero-logo"><img src="/image/image_de_accueil.png" alt="">/div>
+</section>
+
+<section class="categories-section">
+    <h2 class="categories-title">Nos Catégories</h2>
+    <div class="categories">
+        <a class="category-btn @(currentFilter == "all" ? "active" : "")"
+            href="@Url.Action("Filter", "Catalogue", new { type = "all" })">Tous</a>
+        <a class="category-btn @(currentFilter == "burger" ? "active" : "")"
+            href="@Url.Action("Filter", "Catalogue", new { type = "burger" })">Burger</a>
+        <a class="category-btn @(currentFilter == "menu" ? "active" : "")"
+            href="@Url.Action("Filter", "Catalogue", new { type = "menu" })">Menu</a>
+        <a class="category-btn @(currentFilter == "boisson" ? "active" : "")"
+            href="@Url.Action("Filter", "Catalogue", new { type = "boisson" })">Boisson</a>
+        <a class="category-btn @(currentFilter == "frite" ? "active" : "")"
+            href="@Url.Action("Filter", "Catalogue", new { type = "frite" })">Frite</a>
     </div>
+</section>
 
-    <h3>Burgers</h3>
-    <div class="burger-list">
-        @{
-            var burgers = ViewBag.Burgers as List<Models.Burger> ?? new List<Models.Burger>();
+<main class="main-content">
+    <h2 class="section-title">@(
+        currentFilter == "all" ? "Tous les produits" :
+        currentFilter == "burger" ? "Burgers" :
+        currentFilter == "menu" ? "Menus" :
+        currentFilter == "boisson" ? "Boissons" :
+        currentFilter == "frite" ? "Frites" : "Produits")
+    </h2>
+
+    <div class="products-grid">
+        @if (!burgers.Any() && !menus.Any())
+        {
+            <div class="empty-state">Aucun produit correspondant.</div>
         }
 
+        @* Burgers *@
         @foreach (var b in burgers)
         {
-            <div class="burger-card">
-                <img src="@(b.ImageUrl ?? "/image/burger_image.png")" alt="Burger">
-                <h3>@b.Nom</h3>
-                <div class="detail-product">
-                    <p>@String.Format("{0} FCFA", b.Prix)</p>
-
-                @if (Context.Session.GetInt32("user_id") == null)
-                {
-                    <button class="btn-ajouter" onclick="openLogin()">Ajouter</button>
-                }
-                else
-                {
-                    <form method="post" asp-controller="Order" asp-action="Create">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="itemType" value="Burger" />
-                        <input type="hidden" name="itemId" value="@b.Id" />
-                        <input type="hidden" name="quantity" value="1" />
-                        <input type="hidden" name="typeLivraison" value="Livraison" />
-                        <button type="submit" class="btn-ajouter">Ajouter</button>
-                    </form>
-                }
+            <div class="product-card">
+                <a href="@Url.Action("BurgerDetails", "Catalogue", new { id = b.Id })" class="product-image"
+                    style="background-image: url('@(b.ImageUrl ?? Url.Content("~/image/default-product.png"))')"></a>
+                <div class="product-info">
+                    <div class="product-name">@b.Nom</div>
+                    <div class="product-footer">
+                        <span class="price">@b.Prix FCFA</span>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a class="add-btn"
+                                href="@Url.Action("Create", "Order", new { itemType = "Burger", itemId = b.Id })">Ajouter +</a>
+                        }
+                        else
+                        {
+                            <button class="add-btn" onclick="showLoginModal('Burger', @b.Id)">Ajouter +</button>
+                        }
+                    </div>
                 </div>
-                
+            </div>
+        }
+
+        @* Menus *@
+        @foreach (var m in menus)
+        {
+            <div class="product-card">
+                <a href="@Url.Action("MenuDetails", "Catalogue", new { id = m.Id })" class="product-image"
+                    style="background-image: url('@(m.Image ?? Url.Content("~/image/default-product.png"))')"></a>
+                <div class="product-info">
+                    <div class="product-name">@m.Nom</div>
+                    <div class="product-footer">
+                        <span class="price">@m.PrixTotal FCFA</span>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a class="add-btn"
+                                href="@Url.Action("Create", "Order", new { itemType = "Menu", itemId = m.Id })">Ajouter +</a>
+                        }
+                        else
+                        {
+                            <button class="add-btn" onclick="showLoginModal('Menu', @m.Id)">Ajouter +</button>
+                        }
+                    </div>
+                </div>
             </div>
         }
     </div>
 </main>
 
-<!-- OVERLAY LOGIN -->
-<div id="loginOverlay" class="overlay">
-    <div class="overlay-content">
+<!-- Modal de connexion -->
+<div class="modal-overlay" id="loginModal" onclick="closeModalOnOverlay(event, 'loginModal')">
+    <div class="login-modal">
+        <h2 class="modal-title">Se connecter</h2>
 
-        <span class="close" onclick="closeLogin()">✕</span>
+        <form id="loginForm" asp-controller="Auth" asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label for="login">Login</label>
+                <input name="login" type="text" id="login" placeholder="Entrez votre login" required />
+            </div>
 
-        <h2>Se connecter</h2>
-        @if (TempData["error"] != null)
-        {
-            <p style="color:red">@TempData["error"]</p>
-        }
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input name="password" type="password" id="password" placeholder="Entrez votre mot de passe" required />
+            </div>
 
+            <input type="hidden" name="returnUrl" id="loginReturnUrl" value="" />
 
-        <form method="post" asp-controller="Auth" asp-action="Login">
-
-            <input type="text" name="login" placeholder="Login" required />
-
-            <input type="password" name="password" placeholder="Mot de passe" required />
-
-            <button type="submit" class="btn-login">
-                Connexion
-            </button>
-
+            <button type="submit" class="connexion-btn">Connexion</button>
         </form>
 
-        <a href="#" class="link-inscription">Inscription</a>
+        <div class="inscription-link">
+            Pas de compte ? <a onclick="showInscriptionModal()">Inscription</a>
+        </div>
+    </div>
+</div>
 
+<!-- Modal d'inscription -->
+<div class="modal-overlay" id="inscriptionModal" onclick="closeModalOnOverlay(event, 'inscriptionModal')">
+    <div class="login-modal" style="max-width: 500px;">
+        <h2 class="modal-title">S'inscrire</h2>
+
+        <form id="registerForm" asp-controller="Auth" asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label for="nom">Nom</label>
+                <input name="nom" type="text" id="nom" placeholder="Votre nom" required />
+            </div>
+
+            <div class="form-group">
+                <label for="prenom">Prénom</label>
+                <input name="prenom" type="text" id="prenom" placeholder="Votre prénom" required />
+            </div>
+
+            <div class="form-group">
+                <label for="adresse">Adresse</label>
+                <input name="adresse" type="text" id="adresse" placeholder="Votre adresse de livraison" required />
+            </div>
+
+            <div class="form-group">
+                <label for="telephone">Téléphone</label>
+                <input name="telephone" type="tel" id="telephone" placeholder="Ex: +221 77 123 45 67" required />
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input name="email" type="email" id="email" placeholder="votre.email@exemple.com" required />
+            </div>
+
+            <div class="form-group">
+                <label for="login-inscription">Login</label>
+                <input name="login" type="text" id="login-inscription" placeholder="Choisissez un login" required />
+            </div>
+
+            <div class="form-group">
+                <label for="password-inscription">Password</label>
+                <input name="password" type="password" id="password-inscription"
+                    placeholder="Choisissez un mot de passe" required />
+            </div>
+
+            <input type="hidden" name="returnUrl" id="registerReturnUrl" value="" />
+
+            <button type="submit" class="connexion-btn">S'inscrire</button>
+
+            <div class="inscription-link">
+                Déjà un compte ? <a onclick="showLoginModal()">Se connecter</a>
+            </div>
+        </form>
     </div>
 </div>

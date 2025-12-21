@@ -25,6 +25,7 @@ namespace Controllers
                                     .Include(m => m.Burger)
                                     .ToList();
             ViewBag.Complements = _context.Complements.ToList();
+            ViewBag.CurrentFilter = "all";
 
             return View();
         }
@@ -87,6 +88,8 @@ namespace Controllers
                 ViewBag.Burgers = _context.Burgers.ToList();
                 ViewBag.Menus = _context.Menus.Include(m => m.Burger).ToList();
             }
+
+            ViewBag.CurrentFilter = type ?? "all";
 
             return View("Index");
         }

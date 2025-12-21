@@ -1,7 +1,87 @@
-function openLogin() {
-    document.getElementById("loginOverlay").classList.add("active");
+// Gestion des catégories
+const categoryBtns = document.querySelectorAll('.category-btn');
+categoryBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        categoryBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+
+// Gestion des modals
+function showLoginModal(itemType, itemId) {
+    closeAllModals();
+    document.getElementById('loginModal').classList.add('active');
+
+    var returnInput = document.getElementById('loginReturnUrl');
+    if (itemType === 'Order') {
+        returnInput.value = '/Order/Create';
+    } else if (itemType && itemId) {
+        returnInput.value = '/Order/Create?itemType=' + encodeURIComponent(itemType) + '&itemId=' + encodeURIComponent(itemId);
+    } else {
+        returnInput.value = '';
+    }
+
+    document.body.style.overflow = 'hidden';
 }
 
-function closeLogin() {
-    document.getElementById("loginOverlay").classList.remove("active");
+function showInscriptionModal(itemType, itemId) {
+    closeAllModals();
+    document.getElementById('inscriptionModal').classList.add('active');
+
+    var returnInput = document.getElementById('registerReturnUrl');
+    if (itemType === 'Order') {
+        returnInput.value = '/Order/Create';
+    } else if (itemType && itemId) {
+        returnInput.value = '/Order/Create?itemType=' + encodeURIComponent(itemType) + '&itemId=' + encodeURIComponent(itemId);
+    } else {
+        returnInput.value = '';
+    }
+
+    document.body.style.overflow = 'hidden';
 }
+
+function closeAllModals() {
+    document.getElementById('loginModal').classList.remove('active');
+    document.getElementById('inscriptionModal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+function closeModalOnOverlay(event, modalId) {
+    if (event.target.id === modalId) {
+        closeAllModals();
+    }
+}
+
+function handleLogin() {
+    const login = document.getElementById('login').value;
+    const password = document.getElementById('password').value;
+
+    if (login && password) {
+        document.getElementById('loginForm').submit();
+    } else {
+        alert('Veuillez remplir tous les champs.');
+    }
+}
+
+function handleInscription() {
+    const nom = document.getElementById('nom').value;
+    const prenom = document.getElementById('prenom').value;
+    const adresse = document.getElementById('adresse').value;
+    const telephone = document.getElementById('telephone').value;
+    const email = document.getElementById('email').value;
+    const login = document.getElementById('login-inscription').value;
+    const password = document.getElementById('password-inscription').value;
+
+    if (nom && prenom && adresse && telephone && email && login && password) {
+        document.getElementById('registerForm').submit();
+    } else {
+        alert('Veuillez remplir tous les champs.');
+    }
+}
+
+// Fermer les modals avec la touche Échap
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeAllModals();
+    }
+});

@@ -22,7 +22,7 @@ namespace Controllers
         // LOGIN
         // =====================
         [HttpPost]
-        public IActionResult Login(string login, string password)
+        public IActionResult Login(string login, string password, string? returnUrl)
         {
             string hash = HashPassword(password);
 
@@ -38,6 +38,9 @@ namespace Controllers
             HttpContext.Session.SetInt32("user_id", user.Id);
             HttpContext.Session.SetString("role", user.RoleUsers);
 
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+
             return RedirectToAction("Index", "Catalogue");
         }
 
@@ -52,7 +55,8 @@ namespace Controllers
             string prenom,
             string telephone,
             string email,
-            string adresse)
+            string adresse,
+            string? returnUrl)
         {
             // Vérifier login unique
             if (_context.Users.Any(u => u.Login == login))
@@ -90,6 +94,9 @@ namespace Controllers
             // Auto login
             HttpContext.Session.SetInt32("user_id", user.Id);
             HttpContext.Session.SetString("role", "Client");
+
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
 
             return RedirectToAction("Index", "Catalogue");
         }
