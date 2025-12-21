@@ -39,7 +39,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 30px;
+    padding: 30px 30px;
     border-radius: 0 0 25px 25px;
 }
 .bb-header-left{
@@ -48,18 +48,21 @@ body {
 
 }
 .bb-header-left h1 {
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
+    color: black;
     margin: 0;
 }
 
 .bb-header-left .status {
-    background: #2ecc71;
+    background: #44D234;
     color: white;
-    padding: 3px 10px;
+    height: 24px;
+    width: 92px;
+    /* padding: 3px 10px; */
     border-radius: 20px;
-    font-size: 12px;
-    margin-right: 10px;
+    font-size: 10px;
+    /* margin-right: 10px; */
 }
 
 .bb-header-center .logo {
@@ -68,18 +71,18 @@ body {
 
 .btn-commander {
     background: white;
+    color: black;
     border: none;
     padding: 10px 22px;
-    border-radius: 30px;
-    font-weight: bold;
+    border-radius: 20px;
+    font-weight: 700;
     cursor: pointer;
 }
 
 .container {
     max-width: 900px;
     margin: auto;
-    padding: 30px;
-    font-family: "Segoe UI", sans-serif;
+    /* padding: 30px; */
 }
 
 .page-title {
