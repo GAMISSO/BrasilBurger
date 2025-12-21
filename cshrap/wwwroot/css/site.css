@@ -81,7 +81,7 @@ body {
 
 .container {
     max-width: 900px;
-    margin: auto;
+    /* margin: auto; */
     /* padding: 30px; */
 }
 

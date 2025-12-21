@@ -21,7 +21,8 @@
             <div class="burger-card">
                 <img src="@(b.ImageUrl ?? "/image/burger_image.png")" alt="Burger">
                 <h3>@b.Nom</h3>
-                <p>@String.Format("{0} FCFA", b.Prix)</p>
+                <div class="detail-product">
+                    <p>@String.Format("{0} FCFA", b.Prix)</p>
 
                 @if (Context.Session.GetInt32("user_id") == null)
                 {
@@ -38,6 +39,8 @@
                         <button type="submit" class="btn-ajouter">Ajouter</button>
                     </form>
                 }
+                </div>
+                
             </div>
         }
     </div>
