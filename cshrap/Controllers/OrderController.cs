@@ -42,7 +42,15 @@ namespace Controllers
         {
             var userId = HttpContext.Session.GetInt32("user_id");
             if (userId == null)
+            {
+                // Store the intended destination to prompt login / registration on the catalogue page
+                if (!string.IsNullOrWhiteSpace(itemType))
+                    TempData["promptLoginItemType"] = itemType;
+                if (itemId != null)
+                    TempData["promptLoginItemId"] = itemId.ToString();
+
                 return RedirectToAction("Index", "Catalogue");
+            }
 
             ViewBag.Burgers = _context.Burgers.ToList();
             ViewBag.Menus = _context.Menus.ToList();

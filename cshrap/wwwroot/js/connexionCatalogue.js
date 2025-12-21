@@ -29,7 +29,13 @@ function showInscriptionModal(itemType, itemId) {
     document.getElementById('inscriptionModal').classList.add('active');
 
     var returnInput = document.getElementById('registerReturnUrl');
-    if (itemType === 'Order') {
+    // If called without args, copy the login returnUrl so registration keeps the intended destination
+    if (typeof itemType === 'undefined') {
+        var loginReturn = document.getElementById('loginReturnUrl');
+        if (loginReturn) returnInput.value = loginReturn.value || '';
+        else returnInput.value = '';
+    }
+    else if (itemType === 'Order') {
         returnInput.value = '/Order/Create';
     } else if (itemType && itemId) {
         returnInput.value = '/Order/Create?itemType=' + encodeURIComponent(itemType) + '&itemId=' + encodeURIComponent(itemId);

@@ -19,6 +19,15 @@
         if (img.StartsWith("/"))
             return img;
 
+        // If looks like it's stored under image folder already
+        if (img.StartsWith("image/", System.StringComparison.OrdinalIgnoreCase))
+            return Url.Content("~/" + img.TrimStart('/'));
+
+        // If only a filename (no slash), assume it's in wwwroot/image
+        if (!img.Contains("/"))
+            return Url.Content("~/image/" + img);
+
+        // Fallback: relative to wwwroot
         return Url.Content("~/" + img.TrimStart('/'));
     }
 }
@@ -135,6 +144,25 @@
         }
     </div>
 </main>
+
+@* If user was redirected here to login before creating an order, open the login modal with preselection *@
+@{
+    var promptType = TempData["promptLoginItemType"] as string;
+    var promptId = TempData["promptLoginItemId"] as string;
+}
+
+@if (!string.IsNullOrWhiteSpace(promptType))
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            try {
+                var id = @((promptId != null) ? promptId : "null");
+                // call with type and id (id may be null)
+                showLoginModal('@promptType', id);
+            } catch (e) { console.error(e); }
+        });
+    </script>
+}
 
 <!-- Modal de connexion -->
 <div class="modal-overlay" id="loginModal" onclick="closeModalOnOverlay(event, 'loginModal')">

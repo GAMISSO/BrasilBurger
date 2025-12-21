@@ -24,6 +24,7 @@ namespace Controllers
         // LOGIN
         // =====================
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Login(string login, string password, string? returnUrl)
         {
             try
@@ -59,6 +60,7 @@ namespace Controllers
         // INSCRIPTION CLIENT
         // =====================
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Register(
             string login,
             string password,
