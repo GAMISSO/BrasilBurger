@@ -1,0 +1,170 @@
+@{
+    ViewData["Title"] = "Create Order";
+}
+
+<h2>Créer une commande</h2>
+
+@if (TempData["error"] != null)
+{
+    <p style="color:red">@TempData["error"]</p>
+}
+
+@{
+    var burgers = ViewBag.Burgers as List<Models.Burger> ?? new List<Models.Burger>();
+    var menus = ViewBag.Menus as List<Models.Menu> ?? new List<Models.Menu>();
+    var complements = ViewBag.Complements as List<Models.Complement> ?? new List<Models.Complement>();
+    var preItemId = ViewBag.PreselectedItemId as int?;
+    var preItemType = ViewBag.PreselectedItemType as string;
+}
+
+<form method="post" asp-controller="Order" asp-action="Create" id="orderForm" data-pre-item-type="@(preItemType ?? "")"
+    data-pre-item-id="@(preItemId?.ToString() ?? "")">
+    @Html.AntiForgeryToken()
+
+    <div>
+        <label><strong>Type d'article</strong></label>
+        <div>
+            <label>
+                <input type="radio" name="itemType" value="Burger"> Burger
+            </label>
+            <label>
+                <input type="radio" name="itemType" value="Menu"> Menu
+            </label>
+        </div>
+    </div>
+
+    <div id="burgerSelect" style="margin-top:10px; display:none;">
+        <label for="burgerList">Choisir un burger</label>
+        <select id="burgerList" name="itemId">
+            <option value="">-- Sélectionner --</option>
+            @foreach (var b in burgers)
+            {
+                <option value="@b.Id">@b.Nom - @b.Prix FCFA</option>
+            }
+        </select>
+    </div>
+
+    <div id="menuSelect" style="margin-top:10px; display:none;">
+        <label for="menuList">Choisir un menu</label>
+        <select id="menuList" name="itemId">
+            <option value="">-- Sélectionner --</option>
+            @foreach (var m in menus)
+            {
+                <option value="@m.Id">@m.Nom - @m.PrixTotal FCFA</option>
+            }
+        </select>
+    </div>
+
+    <div style="margin-top:15px;">
+        <label><strong>Compléments (optionnel, mais impossible sans item principal)</strong></label>
+        <div>
+            @foreach (var c in complements)
+            {
+                <label style="display:block; margin-bottom:4px;">
+                    <input type="checkbox" name="complementIds" value="@c.Id"> @c.Nom - @c.Prix FCFA
+                </label>
+            }
+        </div>
+    </div>
+
+    <div style="margin-top:15px;">
+        <label for="quantity">Quantité</label>
+        <input type="number" id="quantity" name="quantity" value="1" min="1" required />
+    </div>
+
+    <div style="margin-top:15px;">
+        <label for="typeLivraison">Type de livraison</label>
+        <select id="typeLivraison" name="typeLivraison">
+            <option value="Livraison">Livraison</option>
+            <option value="Retrait">Retrait</option>
+        </select>
+    </div>
+
+    <div id="adresseBlock" style="margin-top:10px; display:none;">
+        <label for="adresse">Adresse de livraison</label>
+        <input type="text" id="adresse" name="adresseLivraison" placeholder="Adresse" />
+    </div>
+
+    <div style="margin-top:20px;">
+        <button type="submit" class="btn-primary">Passer la commande</button>
+        <a asp-action="Index" asp-controller="Catalogue" class="btn-link">Annuler</a>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        (function () {
+            const burgerRadio = document.querySelector('input[name="itemType"][value="Burger"]');
+            const menuRadio = document.querySelector('input[name="itemType"][value="Menu"]');
+            const burgerSelect = document.getElementById('burgerSelect');
+            const menuSelect = document.getElementById('menuSelect');
+            const burgerList = document.getElementById('burgerList');
+            const menuList = document.getElementById('menuList');
+            const orderForm = document.getElementById('orderForm');
+            const typeLivraison = document.getElementById('typeLivraison');
+            const adresseBlock = document.getElementById('adresseBlock');
+
+            function updateVisibility() {
+                if (burgerRadio.checked) {
+                    burgerSelect.style.display = '';
+                    menuSelect.style.display = 'none';
+                    burgerList.required = true;
+                    menuList.required = false;
+                } else if (menuRadio.checked) {
+                    burgerSelect.style.display = 'none';
+                    menuSelect.style.display = '';
+                    burgerList.required = false;
+                    menuList.required = true;
+                } else {
+                    burgerSelect.style.display = 'none';
+                    menuSelect.style.display = 'none';
+                    burgerList.required = false;
+                    menuList.required = false;
+                }
+            }
+
+            // preselect from server values (if any) then update visibility
+            const preType = orderForm.dataset.preItemType;
+            const preId = orderForm.dataset.preItemId;
+            if (preType) {
+                const radio = document.querySelector('input[name="itemType"][value="' + preType + '"]');
+                if (radio) radio.checked = true;
+            }
+            if (preId) {
+                // set value on both selects, updateVisibility will show the correct one
+                burgerList.value = preId;
+                menuList.value = preId;
+            }
+            updateVisibility();
+
+            burgerRadio.addEventListener('change', updateVisibility);
+            menuRadio.addEventListener('change', updateVisibility);
+
+            typeLivraison.addEventListener('change', function () {
+                if (this.value === 'Livraison') adresseBlock.style.display = '';
+                else adresseBlock.style.display = 'none';
+            });
+
+            orderForm.addEventListener('submit', function (e) {
+                const itemType = document.querySelector('input[name="itemType"]:checked');
+                const comps = document.querySelectorAll('input[name="complementIds"]:checked');
+                if (!itemType) {
+                    e.preventDefault();
+                    alert('Veuillez choisir un type d\'article (Burger ou Menu).');
+                    return;
+                }
+
+                const chosen = itemType.value;
+                const selectedItemId = (chosen === 'Burger') ? burgerList.value : menuList.value;
+                if (!selectedItemId) {
+                    e.preventDefault();
+                    alert('Veuillez sélectionner l\'élément principal (burger ou menu).');
+                    return;
+                }
+
+                // prevent complement-only (server also enforces it)
+                // (If user selected complements but no main item, we already prevented)
+            });
+        })();
+    </script>
+}

@@ -4,6 +4,7 @@ using Data;
 using Models;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Controllers
 {
@@ -36,20 +37,43 @@ namespace Controllers
         // ==========================
         // CRÉER COMMANDE (burger ou menu)
         // ==========================
+        [HttpGet]
+        public IActionResult Create(int? itemId = null, string? itemType = null)
+        {
+            var userId = HttpContext.Session.GetInt32("user_id");
+            if (userId == null)
+                return RedirectToAction("Index", "Catalogue");
+
+            ViewBag.Burgers = _context.Burgers.ToList();
+            ViewBag.Menus = _context.Menus.ToList();
+            ViewBag.Complements = _context.Complements.ToList();
+
+            ViewBag.PreselectedItemId = itemId;
+            ViewBag.PreselectedItemType = itemType;
+
+            return View();
+        }
         [HttpPost]
         public IActionResult Create(
             string itemType,
             int itemId,
             int quantity,
             string typeLivraison,
-            string? adresseLivraison)
+            string? adresseLivraison,
+            int[]? complementIds)
         {
             var userId = HttpContext.Session.GetInt32("user_id");
             if (userId == null)
                 return RedirectToAction("Index", "Catalogue");
 
-            int prixItem = 0;
+            // Validate main item
+            if (itemType != "Burger" && itemType != "Menu")
+            {
+                TempData["error"] = "Sélection invalide : choisissez un Burger ou un Menu.";
+                return RedirectToAction("Index", "Catalogue");
+            }
 
+            int prixItem = 0;
             if (itemType == "Burger")
             {
                 var burger = _context.Burgers.Find(itemId);
@@ -57,7 +81,7 @@ namespace Controllers
 
                 prixItem = burger.Prix;
             }
-            else if (itemType == "Menu")
+            else // Menu
             {
                 var menu = _context.Menus.Find(itemId);
                 if (menu == null) return NotFound();
@@ -65,12 +89,22 @@ namespace Controllers
                 prixItem = menu.PrixTotal;
             }
 
+            // Collect complements and compute their total price per item
+            var selectedComplements = new List<Complement>();
+            int complementsPrice = 0;
+            if (complementIds != null && complementIds.Length > 0)
+            {
+                selectedComplements = _context.Complements
+                    .Where(c => complementIds.Contains(c.Id)).ToList();
+                complementsPrice = selectedComplements.Sum(c => c.Prix);
+            }
+
             var order = new Order
             {
                 StateOrder = "En_cours",
                 TypeLivraison = typeLivraison,
                 AdresseLivraison = adresseLivraison,
-                TotalPrix = prixItem * quantity,
+                TotalPrix = (prixItem + complementsPrice) * quantity,
                 CreatedAt = DateTime.Now,
                 ClientProfilId = userId
             };
@@ -91,6 +125,23 @@ namespace Controllers
 
             _context.OrderLines.Add(orderLine);
             _context.SaveChanges();
+
+            // Add complement lines (one per selected complement, quantity applied)
+            foreach (var comp in selectedComplements)
+            {
+                var compLine = new OrderLine
+                {
+                    OrderId = order.Id,
+                    ItemType = "Complement",
+                    ComplementId = comp.Id,
+                    Quantity = quantity,
+                    Prix = comp.Prix,
+                    CreatedAt = DateTime.Now
+                };
+                _context.OrderLines.Add(compLine);
+            }
+            if (selectedComplements.Count > 0)
+                _context.SaveChanges();
 
             return RedirectToAction("MyOrders");
         }

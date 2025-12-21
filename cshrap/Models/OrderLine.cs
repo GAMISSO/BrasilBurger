@@ -32,6 +32,10 @@ namespace Models
         public int? BurgerId { get; set; }
         public Burger? Burger { get; set; }
 
+        [Column("complement_id")]
+        public int? ComplementId { get; set; }
+        public Complement? Complement { get; set; }
+
         [Column("menu_id")]
         public int? MenuId { get; set; }
         public Menu? Menu { get; set; }

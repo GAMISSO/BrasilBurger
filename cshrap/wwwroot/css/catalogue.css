@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: "Instrument Sans", sans-serif;
 }
 
 /* HEADER */
@@ -15,17 +15,18 @@
 
 /* CATALOGUE */
 .catalogue {
-    padding: 40px;
+    /* padding: 40px; */
 }
 
 .burger-list {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(1fr,5);
     gap: 20px;
 }
 
 .burger-card {
     width: 220px;
-    padding: 15px;
+    /* padding: 15px; */
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,.1);
     text-align: center;
@@ -99,7 +100,9 @@
 
 .the-categorie{
     display: flex;
-    gap: 10 px;
+    gap: 20 px;
+    font-weight: 600;
+    font-size: 20px;
 }
 
 .categorie-btn{
