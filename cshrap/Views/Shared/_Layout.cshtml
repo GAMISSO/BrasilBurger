@@ -24,7 +24,17 @@
             <div class="hours">11:00AM-11:25PM</div>
         </div>
         <div class="logo"><img src="/image/logo.png" alt="Logo"></div>
-        <button class="commander-btn" onclick="showLoginModal('Order')">Commander</button>
+        @{
+            var userId = Context.Session.GetInt32("user_id");
+        }
+        @if (userId != null)
+        {
+            <a class="commander-btn" href="@Url.Action("MyOrders", "Order")">Mon panier</a>
+        }
+        else
+        {
+            <button class="commander-btn" onclick="showLoginModal('Order')">Commander</button>
+        }
     </header>
 
     @if (TempData["error"] != null)
