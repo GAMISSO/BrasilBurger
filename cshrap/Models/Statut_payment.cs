@@ -1,5 +1,6 @@
-namespace Models{
-    public enum statut_payement
+namespace Models
+{
+    public enum Statut_payment
     {
         Valider,
         Annuler

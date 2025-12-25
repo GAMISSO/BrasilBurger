@@ -1,0 +1,111 @@
+@* Views/Order/Paiement.cshtml *@
+@model Models.Order
+@{
+    ViewData["Title"] = "Paiement";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white text-center">
+                    <h3><i class="bi bi-credit-card"></i> Paiement de la commande</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> 
+                        <strong>Si votre commande est à livrer, veuillez payer avant d'appuyer sur le bouton commander</strong>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Récapitulatif de la commande</h5>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <p><strong>Numéro:</strong> @Model.Id</p>
+                                <p><strong>Type:</strong> 
+                                    @switch (Model.TypeLivraison)
+                                    {
+                                        case "SUR_PLACE":
+                                        case "Sur_place":
+                                            <span>🍽️ Sur place</span>
+                                            break;
+                                        case "A_EMPORTER":
+                                        case "A_retirer":
+                                            <span>🛍️ À emporter</span>
+                                            break;
+                                        case "LIVRAISON":
+                                        case "A_livrer":
+                                            <span>🚚 Livraison</span>
+                                            break;
+                                        default:
+                                            <span>@Model.TypeLivraison</span>
+                                            break;
+                                    }
+                                </p>
+                                <hr>
+                                <h4 class="text-success">Total: @Model.TotalPrix.ToString("N0") FCFA</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-controller="Payment" asp-action="Process" method="post">
+                        <input type="hidden" name="orderId" value="@Model.Id" />
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Choisissez votre mode de paiement</label>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <input type="radio" class="btn-check" name="methodePayement" id="wave" value="WAVE" checked>
+                                    <label class="btn btn-outline-primary w-100 p-4" for="wave">
+                                        <div class="text-center">
+                                            <i class="bi bi-phone" style="font-size: 2rem;"></i>
+                                            <h5 class="mt-2">Wave</h5>
+                                            <small>Paiement mobile sécurisé</small>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <input type="radio" class="btn-check" name="methodePayement" id="om" value="OM">
+                                    <label class="btn btn-outline-warning w-100 p-4" for="om">
+                                        <div class="text-center">
+                                            <i class="bi bi-phone" style="font-size: 2rem;"></i>
+                                            <h5 class="mt-2">Orange Money</h5>
+                                            <small>Paiement mobile sécurisé</small>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Important:</strong> Après avoir cliqué sur "Confirmer le paiement", 
+                            vous recevrez un message sur votre téléphone pour valider la transaction.
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle"></i> Confirmer le paiement
+                            </button>
+                            <a href="@Url.Action("MesCommandes", "Commande")" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-3 border-warning">
+                <div class="card-body">
+                    <h6><i class="bi bi-shield-check"></i> Paiement 100% sécurisé</h6>
+                    <small class="text-muted">
+                        Vos informations de paiement sont protégées et cryptées. 
+                        Brasil Burger ne stocke jamais vos coordonnées bancaires.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

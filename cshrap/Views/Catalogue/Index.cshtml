@@ -1,248 +1,145 @@
-@using Models
-
+@* Views/Catalogue/Index.cshtml *@
+@model dynamic
 @{
-    var burgers = ViewBag.Burgers as List<Burger> ?? new List<Burger>();
-    var menus = ViewBag.Menus as List<Menu> ?? new List<Menu>();
-    var currentFilter = (ViewBag.CurrentFilter as string) ?? "all";
+    ViewData["Title"] = "Catalogue";
+    var burgers = ViewBag.Burgers as List<Models.Burger>;
+    var menus = ViewBag.Menus as List<Models.Menu>;
 }
 
-@functions {
-    public string ImgUrl(string? img)
-    {
-        if (string.IsNullOrWhiteSpace(img))
-            return Url.Content("~/image/burger_image.png");
-
-        if (img.StartsWith("http://", System.StringComparison.OrdinalIgnoreCase) || img.StartsWith("https://",
-        System.StringComparison.OrdinalIgnoreCase))
-            return img;
-
-        if (img.StartsWith("/"))
-            return img;
-
-        // If looks like it's stored under image folder already
-        if (img.StartsWith("image/", System.StringComparison.OrdinalIgnoreCase))
-            return Url.Content("~/" + img.TrimStart('/'));
-
-        // If only a filename (no slash), assume it's in wwwroot/image
-        if (!img.Contains("/"))
-            return Url.Content("~/image/" + img);
-
-        // Fallback: relative to wwwroot
-        return Url.Content("~/" + img.TrimStart('/'));
-    }
-}
-
-<section class="hero">
-    <div class="hero-logo"></div>
-</section>
-
-<section class="categories-section">
-    <h2 class="categories-title">Nos Catégories</h2>
-    <div class="categories">
-        <a class="category-btn @(currentFilter == "all" ? "active" : "")"
-            href="@Url.Action("Filter", "Catalogue", new { type = "all" })">Tous</a>
-        <a class="category-btn @(currentFilter == "burger" ? "active" : "")"
-            href="@Url.Action("Filter", "Catalogue", new { type = "burger" })">Burger</a>
-        <a class="category-btn @(currentFilter == "menu" ? "active" : "")"
-            href="@Url.Action("Filter", "Catalogue", new { type = "menu" })">Menu</a>
-        <a class="category-btn @(currentFilter == "boisson" ? "active" : "")"
-            href="@Url.Action("Filter", "Catalogue", new { type = "boisson" })">Boisson</a>
-        <a class="category-btn @(currentFilter == "frite" ? "active" : "")"
-            href="@Url.Action("Filter", "Catalogue", new { type = "frite" })">Frite</a>
-    </div>
-</section>
-
-<main class="main-content">
-    <h2 class="section-title">@(
-        currentFilter == "all" ? "Tous les produits" :
-        currentFilter == "burger" ? "Burgers" :
-        currentFilter == "menu" ? "Menus" :
-        currentFilter == "boisson" ? "Boissons" :
-        currentFilter == "frite" ? "Frites" : "Produits")
-    </h2>
-
-    <div class="products-grid">
-        @if (!burgers.Any() && !menus.Any())
-        {
-            <div class="empty-state">Aucun produit correspondant.</div>
-        }
-
-        @* Complements (boisson, frite, etc.) *@
-        @{
-            var complements = ViewBag.Complements as List<Models.Complement> ?? new List<Models.Complement>();
-        }
-        @if (complements.Any())
-        {
-            @foreach (var c in complements)
-            {
-                <div class="product-card">
-                    <div class="product-image" style="background-image: url('@ImgUrl(c.Image)')"></div>
-                    <div class="product-info">
-                        <div class="product-name">@c.Nom</div>
-                        <div class="product-footer">
-                            <span class="price">@c.Prix FCFA</span>
-                            @if (User.Identity?.IsAuthenticated == true)
-                            {
-                                <a class="add-btn" href="@Url.Action("Create", "Order")">Ajouter +</a>
-                            }
-                            else
-                            {
-                                <button class="add-btn" onclick="showLoginModal()">Ajouter +</button>
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
-        }
-
-        @* Burgers *@
-        @foreach (var b in burgers)
-        {
-            <div class="product-card">
-                <a href="@Url.Action("BurgerDetails", "Catalogue", new { id = b.Id })" class="product-image"
-                    style="background-image: url('@ImgUrl(b.ImageUrl)')"></a>
-                <div class="product-info">
-                    <div class="product-name">@b.Nom</div>
-                    <div class="product-footer">
-                        <span class="price">@b.Prix FCFA</span>
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <a class="add-btn"
-                                href="@Url.Action("Create", "Order", new { itemType = "Burger", itemId = b.Id })">Ajouter +</a>
-                        }
-                        else
-                        {
-                            <button class="add-btn" onclick="showLoginModal('Burger', @b.Id)">Ajouter +</button>
-                        }
-                    </div>
-                </div>
-            </div>
-        }
-
-        @* Menus *@
-        @foreach (var m in menus)
-        {
-            <div class="product-card">
-                <a href="@Url.Action("MenuDetails", "Catalogue", new { id = m.Id })" class="product-image"
-                    style="background-image: url('@ImgUrl(m.Image)')"></a>
-                <div class="product-info">
-                    <div class="product-name">@m.Nom</div>
-                    <div class="product-footer">
-                        <span class="price">@m.PrixTotal FCFA</span>
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <a class="add-btn"
-                                href="@Url.Action("Create", "Order", new { itemType = "Menu", itemId = m.Id })">Ajouter +</a>
-                        }
-                        else
-                        {
-                            <button class="add-btn" onclick="showLoginModal('Menu', @m.Id)">Ajouter +</button>
-                        }
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-</main>
-
-@* If user was redirected here to login before creating an order, open the login modal with preselection *@
-@{
-    var promptType = TempData["promptLoginItemType"] as string;
-    var promptId = TempData["promptLoginItemId"] as string;
-}
-
-@if (!string.IsNullOrWhiteSpace(promptType))
-{
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            try {
-                var id = @((promptId != null) ? promptId : "null");
-                // call with type and id (id may be null)
-                showLoginModal('@promptType', id);
-            } catch (e) { console.error(e); }
-        });
-    </script>
-}
-
-<!-- Modal de connexion -->
-<div class="modal-overlay" id="loginModal" onclick="closeModalOnOverlay(event, 'loginModal')">
-    <div class="login-modal">
-        <h2 class="modal-title">Se connecter</h2>
-
-        <form id="loginForm" asp-controller="Auth" asp-action="Login" method="post">
-            @Html.AntiForgeryToken()
-            <div class="form-group">
-                <label for="login">Login</label>
-                <input name="login" type="text" id="login" placeholder="Entrez votre login" required />
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input name="password" type="password" id="password" placeholder="Entrez votre mot de passe" required />
-            </div>
-
-            <input type="hidden" name="returnUrl" id="loginReturnUrl" value="" />
-
-            <button type="submit" class="connexion-btn">Connexion</button>
-        </form>
-
-        <div class="inscription-link">
-            Pas de compte ? <a onclick="showInscriptionModal()">Inscription</a>
-        </div>
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold">🍔 Nos Délicieux Burgers</h1>
+        <p class="lead">Découvrez notre sélection de burgers et menus</p>
     </div>
 </div>
 
-<!-- Modal d'inscription -->
-<div class="modal-overlay" id="inscriptionModal" onclick="closeModalOnOverlay(event, 'inscriptionModal')">
-    <div class="login-modal" style="max-width: 500px;">
-        <h2 class="modal-title">S'inscrire</h2>
-
-        <form id="registerForm" asp-controller="Auth" asp-action="Register" method="post">
-            @Html.AntiForgeryToken()
-
-            <div class="form-group">
-                <label for="nom">Nom</label>
-                <input name="nom" type="text" id="nom" placeholder="Votre nom" required />
+<div class="container my-5">
+    <!-- Filtres -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="btn-group" role="group">
+                <a href="@Url.Action("Index", "Catalogue", new { filtre = "tous" })"
+                    class="btn @(ViewBag.Filtre == "tous" ? "btn-brasil" : "btn-outline-secondary")">
+                    Tous
+                </a>
+                <a href="@Url.Action("Index", "Catalogue", new { filtre = "burger" })"
+                    class="btn @(ViewBag.Filtre == "burger" ? "btn-brasil" : "btn-outline-secondary")">
+                    🍔 Burgers
+                </a>
+                <a href="@Url.Action("Index", "Catalogue", new { filtre = "menu" })"
+                    class="btn @(ViewBag.Filtre == "menu" ? "btn-brasil" : "btn-outline-secondary")">
+                    🍽️ Menus
+                </a>
             </div>
-
-            <div class="form-group">
-                <label for="prenom">Prénom</label>
-                <input name="prenom" type="text" id="prenom" placeholder="Votre prénom" required />
-            </div>
-
-            <div class="form-group">
-                <label for="adresse">Adresse</label>
-                <input name="adresse" type="text" id="adresse" placeholder="Votre adresse de livraison" required />
-            </div>
-
-            <div class="form-group">
-                <label for="telephone">Téléphone</label>
-                <input name="telephone" type="tel" id="telephone" placeholder="Ex: +221 77 123 45 67" required />
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input name="email" type="email" id="email" placeholder="votre.email@exemple.com" required />
-            </div>
-
-            <div class="form-group">
-                <label for="login-inscription">Login</label>
-                <input name="login" type="text" id="login-inscription" placeholder="Choisissez un login" required />
-            </div>
-
-            <div class="form-group">
-                <label for="password-inscription">Password</label>
-                <input name="password" type="password" id="password-inscription"
-                    placeholder="Choisissez un mot de passe" required />
-            </div>
-
-            <input type="hidden" name="returnUrl" id="registerReturnUrl" value="" />
-
-            <button type="submit" class="connexion-btn">S'inscrire</button>
-
-            <div class="inscription-link">
-                Déjà un compte ? <a onclick="showLoginModal()">Se connecter</a>
-            </div>
-        </form>
+        </div>
     </div>
+
+    <!-- Section Burgers -->
+    @if (burgers != null && burgers.Any())
+    {
+        <div class="mb-5">
+            <h2 class="mb-4">
+                <i class="bi bi-shop"></i> Nos Burgers
+            </h2>
+            <div class="row g-4">
+                @foreach (var burger in burgers)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card card-product h-100">
+                            <img src="@(burger.ImageUrl != null ? burger.ImageUrl : "/image/burger_image.png")"
+                                class="card-img-top" alt="@burger.Nom">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">@burger.Nom</h5>
+                                <p class="card-text text-muted flex-grow-1">
+                                    Délicieux burger fait maison
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="text-success mb-0">@burger.Prix.ToString("N0") FCFA</h4>
+                                    <div>
+                                        <a href="@Url.Action("DetailsBurger", "Catalogue", new { id = burger.Id })"
+                                            class="btn btn-sm btn-outline-secondary me-2">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="@Url.Action("Commander", "Commande", new { burgerId = burger.Id })"
+                                            class="btn btn-sm btn-brasil">
+                                            <i class="bi bi-cart-plus"></i> Commander
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Section Menus -->
+    @if (menus != null && menus.Any())
+    {
+        <div class="mb-5">
+            <h2 class="mb-4">
+                <i class="bi bi-cup-straw"></i> Nos Menus
+            </h2>
+            <div class="row g-4">
+                @foreach (var menu in menus)
+                {
+                    var burgerComp = menu.Burger;
+                    var complementBoisson = menu.MenuComplements?.FirstOrDefault(mc => mc.Complement?.TypeComplement ==
+                    "boisson")?.Complement;
+                    var complementFrite = menu.MenuComplements?.FirstOrDefault(mc => mc.Complement?.TypeComplement ==
+                    "frite")?.Complement;
+                    decimal prixTotal = 0;
+                    if (burgerComp != null) prixTotal += burgerComp.Prix;
+                    if (complementBoisson != null) prixTotal += complementBoisson.Prix;
+                    if (complementFrite != null) prixTotal += complementFrite.Prix;
+
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card card-product h-100">
+                            <div class="badge bg-success position-absolute top-0 end-0 m-3">Menu Complet</div>
+                            <img src="@(menu.Image != null ? menu.Image : "/images/placeholder.jpg")" class="card-img-top"
+                                alt="@menu.Nom">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">@menu.Nom</h5>
+                                <p class="card-text">
+                                    @if (burgerComp != null || complementBoisson != null || complementFrite != null)
+                                    {
+                                        <small class="text-muted">
+                                            @if (burgerComp != null)
+                                            {
+                                                <span>🍔 @burgerComp.Nom</span>
+                                                <br>
+                                            }
+                                            @if (complementBoisson != null)
+                                            {
+                                                <span>🥤 @complementBoisson.Nom</span>
+                                                <br>
+                                            }
+                                            @if (complementFrite != null)
+                                            {
+                                                <span>🍟 @complementFrite.Nom</span>
+                                            }
+                                        </small>
+                                    }
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                    <h4 class="text-success mb-0">@prixTotal.ToString("N0") FCFA</h4>
+                                    <div>
+                                        <a href="@Url.Action("DetailsMenu", "Catalogue", new { id = menu.Id })"
+                                            class="btn btn-sm btn-outline-secondary me-2">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="@Url.Action("Commander", "Commande", new { menuId = menu.Id })"
+                                            class="btn btn-sm btn-brasil">
+                                            <i class="bi bi-cart-plus"></i> Commander
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
 </div>

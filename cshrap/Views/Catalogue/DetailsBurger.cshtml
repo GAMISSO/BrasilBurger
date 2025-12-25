@@ -1,0 +1,60 @@
+@* Views/Catalogue/DetailsBurger.cshtml *@
+@model Models.Burger
+@{
+    ViewData["Title"] = Model.Nom;
+    var complements = ViewBag.Complements as List<Models.Complement>;
+}
+
+<div class="container my-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Catalogue")">Catalogue</a></li>
+            <li class="breadcrumb-item active">@Model.Nom</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-6">
+            <img src="@(Model.ImageUrl != null ? Model.ImageUrl : "/image/burger_image.png")"
+                class="img-fluid rounded shadow" alt="@Model.Nom">
+        </div>
+        <div class="col-md-6">
+            <h1 class="display-5 fw-bold">@Model.Nom</h1>
+            <p class="lead text-muted">Délicieux burger fait maison</p>
+
+            <div class="card bg-light mb-4">
+                <div class="card-body">
+                    <h3 class="text-success">@Model.Prix.ToString("N0") FCFA</h3>
+                </div>
+            </div>
+
+            <h5 class="mb-3">Compléments disponibles :</h5>
+            <div class="row g-3 mb-4">
+                @if (complements != null)
+                {
+                    @foreach (var comp in complements)
+                    {
+                        <div class="col-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>@comp.Nom</h6>
+                                    <p class="mb-0 text-success">+@comp.Prix.ToString("N0") FCFA</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <div class="d-grid gap-2">
+                <a href="@Url.Action("Commander", "Commande", new { burgerId = Model.Id })"
+                    class="btn btn-brasil btn-lg">
+                    <i class="bi bi-cart-plus"></i> Commander maintenant
+                </a>
+                <a href="@Url.Action("Index", "Catalogue")" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Retour au catalogue
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

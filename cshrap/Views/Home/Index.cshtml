@@ -1,8 +1,96 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@* Views/Home/Index.cshtml *@
+@{
+    ViewData["Title"] = "Accueil";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-3 fw-bold mb-3">Bienvenue chez Brasil Burger</h1>
+        <p class="lead mb-4">Le meilleur burger de Dakar, maintenant en ligne !</p>
+        <div>
+            <a href="@Url.Action("Index", "Catalogue")" class="btn btn-brasil btn-lg me-2">
+                <i class="bi bi-shop"></i> Voir le Catalogue
+            </a>
+            @if (!(User?.Identity?.IsAuthenticated ?? false))
+            {
+                <a href="@Url.Action("Register", "Account")" class="btn btn-light btn-lg">
+                    <i class="bi bi-person-plus"></i> S'inscrire
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row text-center mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-truck" style="font-size: 3rem; color: var(--brasil-yellow);"></i>
+                    <h4 class="mt-3">Livraison Rapide</h4>
+                    <p class="text-muted">Livraison dans toute la ville de Dakar en moins de 30 minutes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-star-fill" style="font-size: 3rem; color: var(--brasil-yellow);"></i>
+                    <h4 class="mt-3">Qualité Premium</h4>
+                    <p class="text-muted">Des ingrédients frais et de qualité pour des burgers savoureux</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-credit-card" style="font-size: 3rem; color: var(--brasil-yellow);"></i>
+                    <h4 class="mt-3">Paiement Facile</h4>
+                    <p class="text-muted">Payez avec Wave ou Orange Money en toute sécurité</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <h2 class="mb-4">Pourquoi choisir Brasil Burger ?</h2>
+            <ul class="list-unstyled">
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>100% fait maison</strong> - Tous nos burgers sont préparés sur place
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>Ingrédients frais</strong> - Sélectionnés quotidiennement
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>Service rapide</strong> - Commandez en ligne et récupérez rapidement
+                </li>
+                <li class="mb-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <strong>Prix abordables</strong> - Des menus adaptés à tous les budgets
+                </li>
+            </ul>
+            <a href="@Url.Action("Index", "Catalogue")" class="btn btn-brasil btn-lg">
+                Commander maintenant
+            </a>
+        </div>
+        <div class="col-md-6">
+            <img src="/images/burger-hero.jpg" class="img-fluid rounded shadow" alt="Brasil Burger">
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">Nos Horaires</h2>
+        <p class="lead">
+            <i class="bi bi-clock"></i>
+            <strong class="text-success">OUVERT</strong>
+        </p>
+        <p class="fs-4">Tous les jours de 11:00 à 23:25</p>
+        <p class="text-muted">Service continu</p>
+    </div>
 </div>

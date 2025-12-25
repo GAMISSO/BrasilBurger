@@ -3,5 +3,10 @@ namespace Models{
     {
         Terminee,
         En_cours,
+        Annulee,
+        En_attente,
+        Prete,
+        Validee,
+        En_livraison
     }
 }

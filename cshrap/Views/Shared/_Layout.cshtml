@@ -4,67 +4,112 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - cshrap</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/catalogue.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/cshrap.styles.css" asp-append-version="true" />
-    <link rel="icon" type="image/png" href="/image/logo.png" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Irish+Grover&family=Lavishly+Yours&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins&family=Sankofa+Display&family=Tektur:wght@400..900&display=swap"
-        rel="stylesheet">
+    <title>@ViewData["Title"] - Brasil Burger</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 
 <body>
-    <header class="header">
-        <div class="restaurant-info">
-            <h1>Brasil Burger Senegal</h1>
-            <span class="status">OUVERT</span>
-            <div class="hours">11:00AM-11:25PM</div>
-        </div>
-        <div class="logo"><img src="/image/logo.png" alt="Logo"></div>
-        @{
-            var userId = Context.Session.GetInt32("user_id");
-        }
-        @if (userId != null)
-        {
-            <a class="commander-btn" href="@Url.Action("MyOrders", "Order")">Mon panier</a>
-        }
-        else
-        {
-            <button class="commander-btn" onclick="showLoginModal('Order')">Commander</button>
-        }
-    </header>
-
-    @if (TempData["error"] != null)
-    {
-        <div class="container mt-2">
-            <div class="alert alert-danger" role="alert">@TempData["error"]</div>
-        </div>
-    }
-    @if (TempData["success"] != null)
-    {
-        <div class="container mt-2">
-            <div class="alert alert-success" role="alert">@TempData["success"]</div>
-        </div>
-    }
-
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
+    <nav class="navbar navbar-brasil navbar-expand-lg navbar-dark">
         <div class="container">
-            &copy; 2025 - cshrap - <a asp-area="" asp-controller="Catalogue" asp-action="Privacy">Privacy</a>
+            <a class="navbar-brand fw-bold fs-4" href="@Url.Action("Index", "Home")">
+                Brasil Burger Senegal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index", "Catalogue")">
+                            <i class="bi bi-shop"></i> Catalogue
+                        </a>
+                    </li>
+                    @if (User?.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("MesCommandes", "Commande")">
+                                <i class="bi bi-bag-check"></i> Mes Commandes
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> @(User?.Identity?.Name ?? "")
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("Profile", "Account")">Mon Profil</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="bi bi-box-arrow-right"></i> Déconnexion
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Login", "Account")">
+                                <i class="bi bi-box-arrow-in-right"></i> Connexion
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-brasil btn-sm ms-2" href="@Url.Action("Register", "Account")">
+                                S'inscrire
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>🍔 Brasil Burger Senegal</h5>
+                    <p>Le meilleur burger de Dakar</p>
+                    <p><strong>OUVERT</strong><br>11:00AM - 11:25PM</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Liens Rapides</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="@Url.Action("Index", "Catalogue")" class="text-white">Catalogue</a></li>
+                        <li><a href="@Url.Action("MesCommandes", "Commande")" class="text-white">Mes Commandes</a></li>
+                        <li><a href="#" class="text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact</h5>
+                    <p>
+                        <i class="bi bi-geo-alt"></i> Dakar, Sénégal<br>
+                        <i class="bi bi-telephone"></i> +221 77 123 45 67<br>
+                        <i class="bi bi-envelope"></i> contact@brasilburger.sn
+                    </p>
+                </div>
+            </div>
+            <hr class="bg-white">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 Brasil Burger - Tous droits réservés</p>
+            </div>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/connexionCatalogue.js" asp-append-version="true"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

@@ -1,59 +1,126 @@
-@model IEnumerable<Models.Order>
+@* Views/Order/MyOrders.cshtml *@
+@model List<Models.Order>
+@{
+    ViewData["Title"] = "Mes Commandes";
+}
 
-<main class="main-content">
-    <div class="page-header">
-        <button class="back-btn" onclick="goBack()">←</button>
-        <h1 class="page-title">Mon Panier</h1>
-        <a class="btn btn-primary ml-auto" href="@Url.Action("Create", "Order")">Nouvelle commande</a>
-    </div>
+<div class="container my-5">
+    <h1 class="mb-4">
+        <i class="bi bi-bag-check"></i> Mon Panier - Mes Commandes
+    </h1>
 
-    <div class="alert-box">
-        *Si votre commande est à livrer veuillez payer avant d'appuier sur le bouton commander
-    </div>
-
-    @if (!Model.Any())
+    @if (Model == null || !Model.Any())
     {
-        <div class="empty-state">Vous n'avez aucune commande pour l'instant.</div>
-    }
-
-    @foreach (var order in Model)
-    {
-        var isPaid = order.StateOrder?.ToLower() == "payee" || order.StateOrder?.ToLower() == "payé" ||
-        order.StateOrder?.ToLower() == "paie";
-        <div class="order-card @(isPaid ? "paid" : "unpaid")">
-            <div class="order-header">
-                <div>
-                    <div class="order-number">Commande N° @order.Id || <span
-                            class="status-@order.StateOrder">@order.StateOrder</span></div>
-                    <div class="order-details">
-                        @* Count lines by ItemType for display *@
-                        @{
-                            var lines = ViewBag.LinesByOrder as Dictionary<int, List<Models.OrderLine>> ?? new Dictionary<int,
-                            List<Models.OrderLine>>();
-                            List<Models.OrderLine> thisLines = lines.ContainsKey(order.Id) ? lines[order.Id] : new
-                            List<Models.OrderLine>();
-                            var nbMenu = thisLines.Count(l => l.ItemType == "Menu");
-                            var nbBoisson = thisLines.Count(l => l.ItemType == "Complement");
-                            var nbBurgerSimple = thisLines.Count(l => l.ItemType == "Burger");
-                        }
-                        <div>Nbre de Menu: @nbMenu</div>
-                        <div>Nbre de Boisson: @nbBoisson</div>
-                        <div>Nbre de Burger Simple: @nbBurgerSimple</div>
-                    </div>
-                    <div class="total-price">Total: @order.TotalPrix FCFA</div>
-                </div>
-                <div class="order-actions">
-                    <a class="btn btn-secondary" href="@Url.Action("Details", "Order", new { id = order.Id })">Détails</a>
-                    <a class="btn btn-success" href="@Url.Action("Reorder", "Order", new { id = order.Id })">Commander à
-                        nouveau</a>
-                    @if (!isPaid)
-                    {
-                        <a class="btn btn-primary" href="@Url.Action("Details", "Order", new { id = order.Id })">Payer /
-                            Commander</a>
-                    }
-                </div>
-            </div>
-            <div class="order-date">@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Vous n'avez pas encore passé de commande.
+            <a href="@Url.Action("Index", "Catalogue")" class="alert-link">Découvrir notre catalogue</a>
         </div>
     }
-</main>
+    else
+    {
+        @foreach (var order in Model)
+        {
+            var etatClass = order.StateOrder switch
+            {
+                "En_attente" => "warning",
+                "Validee" => "info",
+                "En_cours" => "primary",
+                "Prete" => "success",
+                "En_livraison" => "info",
+                "Terminee" => "success",
+                "Annulee" => "danger",
+                _ => "secondary"
+            };
+
+            var isPaye = order.Payement != null && order.Payement.StatutPayement?.Equals("Valider",
+            System.StringComparison.OrdinalIgnoreCase) == true;
+
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Commande N°@order.Id</strong>
+                        <br>
+                        <small class="text-muted">@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge badge-status bg-@etatClass">
+                            @order.StateOrder.Replace("_", " ")
+                        </span>
+                        @if (isPaye)
+                        {
+                            <br>
+
+                            <span class="badge bg-success mt-1">✓ Payée</span>
+                        }
+                        else
+                        {
+                            <br>
+
+                            <span class="badge bg-warning text-dark mt-1">⏳ Non payée</span>
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6>Articles commandés :</h6>
+                            @{
+                                var lines = ViewBag.LinesByOrder as Dictionary<int, List<Models.OrderLine>> ?? new Dictionary<int,
+                                List<Models.OrderLine>>();
+                                var thisLines = lines.ContainsKey(order.Id) ? lines[order.Id] : new List<Models.OrderLine>();
+                            }
+                            <ul class="list-unstyled">
+                                @foreach (var item in thisLines)
+                                {
+                                    <li class="mb-2">
+                                        @if (item.ItemType == "Menu")
+                                        {
+                                            <span>🍔 <strong>@item.Burger?.Nom</strong> x@item.Quantity</span>
+                                        }
+                                        else if (item.ItemType == "Burger")
+                                        {
+                                            <span>🍔 <strong>@item.Burger?.Nom</strong> x@item.Quantity</span>
+                                        }
+                                        else if (item.ItemType == "Complement")
+                                        {
+                                            <span>➕ <strong>@item.Complement?.Nom</strong> x@item.Quantity</span>
+                                        }
+                                        <span class="text-success"> - @item.Prix.ToString("N0") FCFA</span>
+                                    </li>
+                                }
+                            </ul>
+                            <p class="mb-1">
+                                <strong>Type:</strong>
+                                @switch (order.TypeLivraison)
+                                {
+                                    case "Sur_place":
+                                        <span>🍽️ Sur place</span>
+                                        break;
+                                    case "A_retirer":
+                                        <span>🛍️ À emporter</span>
+                                        break;
+                                    case "A_livrer":
+                                        <span>🚚 Livraison</span>
+                                        break;
+                                }
+                            </p>
+                            @if (order.TypeLivraison == "A_livrer")
+                            {
+                                <p class="mb-0"><strong>Adresse:</strong> @order.AdresseLivraison</p>
+                            }
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <h3 class="text-success">@order.TotalPrix.ToString("N0") FCFA</h3>
+                            @if (!isPaye && order.StateOrder != "Annulee")
+                            {
+                                <a href="@Url.Action("Paiement", "Order", new { id = order.Id })" class="btn btn-brasil btn-sm">
+                                    <i class="bi bi-credit-card"></i> Payer
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

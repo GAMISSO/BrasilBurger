@@ -1,5 +1,6 @@
-namespace Models{
-    public enum type_livraison
+namespace Models
+{
+    public enum Type_livraison
     {
         A_livrer,
         A_retirer,
