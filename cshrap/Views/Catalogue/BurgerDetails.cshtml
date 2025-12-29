@@ -47,7 +47,7 @@
             </div>
 
             <div class="d-grid gap-2">
-                <a href="@Url.Action("Commander", "Commande", new { burgerId = Model.Id })"
+                <a href="@Url.Action("Create", "Order", new { itemId = Model.Id, itemType = "burger" })"
                     class="btn btn-brasil btn-lg">
                     <i class="bi bi-cart-plus"></i> Commander maintenant
                 </a>

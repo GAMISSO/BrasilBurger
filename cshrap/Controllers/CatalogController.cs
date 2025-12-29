@@ -68,6 +68,8 @@ namespace Controllers
             if (burger == null)
                 return NotFound();
 
+            ViewBag.Complements = _context.Complements.ToList();
+
             return View(burger);
         }
 

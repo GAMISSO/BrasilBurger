@@ -28,25 +28,25 @@
                             <i class="bi bi-shop"></i> Catalogue
                         </a>
                     </li>
-                    @if (User?.Identity?.IsAuthenticated == true)
+                    @{
+                        var userId = Context.Session.GetInt32("user_id");
+                        var isAuthenticated = userId.HasValue;
+                    }
+                    @if (isAuthenticated)
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("MesCommandes", "Commande")">
+                            <a class="nav-link" href="@Url.Action("MyOrders", "Order")">
                                 <i class="bi bi-bag-check"></i> Mes Commandes
                             </a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-bs-toggle="dropdown">
-                                <i class="bi bi-person-circle"></i> @(User?.Identity?.Name ?? "")
+                                <i class="bi bi-person-circle"></i> Mon compte
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="@Url.Action("Profile", "Account")">Mon Profil</a></li>
                                 <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li>
-                                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                    <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
                                         <button type="submit" class="dropdown-item">
                                             <i class="bi bi-box-arrow-right"></i> Déconnexion
                                         </button>
@@ -58,12 +58,13 @@
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Login", "Account")">
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
                                 <i class="bi bi-box-arrow-in-right"></i> Connexion
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-brasil btn-sm ms-2" href="@Url.Action("Register", "Account")">
+                            <a class="btn btn-brasil btn-sm ms-2" href="#" data-bs-toggle="modal"
+                                data-bs-target="#registerModal">
                                 S'inscrire
                             </a>
                         </li>
@@ -108,6 +109,90 @@
             </div>
         </div>
     </footer>
+
+    <!-- Modal Connexion -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-brasil">
+                    <h5 class="modal-title" id="loginModalLabel">🔐 Connexion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form asp-controller="Auth" asp-action="Login" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="loginInput" class="form-label">Login</label>
+                            <input type="text" class="form-control" id="loginInput" name="login" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="passwordInput" class="form-label">Mot de passe</label>
+                            <input type="password" class="form-control" id="passwordInput" name="password" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-brasil">Se connecter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Inscription -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-brasil">
+                    <h5 class="modal-title" id="registerModalLabel">📝 Inscription</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form asp-controller="Auth" asp-action="Register" method="post">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="registerLogin" class="form-label">Login *</label>
+                                <input type="text" class="form-control" id="registerLogin" name="login" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="registerPassword" class="form-label">Mot de passe *</label>
+                                <input type="password" class="form-control" id="registerPassword" name="password"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="registerNom" class="form-label">Nom *</label>
+                                <input type="text" class="form-control" id="registerNom" name="nom" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="registerPrenom" class="form-label">Prénom *</label>
+                                <input type="text" class="form-control" id="registerPrenom" name="prenom" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="registerTelephone" class="form-label">Téléphone *</label>
+                                <input type="tel" class="form-control" id="registerTelephone" name="telephone" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="registerEmail" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="registerEmail" name="email" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="registerAdresse" class="form-label">Adresse *</label>
+                            <textarea class="form-control" id="registerAdresse" name="adresse" rows="2"
+                                required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-brasil">S'inscrire</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js"></script>
