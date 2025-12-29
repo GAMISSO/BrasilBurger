@@ -153,6 +153,34 @@ namespace Controllers
                     return RedirectToAction("Create", new { itemId, itemType });
                 }
 
+                // Vérifier si l'utilisateur a un ClientProfil, sinon en créer un
+                var clientProfil = _context.ClientProfiles.Find(userId.Value);
+                if (clientProfil == null)
+                {
+                    // Récupérer les infos de l'utilisateur
+                    var user = _context.Users.Find(userId.Value);
+                    if (user == null)
+                    {
+                        TempData["error"] = "Utilisateur introuvable. Veuillez vous reconnecter.";
+                        return RedirectToAction("Index", "Catalogue");
+                    }
+
+                    // Créer un ClientProfil de base
+                    clientProfil = new ClientProfil
+                    {
+                        Id = userId.Value,
+                        Nom = user.Login,
+                        Prenom = "",
+                        Adresse = adresseLivraison ?? "",
+                        Telephone = "",
+                        Email = "",
+                        CreatedAt = DateTime.Now
+                    };
+                    _context.ClientProfiles.Add(clientProfil);
+                    _context.SaveChanges();
+                    _logger.LogInformation("ClientProfil créé automatiquement pour userId={UserId}", userId.Value);
+                }
+
                 // Validate main item
                 if (itemType != "Burger" && itemType != "Menu")
                 {
@@ -244,7 +272,18 @@ namespace Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erreur lors de la validation de la commande (Create POST) itemType={ItemType} itemId={ItemId}", itemType, itemId);
+                _logger.LogError(ex, "Erreur lors de la validation de la commande (Create POST) itemType={ItemType} itemId={ItemId} userId={UserId}", itemType, itemId, GetCurrentUserId());
+
+                // Extraire l'erreur interne pour plus de détails
+                var innerException = ex.InnerException;
+                var errorDetails = ex.Message;
+                while (innerException != null)
+                {
+                    errorDetails += " | Inner: " + innerException.Message;
+                    innerException = innerException.InnerException;
+                }
+                _logger.LogError("Détails complets: {ErrorDetails}", errorDetails);
+
                 TempData["error"] = $"Impossible de valider la commande: {ex.Message}";
                 return RedirectToAction("Create", new { itemId, itemType });
             }
