@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Commandes{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1 class="page-title">📦 Gestion des Commandes</h1>
+    <p class="page-subtitle">{{ commandes|length }} commande(s)</p>
+</div>
+
+{# Inclure le formulaire de filtrage #}
+{% include 'commande/_filter_form.html.twig' %}
+
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>N° Commande</th>
+                <th>Date</th>
+                <th>Client</th>
+                <th>Type</th>
+                <th>Montant</th>
+                <th>Paiement</th>
+                <th>État</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for commande in commandes %}
+            <tr>
+                <td><strong>#{{ commande.id }}</strong></td>
+                <td>{{ commande.created_at|date('d/m/Y') }}</td>
+                <td>Client ID: {{ commande.client_profil_id ?? 'N/A' }}</td>
+                <td>
+                    {% if commande.type_livraison == 'Sur_place' %}
+                        <span class="badge badge-info">🪑 Sur place</span>
+                    {% elseif commande.type_livraison == 'A_retirer' %}
+                        <span class="badge badge-warning">📦 À retirer</span>
+                    {% else %}
+                        <span class="badge" style="background: #9C27B0; color: white;">🚚 À livrer</span>
+                    {% endif %}
+                </td>
+                <td><strong>{{ commande.total_prix|number_format(0, ',', ' ') }} FCFA</strong></td>
+                <td>
+                    {% if commande.payement_id %}
+                        <span class="badge badge-success">✓ Payé</span>
+                    {% else %}
+                        <span class="badge badge-danger">✗ Non payé</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if commande.state_order == 'En_cours' %}
+                        <span class="badge badge-warning">⏳ En cours</span>
+                    {% elseif commande.state_order == 'Terminee' %}
+                        <span class="badge badge-success">✓ Terminée</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <a href="{{ path('app_commande_show', {id: commande.id}) }}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Voir</a>
+                        {% if commande.state_order == 'En_cours' %}
+                            <form method="post" action="{{ path('app_commande_terminer', {id: commande.id}) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-success" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Terminer</button>
+                            </form>
+                            <form method="post" action="{{ path('app_commande_annuler', {id: commande.id}) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="return confirm('Annuler cette commande ?')">Annuler</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="8" style="text-align: center; color: #999; padding: 2rem;">
+                    Aucune commande trouvée.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 1rem;">
+    <a href="{{ path('app_home') }}" class="btn" style="background: #ddd; color: #333;">← Retour</a>
+</div>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 2rem; color: #999;">
+                    Aucune commande trouvée
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

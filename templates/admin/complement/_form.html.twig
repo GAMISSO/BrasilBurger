@@ -1,0 +1,15 @@
+{{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+<div class="form-group">
+    {{ form_label(form.nom, 'Nom du complément', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+</div>
+<div class="form-group">
+    {{ form_label(form.prix, 'Prix (FCFA)', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.prix, {'attr': {'class': 'form-control'}}) }}
+</div>
+<div class="form-group">
+    {{ form_label(form.image, 'Image', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.image, {'attr': {'class': 'form-control'}}) }}
+</div>
+<button type="submit" class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form) }}

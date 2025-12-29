@@ -8,4 +8,34 @@
 #   bin/console debug:router
 
 controllers:
-    resource: routing.controllers
+    resource: ../src/Controller/
+    type: attribute
+
+admin_controllers:
+    resource: ../src/Controller/Admin/
+    type: attribute
+
+admin_burger_file:
+    resource: ../src/Controller/Admin/BurgerController.php
+    type: attribute
+
+app_admin_complement_index:
+    path: /admin/complement/
+    controller: App\Controller\Admin\ComplementController::index
+
+app_admin_complement_new:
+    path: /admin/complement/new
+    controller: App\Controller\Admin\ComplementController::new
+
+app_admin_complement_edit:
+    path: /admin/complement/{id}/edit
+    controller: App\Controller\Admin\ComplementController::edit
+    requirements:
+        id: '\d+'
+
+app_admin_complement_delete:
+    path: /admin/complement/{id}/delete
+    controller: App\Controller\Admin\ComplementController::delete
+    methods: [POST]
+    requirements:
+        id: '\d+'

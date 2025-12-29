@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Compléments{% endblock %}
+
+{% block body %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1 class="page-title">🍟 Gestion des Compléments</h1>
+        <p class="page-subtitle">{{ complements|length }} complément(s) disponible(s)</p>
+    </div>
+    <a href="{{ path('app_admin_complement_new') }}" class="btn btn-primary">+ Nouveau Complément</a>
+</div>
+
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Nom</th>
+                <th>Prix</th>
+                <th>Date création</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for complement in complements %}
+            <tr>
+                <td>
+                    <img src="{{ asset('uploads/complements/' ~ complement.image) }}" alt="{{ complement.nom }}" 
+                         style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                </td>
+                <td><strong>{{ complement.nom }}</strong></td>
+                <td><strong style="color: #4CAF50;">{{ complement.prix|number_format(0, ',', ' ') }} FCFA</strong></td>
+                <td>{{ complement.created_at|date('d/m/Y') }}</td>
+                <td>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="{{ path('app_admin_complement_edit', {id: complement.id}) }}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Modifier</a>
+                        <form method="post" action="{{ path('app_admin_complement_delete', {id: complement.id}) }}" style="display: inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ complement.id) }}">
+                            <button type="submit" class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;" 
+                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce complément ?')">Supprimer</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 2rem; color: #999;">
+                    Aucun complément disponible. <a href="{{ path('app_admin_complement_new') }}">Créer le premier complément</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

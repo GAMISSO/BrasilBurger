@@ -1,0 +1,3 @@
+test_burger:
+    path: /test-burger
+    controller: App\Controller\Admin\BurgerController::index

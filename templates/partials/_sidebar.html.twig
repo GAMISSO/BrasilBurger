@@ -1,0 +1,99 @@
+<div class="sidebar-sticky pt-3">
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link {{ app.request.attributes.get('_route') starts with 'app_dashboard' ? 'active' : '' }}" 
+               href="{{ path('app_dashboard') }}">
+                <i class="bi bi-house-door"></i> Accueil
+            </a>
+        </li>
+        
+        <li class="nav-item mt-3">
+            <h6 class="sidebar-heading px-3 text-muted">COMMANDES</h6>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ app.request.attributes.get('_route') starts with 'app_commande' ? 'active' : '' }}" 
+               href="{{ path('app_commande_index') }}">
+                <i class="bi bi-list-ul"></i> Liste des commandes
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ app.request.attributes.get('_route') starts with 'app_livraison' ? 'active' : '' }}" 
+               href="{{ path('app_livraison_index') }}">
+                <i class="bi bi-truck"></i> Livraisons
+            </a>
+        </li>
+        
+        <li class="nav-item mt-3">
+            <h6 class="sidebar-heading px-3 text-muted">PRODUITS</h6>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ app.request.attributes.get('_route') starts with 'app_admin_burger' ? 'active' : '' }}" 
+               href="{{ path('app_admin_burger_index') }}">
+                <i class="bi bi-shop"></i> Burgers
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ app.request.attributes.get('_route') starts with 'app_admin_menu' ? 'active' : '' }}" 
+               href="{{ path('app_admin_menu_index') }}">
+                <i class="bi bi-cup-straw"></i> Menus
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ app.request.attributes.get('_route') starts with 'app_admin_complement' ? 'active' : '' }}" 
+               href="{{ path('app_admin_complement_index') }}">
+                <i class="bi bi-plus-circle"></i> Compléments
+            </a>
+        </li>
+        
+        <li class="nav-item mt-3">
+            <h6 class="sidebar-heading px-3 text-muted">RAPPORTS</h6>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ app.request.attributes.get('_route') starts with 'app_statistiques' ? 'active' : '' }}" 
+               href="{{ path('app_statistiques_index') }}">
+                <i class="bi bi-bar-chart"></i> Statistiques
+            </a>
+        </li>
+    </ul>
+</div>
+
+<style>
+.sidebar {
+    position: fixed;
+    top: 56px;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    padding: 48px 0 0;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+.sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 56px);
+    padding-top: .5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.sidebar .nav-link {
+    font-weight: 500;
+    color: #333;
+    padding: 0.75rem 1rem;
+}
+.sidebar .nav-link:hover {
+    color: #007bff;
+}
+.sidebar .nav-link.active {
+    color: #007bff;
+    background-color: #f8f9fa;
+}
+.sidebar .nav-link i {
+    margin-right: 0.5rem;
+}
+.sidebar-heading {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+</style>

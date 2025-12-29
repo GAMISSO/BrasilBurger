@@ -1,0 +1,25 @@
+{# Composant de fil d'Ariane (Breadcrumb) #}
+{% if breadcrumbs is defined and breadcrumbs %}
+    <nav aria-label="breadcrumb" style="margin-bottom: 1.5rem;">
+        <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin-bottom: 0.5rem;">
+            <li class="breadcrumb-item">
+                <a href="{{ path('app_home') }}" style="color: #FFD700; text-decoration: none; font-weight: 600;">
+                    🏠 Accueil
+                </a>
+            </li>
+            {% for breadcrumb in breadcrumbs %}
+                {% if loop.last %}
+                    <li class="breadcrumb-item active" aria-current="page" style="color: #333; font-weight: 600;">
+                        {{ breadcrumb.label }}
+                    </li>
+                {% else %}
+                    <li class="breadcrumb-item">
+                        <a href="{{ breadcrumb.url }}" style="color: #FFD700; text-decoration: none; font-weight: 600;">
+                            {{ breadcrumb.label }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ol>
+    </nav>
+{% endif %}

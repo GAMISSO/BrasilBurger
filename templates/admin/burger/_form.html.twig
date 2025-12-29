@@ -1,0 +1,32 @@
+{{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+
+<div class="form-group">
+    {{ form_label(form.nom, 'Nom du burger', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Carioca Burger'}}) }}
+    {{ form_errors(form.nom) }}
+</div>
+
+<div class="form-group">
+    {{ form_label(form.prix, 'Prix (FCFA)', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.prix, {'attr': {'class': 'form-control', 'placeholder': '6000'}}) }}
+    {{ form_errors(form.prix) }}
+</div>
+
+<div class="form-group">
+    {{ form_label(form.image_url, 'Image', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.image_url, {'attr': {'class': 'form-control'}}) }}
+    {{ form_errors(form.image_url) }}
+    {% if burger is defined and burger.image_url %}
+        <div style="margin-top: 1rem;">
+            <img src="{{ asset('uploads/burgers/' ~ burger.image_url) }}" alt="{{ burger.nom }}" 
+                 style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
+        </div>
+    {% endif %}
+</div>
+
+<div style="display: flex; gap: 1rem; margin-top: 2rem;">
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
+    <a href="{{ path('app_admin_burger_index') }}" class="btn" style="background: #ddd; color: #333;">Annuler</a>
+</div>
+
+{{ form_end(form) }}

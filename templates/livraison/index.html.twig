@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Livraisons{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1 class="page-title">🚚 Gestion des Livraisons</h1>
+    <p class="page-subtitle">Affectation des commandes par zone</p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+    {% for zoneName, zoneData in commandesParZone %}
+    <div class="card">
+        <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); padding: 1rem; border-radius: 8px 8px 0 0; margin: -1.5rem -1.5rem 1rem -1.5rem;">
+            <h3 style="font-size: 1.3rem; font-weight: 900; color: #000; margin-bottom: 0.3rem;">
+                📍 Zone: {{ zoneData.zone.nom }}
+            </h3>
+            <p style="color: #333; font-size: 0.9rem;">
+                Prix livraison: {{ zoneData.zone.prix_zone|number_format(0, ',', ' ') }} FCFA
+            </p>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <strong>{{ zoneData.commandes|length }} commande(s) à livrer</strong>
+        </div>
+
+        {% for commande in zoneData.commandes %}
+        <div style="border: 2px solid #f0f0f0; border-radius: 8px; padding: 1rem; margin-bottom: 0.8rem; background: #fafafa;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                <div>
+                    <strong style="font-size: 1.1rem;">Commande #{{ commande.id }}</strong><br>
+                    <span style="color: #666; font-size: 0.9rem;">
+                        {% if commande.clientProfil is defined %}
+                            Client ID: {{ commande.client_profil_id }}
+                        {% else %}
+                            Client ID: {{ commande.client_profil_id }}
+                        {% endif %}
+                    </span>
+                </div>
+                <span class="badge badge-warning">{{ commande.total_prix|number_format(0, ',', ' ') }} FCFA</span>
+            </div>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem;">
+                📍 {{ commande.adresse_livraison }}
+            </p>
+            <div style="display: flex; gap: 0.5rem;">
+                <a href="{{ path('app_commande_show', {id: commande.id}) }}" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Voir</a>
+                {% if commande.livreur is not defined %}
+                <form method="post" action="{{ path('app_livraison_affecter', {id: commande.id}) }}" style="display: inline;">
+                    <select name="livreur_id" required style="padding: 0.4rem; border-radius: 6px; border: 2px solid #ddd; margin-right: 0.3rem;">
+                        <option value="">Choisir livreur</option>
+                        {% for livreur in livreurs %}
+                        <option value="{{ livreur.id }}">{{ livreur.nom }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-success" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Affecter</button>
+                </form>
+                {% else %}
+                <span class="badge badge-success">Affecté à: {{ commande.livreur.nom }}</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if zoneData.commandes|length == 0 %}
+        <p style="text-align: center; color: #999; padding: 2rem;">Aucune commande dans cette zone</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% for type, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show" role="alert">
+            {% if type == 'success' %}
+                <i class="bi bi-check-circle"></i>
+            {% elseif type == 'error' %}
+                <i class="bi bi-x-circle"></i>
+            {% else %}
+                <i class="bi bi-info-circle"></i>
+            {% endif %}
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endfor %}

@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande #{{ commande.id }}{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1 class="page-title">📦 Commande N°{{ commande.id }}</h1>
+    <p class="page-subtitle">Créée le {{ commande.created_at|date('d/m/Y') }}</p>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+    <div>
+        {# Détails des lignes de commande #}
+        <div class="card">
+            <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; border-bottom: 2px solid #FFD700; padding-bottom: 0.5rem;">
+                Articles
+            </h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Référence</th>
+                        <th>Quantité</th>
+                        <th>Prix unitaire</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ligne in lignes %}
+                        <tr>
+                            <td>
+                                {% if ligne.item_type == 'Burger' %}
+                                    <span class="badge badge-warning">Burger</span>
+                                {% elseif ligne.item_type == 'Menu' %}
+                                    <span class="badge badge-info">Menu</span>
+                                {% else %}
+                                    <span class="badge" style="background: #FF9800; color: white;">{{ ligne.item_type }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if ligne.item_type == 'Burger' and ligne.burger_id %}
+                                    ID Burger: {{ ligne.burger_id }}
+                                {% elseif ligne.item_type == 'Menu' and ligne.menu_id %}
+                                    ID Menu: {{ ligne.menu_id }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                            <td>{{ ligne.quantity }}</td>
+                            <td>{{ ligne.prix|number_format(0, ',', ' ') }} FCFA</td>
+                            <td><strong>{{ (ligne.quantity * ligne.prix)|number_format(0, ',', ' ') }} FCFA</strong></td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align:center; color:#999;">Aucune ligne pour cette commande.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr style="background: #FFF9E6;">
+                        <td colspan="4" style="text-align: right; font-weight: 700; font-size: 1.2rem;">TOTAL:</td>
+                        <td style="font-weight: 900; font-size: 1.3rem; color: #4CAF50;">
+                            {{ commande.total_prix|number_format(0, ',', ' ') }} FCFA
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        {# Actions #}
+        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+            <form method="post" action="{{ path('app_commande_terminer', {id: commande.id}) }}" style="flex: 1;">
+                <button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                    ✓ Marquer comme Terminée
+                </button>
+            </form>
+            <form method="post" action="{{ path('app_commande_annuler', {id: commande.id}) }}" style="flex: 1;">
+                <button type="submit" class="btn btn-danger" style="width: 100%; padding: 1rem; font-size: 1.1rem;"
+                        onclick="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?')">
+                    ✗ Annuler la commande
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        {# Informations commande #}
+        <div class="card" style="margin-bottom:1rem;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">📊 État</h3>
+            {% if commande.state_order == 'En_cours' %}
+                <span class="badge badge-warning" style="font-size: 1.2rem; padding: 0.6rem 1.2rem;">⏳ En cours</span>
+            {% elseif commande.state_order == 'Terminee' %}
+                <span class="badge badge-success" style="font-size: 1.2rem; padding: 0.6rem 1.2rem;">✓ Terminée</span>
+            {% endif %}
+        </div>
+
+        <div class="card" style="margin-bottom:1rem;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">📋 Type de livraison</h3>
+            {% if commande.type_livraison == 'Sur_place' %}
+                <span class="badge badge-info" style="font-size: 1rem; padding: 0.5rem 1rem;">🪑 Sur place</span>
+            {% elseif commande.type_livraison == 'A_retirer' %}
+                <span class="badge badge-warning" style="font-size: 1rem; padding: 0.5rem 1rem;">📦 À retirer</span>
+            {% else %}
+                <span class="badge" style="background: #9C27B0; color: white; font-size: 1rem; padding: 0.5rem 1rem;">🚚 À livrer</span>
+                {% if commande.adresse_livraison %}
+                    <p style="margin-top: 1rem;"><strong>Adresse:</strong><br>{{ commande.adresse_livraison }}</p>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="card" style="margin-bottom:1rem;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">👤 Client</h3>
+            <p><strong>Client ID:</strong> {{ commande.client_profil_id ?? 'N/A' }}</p>
+        </div>
+
+        <div class="card">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">💳 Paiement</h3>
+            {% if commande.payement_id %}
+                <div style="background: #d4edda; padding: 1rem; border-radius: 8px; border: 2px solid #4CAF50;">
+                    <p style="color: #155724; font-weight: 700; margin-bottom: 0.5rem;">✓ Commande payée</p>
+                    <p><strong>Référence paiement ID:</strong> {{ commande.payement_id }}</p>
+                </div>
+            {% else %}
+                <div style="background: #f8d7da; padding: 1rem; border-radius: 8px; border: 2px solid #f44336;">
+                    <p style="color: #721c24; font-weight: 700;">✗ Commande non payée</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div style="margin-top: 1rem;">
+    <a href="{{ path('app_commande_index') }}" class="btn" style="background: #ddd; color: #333;">← Retour aux commandes</a>
+</div>
+{% endblock %}

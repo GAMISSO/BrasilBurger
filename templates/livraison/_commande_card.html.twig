@@ -1,0 +1,38 @@
+{# Carte d'une commande pour la page Livraison #}
+<div style="border: 2px solid #f0f0f0; border-radius: 8px; padding: 1rem; margin-bottom: 0.8rem; background: #fafafa;">
+	<div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+		<div>
+			<strong style="font-size: 1.1rem;">Commande #{{ commande.id }}</strong><br>
+			{% if commande.client_profil_id is defined and commande.client_profil_id %}
+				<span style="color: #666; font-size: 0.9rem;">Client ID: {{ commande.client_profil_id }}</span>
+			{% endif %}
+		</div>
+		<span class="badge bg-warning text-dark">{{ commande.total_prix|number_format(0, ',', ' ') }} FCFA</span>
+	</div>
+
+	{% if commande.adresse_livraison is defined and commande.adresse_livraison %}
+		<p style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem;">📍 {{ commande.adresse_livraison }}</p>
+	{% endif %}
+
+	<div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+		<a href="{{ path('app_commande_show', {id: commande.id}) }}" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Voir</a>
+
+		{% if commande.livreur is not defined or not commande.livreur %}
+			{% if livreurs is defined and livreurs|length > 0 %}
+				<form method="post" action="{{ path('app_livraison_affecter', {id: commande.id}) }}" style="display: inline-flex; gap: 0.4rem; align-items: center;">
+					<select name="livreur_id" required class="form-select form-select-sm" style="width: auto; min-width: 180px;">
+						<option value="">Choisir livreur</option>
+						{% for livreur in livreurs %}
+							<option value="{{ livreur.id }}">{{ livreur.nom }}</option>
+						{% endfor %}
+					</select>
+					<button type="submit" class="btn btn-success" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Affecter</button>
+				</form>
+			{% else %}
+				<span class="text-muted" style="font-size: 0.85rem;">Aucun livreur disponible</span>
+			{% endif %}
+		{% else %}
+			<span class="badge bg-success">Affecté à: {{ commande.livreur.nom }}</span>
+		{% endif %}
+	</div>
+</div>

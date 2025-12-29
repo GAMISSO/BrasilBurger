@@ -1,0 +1,20 @@
+app_admin_complement_index:
+    path: /admin/complement/
+    controller: App\Controller\Admin\ComplementController::index
+
+app_admin_complement_new:
+    path: /admin/complement/new
+    controller: App\Controller\Admin\ComplementController::new
+
+app_admin_complement_edit:
+    path: /admin/complement/{id}/edit
+    controller: App\Controller\Admin\ComplementController::edit
+    requirements:
+           id: '\d+'
+
+app_admin_complement_delete:
+    path: /admin/complement/{id}/delete
+    controller: App\Controller\Admin\ComplementController::delete
+    methods: [POST]
+    requirements:
+           id: '\d+'

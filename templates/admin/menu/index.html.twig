@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Menus{% endblock %}
+
+{% block body %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1 class="page-title">📋 Gestion des Menus</h1>
+        <p class="page-subtitle">{{ menus|length }} menu(s) disponible(s)</p>
+    </div>
+    <a href="{{ path('app_admin_menu_new') }}" class="btn btn-primary">+ Nouveau Menu</a>
+</div>
+
+<div class="card">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Nom</th>
+                <th>Burger</th>
+                <th>Prix total</th>
+                <th>Date création</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for menu in menus %}
+            <tr>
+                <td>
+                    <img src="{{ asset('uploads/menus/' ~ menu.image) }}" alt="{{ menu.nom }}" 
+                         style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                </td>
+                <td><strong>{{ menu.nom }}</strong></td>
+                <td>{{ menu.burger_id ? 'ID: ' ~ menu.burger_id : 'N/A' }}</td>
+                <td><strong style="color: #4CAF50;">{{ menu.prix_total|number_format(0, ',', ' ') }} FCFA</strong></td>
+                <td>{{ menu.created_at|date('d/m/Y') }}</td>
+                <td>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="{{ path('app_admin_menu_edit', {id: menu.id}) }}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Modifier</a>
+                        <form method="post" action="{{ path('app_admin_menu_delete', {id: menu.id}) }}" style="display: inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ menu.id) }}">
+                            <button type="submit" class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;" 
+                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce menu ?')">Supprimer</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 2rem; color: #999;">
+                    Aucun menu disponible. <a href="{{ path('app_admin_menu_new') }}">Créer le premier menu</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Burger{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1 class="page-title">🍔 Modifier: {{ burger.nom }}</h1>
+    <p class="page-subtitle">Mettre à jour les informations du burger</p>
+</div>
+
+<div class="card" style="max-width: 800px;">
+    {{ include('admin/burger/_form.html.twig', {button_label: 'Mettre à jour'}) }}
+</div>
+
+<div style="margin-top: 1rem;">
+    <a href="{{ path('app_admin_burger_index') }}" class="btn" style="background: #ddd; color: #333;">← Retour à la liste</a>
+</div>
+{% endblock %}

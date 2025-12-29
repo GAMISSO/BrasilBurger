@@ -5,7 +5,12 @@ security:
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        users_in_memory:
+            memory:
+                users:
+                    gestionnaire:
+                        password: '$2y$13$R2R2R2R2R2R2R2R2R2R2Reu0kqC7zTQ0Q5o6bCwQbHq2W8PwBsdC' # bcrypt for 'admin'
+                        roles: ['ROLE_GESTIONNAIRE']
 
     firewalls:
         dev:
@@ -15,6 +20,15 @@ security:
         main:
             lazy: true
             provider: users_in_memory
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                username_parameter: login
+                password_parameter: password
+                enable_csrf: true
+            logout:
+                path: app_logout
+                target: app_login
 
             # Activate different ways to authenticate:
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -24,8 +38,12 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/logout, roles: PUBLIC_ACCESS }
+        - { path: ^/admin, roles: ROLE_GESTIONNAIRE }
+        - { path: ^/commande, roles: ROLE_GESTIONNAIRE }
+        - { path: ^/livraison, roles: ROLE_GESTIONNAIRE }
+        - { path: ^/statistiques, roles: ROLE_GESTIONNAIRE }
 
 when@test:
     security:

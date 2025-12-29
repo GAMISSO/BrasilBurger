@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nouveau Complément{% endblock %}
+{% block body %}
+<div class="page-header">
+    <h1 class="page-title">🍟 Nouveau Complément</h1>
+</div>
+<div class="card" style="max-width: 800px;">
+    {{ include('admin/complement/_form.html.twig', {button_label: 'Créer le complément'}) }}
+</div>
+<a href="{{ path('app_admin_complement_index') }}" class="btn" style="background: #ddd; color: #333; margin-top: 1rem;">← Retour</a>
+{% endblock %}
