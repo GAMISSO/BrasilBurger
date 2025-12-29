@@ -57,8 +57,30 @@ namespace Controllers
             // La connexion sera demandée lors de la validation de la commande
 
             ViewBag.Burgers = _context.Burgers.ToList();
-            ViewBag.Menus = _context.Menus.ToList();
+            ViewBag.Menus = _context.Menus.Include(m => m.Burger).Include(m => m.MenuComplements).ThenInclude(mc => mc.Complement).ToList();
             ViewBag.Complements = _context.Complements.ToList();
+            ViewBag.Zones = _context.Zones.ToList();
+
+            // Charger l'item spécifique si fourni
+            if (itemId.HasValue && !string.IsNullOrEmpty(itemType))
+            {
+                if (itemType.ToLower() == "burger")
+                {
+                    var burger = _context.Burgers.Find(itemId.Value);
+                    ViewBag.Item = burger;
+                    ViewBag.TypeItem = "burger";
+                }
+                else if (itemType.ToLower() == "menu")
+                {
+                    var menu = _context.Menus
+                        .Include(m => m.Burger)
+                        .Include(m => m.MenuComplements)
+                        .ThenInclude(mc => mc.Complement)
+                        .FirstOrDefault(m => m.Id == itemId.Value);
+                    ViewBag.Item = menu;
+                    ViewBag.TypeItem = "menu";
+                }
+            }
 
             ViewBag.PreselectedItemId = itemId;
             ViewBag.PreselectedItemType = itemType;

@@ -31,19 +31,20 @@
         <div class="col-md-7">
             <div class="card mb-4">
                 <div class="card-header bg-brasil text-dark">
-                    <h5 class="mb-0">📝 Détails de la commande</h5>
+                    <h5 class="mb-0"> Détails de la commande</h5>
                 </div>
                 <div class="card-body">
-                    <form asp-action="Commander" method="post" id="commandeForm">
+                    <form asp-action="Create" method="post" id="commandeForm">
                         @if (typeItem == "burger")
                         {
                             var burger = item as Models.Burger;
                             if (burger != null)
                             {
-                                <input type="hidden" name="burgerId" value="@burger.Id" />
+                                <input type="hidden" name="itemType" value="Burger" />
+                                <input type="hidden" name="itemId" value="@burger.Id" />
 
                                 <div class="mb-3">
-                                    <h5>🍔 @burger.Nom</h5>
+                                    <h5> @burger.Nom</h5>
                                     <p class="text-muted">Délicieux burger fait maison</p>
                                     <p class="text-success fw-bold">Prix: @burger.Prix.ToString("N0") FCFA</p>
                                 </div>
@@ -87,23 +88,24 @@
 
                             @if (menu != null)
                             {
-                                <input type="hidden" name="menuId" value="@menu.Id" />
+                                <input type="hidden" name="itemType" value="Menu" />
+                                <input type="hidden" name="itemId" value="@menu.Id" />
 
                                 <div class="mb-3">
-                                    <h5>🍽️ @menu.Nom</h5>
+                                    <h5> @menu.Nom</h5>
                                     <p>Ce menu comprend :</p>
                                     <ul>
                                         @if (burgerComp != null)
                                         {
-                                            <li>🍔 @burgerComp.Nom</li>
+                                            <li> @burgerComp.Nom</li>
                                         }
                                         @if (complementBoisson != null)
                                         {
-                                            <li>🥤 @complementBoisson.Nom</li>
+                                            <li> @complementBoisson.Nom</li>
                                         }
                                         @if (complementFrite != null)
                                         {
-                                            <li>🍟 @complementFrite.Nom</li>
+                                            <li> @complementFrite.Nom</li>
                                         }
                                     </ul>
                                     <p class="text-success fw-bold">Prix total: @prixTotal.ToString("N0") FCFA</p>
@@ -117,26 +119,26 @@
 
                         <div class="mb-3">
                             <label class="form-label">Quantité</label>
-                            <input type="number" name="quantite" class="form-control" value="1" min="1" max="10"
+                            <input type="number" name="quantity" class="form-control" value="1" min="1" max="10"
                                 id="quantite">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Type de service</label>
                             <div class="btn-group w-100" role="group">
-                                <input type="radio" class="btn-check" name="typeService" id="surPlace" value="SUR_PLACE"
-                                    checked>
+                                <input type="radio" class="btn-check" name="typeLivraison" id="surPlace"
+                                    value="SUR_PLACE" checked>
                                 <label class="btn btn-outline-primary" for="surPlace">
                                     <i class="bi bi-shop"></i> Sur place
                                 </label>
 
-                                <input type="radio" class="btn-check" name="typeService" id="aEmporter"
+                                <input type="radio" class="btn-check" name="typeLivraison" id="aEmporter"
                                     value="A_EMPORTER">
                                 <label class="btn btn-outline-primary" for="aEmporter">
                                     <i class="bi bi-bag"></i> À emporter
                                 </label>
 
-                                <input type="radio" class="btn-check" name="typeService" id="livraison"
+                                <input type="radio" class="btn-check" name="typeLivraison" id="livraison"
                                     value="LIVRAISON">
                                 <label class="btn btn-outline-primary" for="livraison">
                                     <i class="bi bi-truck"></i> Livraison
@@ -176,7 +178,7 @@
         <div class="col-md-5">
             <div class="card sticky-top" style="top: 20px;">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0">📊 Résumé de la commande</h5>
+                    <h5 class="mb-0"> Résumé de la commande</h5>
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-2">
@@ -209,3 +211,91 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const prixBaseElement = document.getElementById('prixBase');
+            const quantiteInput = document.getElementById('quantite');
+            const quantiteDisplay = document.getElementById('quantiteDisplay');
+            const totalFinalElement = document.getElementById('totalFinal');
+            const complementCheckboxes = document.querySelectorAll('.complement-checkbox');
+            const prixComplementsElement = document.getElementById('prixComplements');
+            const complementsTotalDiv = document.getElementById('complementsTotal');
+            const livraisonRadios = document.querySelectorAll('input[name="typeLivraison"]');
+            const livraisonDetailsDiv = document.getElementById('livraisonDetails');
+            const zoneSelect = document.getElementById('zoneSelect');
+            const prixLivraisonElement = document.getElementById('prixLivraison');
+            const livraisonTotalDiv = document.getElementById('livraisonTotal');
+
+            const prixBase = parseInt(prixBaseElement.getAttribute('data-prix-base')) || 0;
+
+            function calculerTotal() {
+                const quantite = parseInt(quantiteInput.value) || 1;
+                quantiteDisplay.textContent = quantite;
+
+                // Calcul compléments
+                let prixComplements = 0;
+                complementCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        prixComplements += parseInt(checkbox.getAttribute('data-prix')) || 0;
+                    }
+                });
+
+                // Calcul livraison
+                let prixLivraison = 0;
+                const typeLivraisonSelected = document.querySelector('input[name="typeLivraison"]:checked');
+                if (typeLivraisonSelected && typeLivraisonSelected.value === 'LIVRAISON') {
+                    const selectedZone = zoneSelect.options[zoneSelect.selectedIndex];
+                    if (selectedZone && selectedZone.value) {
+                        prixLivraison = parseInt(selectedZone.getAttribute('data-prix')) || 0;
+                    }
+                }
+
+                // Affichage compléments
+                if (prixComplements > 0) {
+                    prixComplementsElement.textContent = (prixComplements * quantite).toLocaleString() + ' FCFA';
+                    complementsTotalDiv.style.display = 'flex';
+                } else {
+                    complementsTotalDiv.style.display = 'none';
+                }
+
+                // Affichage livraison
+                if (prixLivraison > 0) {
+                    prixLivraisonElement.textContent = prixLivraison.toLocaleString() + ' FCFA';
+                    livraisonTotalDiv.style.display = 'flex';
+                } else {
+                    livraisonTotalDiv.style.display = 'none';
+                }
+
+                // Total
+                const total = ((prixBase + prixComplements) * quantite) + prixLivraison;
+                totalFinalElement.textContent = total.toLocaleString() + ' FCFA';
+            }
+
+            // Événements
+            quantiteInput.addEventListener('input', calculerTotal);
+            complementCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', calculerTotal);
+            });
+
+            livraisonRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    if (this.value === 'LIVRAISON') {
+                        livraisonDetailsDiv.style.display = 'block';
+                    } else {
+                        livraisonDetailsDiv.style.display = 'none';
+                    }
+                    calculerTotal();
+                });
+            });
+
+            if (zoneSelect) {
+                zoneSelect.addEventListener('change', calculerTotal);
+            }
+
+            // Calcul initial
+            calculerTotal();
+        });
+    </script>
+}

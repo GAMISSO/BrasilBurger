@@ -56,7 +56,7 @@
                         {
                             <br>
 
-                            <span class="badge bg-warning text-dark mt-1">⏳ Non payée</span>
+                            <span class="badge bg-warning text-dark mt-1"> Non payée</span>
                         }
                     </div>
                 </div>
@@ -75,15 +75,15 @@
                                     <li class="mb-2">
                                         @if (item.ItemType == "Menu")
                                         {
-                                            <span>🍔 <strong>@item.Burger?.Nom</strong> x@item.Quantity</span>
+                                            <span> <strong>@item.Burger?.Nom</strong> x@item.Quantity</span>
                                         }
                                         else if (item.ItemType == "Burger")
                                         {
-                                            <span>🍔 <strong>@item.Burger?.Nom</strong> x@item.Quantity</span>
+                                            <span> <strong>@item.Burger?.Nom</strong> x@item.Quantity</span>
                                         }
                                         else if (item.ItemType == "Complement")
                                         {
-                                            <span>➕ <strong>@item.Complement?.Nom</strong> x@item.Quantity</span>
+                                            <span> <strong>@item.Complement?.Nom</strong> x@item.Quantity</span>
                                         }
                                         <span class="text-success"> - @item.Prix.ToString("N0") FCFA</span>
                                     </li>
@@ -94,13 +94,13 @@
                                 @switch (order.TypeLivraison)
                                 {
                                     case "Sur_place":
-                                        <span>🍽️ Sur place</span>
+                                        <span> Sur place</span>
                                         break;
                                     case "A_retirer":
-                                        <span>🛍️ À emporter</span>
+                                        <span> À emporter</span>
                                         break;
                                     case "A_livrer":
-                                        <span>🚚 Livraison</span>
+                                        <span> Livraison</span>
                                         break;
                                 }
                             </p>

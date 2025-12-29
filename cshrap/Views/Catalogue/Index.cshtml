@@ -8,7 +8,7 @@
 
 <div class="hero-section text-center">
     <div class="container">
-        <h1 class="display-4 fw-bold">🍔 Nos Délicieux Burgers</h1>
+        <h1 class="display-4 fw-bold"> Nos Délicieux Burgers</h1>
         <p class="lead">Découvrez notre sélection de burgers et menus</p>
     </div>
 </div>
@@ -24,11 +24,11 @@
                 </a>
                 <a href="@Url.Action("Index", "Catalogue", new { filtre = "burger" })"
                     class="btn @(ViewBag.Filtre == "burger" ? "btn-brasil" : "btn-outline-secondary")">
-                    🍔 Burgers
+                     Burgers
                 </a>
                 <a href="@Url.Action("Index", "Catalogue", new { filtre = "menu" })"
                     class="btn @(ViewBag.Filtre == "menu" ? "btn-brasil" : "btn-outline-secondary")">
-                    🍽️ Menus
+                     Menus
                 </a>
             </div>
         </div>
@@ -107,17 +107,17 @@
                                         <small class="text-muted">
                                             @if (burgerComp != null)
                                             {
-                                                <span>🍔 @burgerComp.Nom</span>
+                                                <span> @burgerComp.Nom</span>
                                                 <br>
                                             }
                                             @if (complementBoisson != null)
                                             {
-                                                <span>🥤 @complementBoisson.Nom</span>
+                                                <span> @complementBoisson.Nom</span>
                                                 <br>
                                             }
                                             @if (complementFrite != null)
                                             {
-                                                <span>🍟 @complementFrite.Nom</span>
+                                                <span> @complementFrite.Nom</span>
                                             }
                                         </small>
                                     }
