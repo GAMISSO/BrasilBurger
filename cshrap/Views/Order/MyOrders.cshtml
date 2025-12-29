@@ -9,14 +9,7 @@
         <i class="bi bi-bag-check"></i> Mon Panier - Mes Commandes
     </h1>
 
-    @if (Model == null || !Model.Any())
-    {
-        <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> Vous n'avez pas encore passé de commande.
-            <a href="@Url.Action("Index", "Catalogue")" class="alert-link">Découvrir notre catalogue</a>
-        </div>
-    }
-    else
+    @if (Model != null && Model.Any())
     {
         @foreach (var order in Model)
         {
