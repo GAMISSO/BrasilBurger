@@ -29,32 +29,43 @@
             </div>
 
             <h5 class="mb-3">Compléments disponibles :</h5>
-            <div class="row g-3 mb-4">
-                @if (complements != null)
-                {
-                    @foreach (var comp in complements)
+            <form method="get" action="@Url.Action("Create", "Order")">
+                <input type="hidden" name="itemId" value="@Model.Id" />
+                <input type="hidden" name="itemType" value="burger" />
+                <div class="row g-3 mb-4">
+                    @if (complements != null)
                     {
-                        <div class="col-6">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6>@comp.Nom</h6>
-                                    <p class="mb-0 text-success">+@comp.Prix.ToString("N0") FCFA</p>
+                        @foreach (var comp in complements)
+                        {
+                            <div class="col-6">
+                                <div class="form-check card h-100">
+                                    <div class="card-body">
+                                        <input class="form-check-input" type="checkbox" value="@comp.Id" id="compDetail@comp.Id"
+                                            name="complementIds">
+                                        <label class="form-check-label" for="compDetail@comp.Id">
+                                            <h6 class="mb-1">@comp.Nom</h6>
+                                            <p class="mb-0 text-success">+@comp.Prix.ToString("N0") FCFA</p>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                     }
-                }
-            </div>
+                </div>
 
-            <div class="d-grid gap-2">
-                <a href="@Url.Action("Create", "Order", new { itemId = Model.Id, itemType = "burger" })"
-                    class="btn btn-brasil btn-lg">
-                    <i class="bi bi-cart-plus"></i> Commander maintenant
-                </a>
-                <a href="@Url.Action("Index", "Catalogue")" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Retour au catalogue
-                </a>
-            </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-brasil btn-lg">
+                        <i class="bi bi-cart-plus"></i> Commander avec ces compléments
+                    </button>
+                    <a href="@Url.Action("Create", "Order", new { itemId = Model.Id, itemType = "burger" })"
+                        class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-right"></i> Passer sans sélection
+                    </a>
+                    <a href="@Url.Action("Index", "Catalogue")" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Retour au catalogue
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 </div>

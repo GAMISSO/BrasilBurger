@@ -51,7 +51,7 @@ namespace Controllers
         // CRÉER COMMANDE (burger ou menu)
         // ==========================
         [HttpGet]
-        public IActionResult Create(int? itemId = null, string? itemType = null)
+        public IActionResult Create(int? itemId = null, string? itemType = null, int[]? complementIds = null)
         {
             // Permettre l'accès à la page sans être connecté
             // La connexion sera demandée lors de la validation de la commande
@@ -60,6 +60,7 @@ namespace Controllers
             ViewBag.Menus = _context.Menus.Include(m => m.Burger).Include(m => m.MenuComplements).ThenInclude(mc => mc.Complement).ToList();
             ViewBag.Complements = _context.Complements.ToList();
             ViewBag.Zones = _context.Zones.ToList();
+            ViewBag.SelectedComplementIds = complementIds?.ToList() ?? new List<int>();
 
             // Charger l'item spécifique si fourni
             if (itemId.HasValue && !string.IsNullOrEmpty(itemType))
@@ -109,9 +110,9 @@ namespace Controllers
                 if (complementIds != null && complementIds.Length > 0)
                     HttpContext.Session.SetString("pending_order_complementIds", string.Join(",", complementIds));
 
-                // Rediriger vers la page de connexion avec un message
+                // Demander la connexion mais rester sur la page de commande
                 TempData["message"] = "Veuillez vous connecter pour valider votre commande";
-                return RedirectToAction("Index", "Catalogue");
+                return RedirectToAction("Create", new { itemId, itemType });
             }
 
             // Validate main item

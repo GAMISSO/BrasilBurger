@@ -6,6 +6,7 @@
     var complements = ViewBag.Complements as List<Models.Complement>;
     var item = ViewBag.Item;
     var typeItem = ViewBag.TypeItem as string;
+    var selectedComplementIds = ViewBag.SelectedComplementIds as List<int> ?? new List<int>();
     int basePrice = 0;
     if (typeItem == "burger" && item is Models.Burger b)
     {
@@ -54,11 +55,12 @@
                                     <div class="row g-2">
                                         @foreach (var comp in complements ?? new List<Models.Complement>())
                                         {
+                                            var isChecked = selectedComplementIds.Contains(comp.Id);
                                             <div class="col-md-6">
                                                 <div class="form-check">
                                                     <input class="form-check-input complement-checkbox" type="checkbox"
                                                         name="complementIds" value="@comp.Id" id="comp@comp.Id"
-                                                        data-prix="@comp.Prix">
+                                                        data-prix="@comp.Prix" @(isChecked ? "checked" : string.Empty)>
                                                     <label class="form-check-label" for="comp@comp.Id">
                                                         @comp.Nom - <span class="text-success">@comp.Prix.ToString("N0") FCFA</span>
                                                     </label>
