@@ -57,12 +57,22 @@
                                         {
                                             var isChecked = selectedComplementIds.Contains(comp.Id);
                                             <div class="col-md-6">
-                                                <div class="form-check">
-                                                    <input class="form-check-input complement-checkbox" type="checkbox"
+                                                <div class="form-check d-flex align-items-start">
+                                                    <input class="form-check-input complement-checkbox me-2" type="checkbox"
                                                         name="complementIds" value="@comp.Id" id="comp@comp.Id"
                                                         data-prix="@comp.Prix" @(isChecked ? "checked" : string.Empty)>
-                                                    <label class="form-check-label" for="comp@comp.Id">
-                                                        @comp.Nom - <span class="text-success">@comp.Prix.ToString("N0") FCFA</span>
+                                                    <label class="form-check-label w-100" for="comp@comp.Id">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span>@comp.Nom</span>
+                                                            <span class="text-success">@comp.Prix.ToString("N0") FCFA</span>
+                                                        </div>
+                                                        <div class="mt-2 d-flex align-items-center complement-qty-row">
+                                                            <small class="text-muted me-2">Quantité</small>
+                                                            <input type="number" name="complementQuantities"
+                                                                class="form-control form-control-sm complement-qty" value="1"
+                                                                min="1" step="1" data-prix="@comp.Prix" style="width: 90px;"
+                                                                @(isChecked ? string.Empty : "disabled")>
+                                                        </div>
                                                     </label>
                                                 </div>
                                             </div>
@@ -222,6 +232,7 @@
             const quantiteDisplay = document.getElementById('quantiteDisplay');
             const totalFinalElement = document.getElementById('totalFinal');
             const complementCheckboxes = document.querySelectorAll('.complement-checkbox');
+            const complementQtyInputs = document.querySelectorAll('.complement-qty');
             const prixComplementsElement = document.getElementById('prixComplements');
             const complementsTotalDiv = document.getElementById('complementsTotal');
             const livraisonRadios = document.querySelectorAll('input[name="typeLivraison"]');
@@ -236,11 +247,14 @@
                 const quantite = parseInt(quantiteInput.value) || 1;
                 quantiteDisplay.textContent = quantite;
 
-                // Calcul compléments
+                // Calcul compléments (avec quantités propres)
                 let prixComplements = 0;
-                complementCheckboxes.forEach(checkbox => {
+                complementCheckboxes.forEach((checkbox, idx) => {
+                    const qtyInput = complementQtyInputs[idx];
                     if (checkbox.checked) {
-                        prixComplements += parseInt(checkbox.getAttribute('data-prix')) || 0;
+                        const prixComp = parseInt(checkbox.getAttribute('data-prix')) || 0;
+                        const qtyComp = Math.max(1, parseInt(qtyInput.value) || 1);
+                        prixComplements += prixComp * qtyComp;
                     }
                 });
 
@@ -270,15 +284,23 @@
                     livraisonTotalDiv.style.display = 'none';
                 }
 
-                // Total
-                const total = ((prixBase + prixComplements) * quantite) + prixLivraison;
+                // Total = article principal (quantité) + compléments (quantités propres) + livraison
+                const total = (prixBase * quantite) + prixComplements + prixLivraison;
                 totalFinalElement.textContent = total.toLocaleString() + ' FCFA';
             }
 
             // Événements
             quantiteInput.addEventListener('input', calculerTotal);
-            complementCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', calculerTotal);
+            complementCheckboxes.forEach((checkbox, idx) => {
+                const qtyInput = complementQtyInputs[idx];
+                checkbox.addEventListener('change', function () {
+                    qtyInput.disabled = !checkbox.checked;
+                    if (!checkbox.checked) {
+                        qtyInput.value = 1;
+                    }
+                    calculerTotal();
+                });
+                qtyInput.addEventListener('input', calculerTotal);
             });
 
             livraisonRadios.forEach(radio => {

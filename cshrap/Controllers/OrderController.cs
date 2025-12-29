@@ -95,7 +95,8 @@ namespace Controllers
             int quantity,
             string typeLivraison,
             string? adresseLivraison,
-            int[]? complementIds)
+            int[]? complementIds,
+            int[]? complementQuantities)
         {
             var userId = HttpContext.Session.GetInt32("user_id");
             if (userId == null)
@@ -109,6 +110,8 @@ namespace Controllers
                     HttpContext.Session.SetString("pending_order_adresseLivraison", adresseLivraison);
                 if (complementIds != null && complementIds.Length > 0)
                     HttpContext.Session.SetString("pending_order_complementIds", string.Join(",", complementIds));
+                if (complementQuantities != null && complementQuantities.Length > 0)
+                    HttpContext.Session.SetString("pending_order_complementQuantities", string.Join(",", complementQuantities));
 
                 // Demander la connexion mais rester sur la page de commande
                 TempData["message"] = "Veuillez vous connecter pour valider votre commande";
@@ -138,14 +141,23 @@ namespace Controllers
                 prixItem = menu.PrixTotal;
             }
 
-            // Collect complements and compute their total price per item
-            var selectedComplements = new List<Complement>();
-            int complementsPrice = 0;
+            // Collect complements and compute their total price (independent of main quantity)
+            var selectedComplements = new List<(Complement Comp, int Qty)>();
+            int complementsTotal = 0;
             if (complementIds != null && complementIds.Length > 0)
             {
-                selectedComplements = _context.Complements
-                    .Where(c => complementIds.Contains(c.Id)).ToList();
-                complementsPrice = selectedComplements.Sum(c => c.Prix);
+                // Safely align quantities with ids
+                var quantities = complementQuantities ?? Array.Empty<int>();
+                var comps = _context.Complements.Where(c => complementIds.Contains(c.Id)).ToList();
+                for (int i = 0; i < complementIds.Length; i++)
+                {
+                    var comp = comps.FirstOrDefault(c => c.Id == complementIds[i]);
+                    if (comp == null) continue;
+                    var qty = (i < quantities.Length ? quantities[i] : 1);
+                    if (qty < 1) qty = 1;
+                    selectedComplements.Add((comp, qty));
+                    complementsTotal += comp.Prix * qty;
+                }
             }
 
             var order = new Order
@@ -153,7 +165,7 @@ namespace Controllers
                 StateOrder = "En_cours",
                 TypeLivraison = typeLivraison,
                 AdresseLivraison = adresseLivraison,
-                TotalPrix = (prixItem + complementsPrice) * quantity,
+                TotalPrix = (prixItem * quantity) + complementsTotal,
                 CreatedAt = DateTime.Now,
                 ClientProfilId = userId
             };
@@ -168,23 +180,23 @@ namespace Controllers
                 BurgerId = itemType == "Burger" ? itemId : null,
                 MenuId = itemType == "Menu" ? itemId : null,
                 Quantity = quantity,
-                Prix = prixItem,
+                Prix = prixItem * quantity,
                 CreatedAt = DateTime.Now
             };
 
             _context.OrderLines.Add(orderLine);
             _context.SaveChanges();
 
-            // Add complement lines (one per selected complement, quantity applied)
-            foreach (var comp in selectedComplements)
+            // Add complement lines with their own quantities
+            foreach (var compTuple in selectedComplements)
             {
                 var compLine = new OrderLine
                 {
                     OrderId = order.Id,
                     ItemType = "Complement",
-                    ComplementId = comp.Id,
-                    Quantity = quantity,
-                    Prix = comp.Prix,
+                    ComplementId = compTuple.Comp.Id,
+                    Quantity = compTuple.Qty,
+                    Prix = compTuple.Comp.Prix * compTuple.Qty,
                     CreatedAt = DateTime.Now
                 };
                 _context.OrderLines.Add(compLine);
