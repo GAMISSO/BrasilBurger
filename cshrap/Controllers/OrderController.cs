@@ -27,27 +27,40 @@ namespace Controllers
         {
             var userId = GetCurrentUserId();
             if (userId == null)
+            {
+                TempData["error"] = "Veuillez vous connecter pour voir vos commandes";
                 return RedirectToAction("Index", "Catalogue");
+            }
 
-            var orders = _context.Orders
-                .Where(o => o.ClientProfilId == userId)
-                .OrderByDescending(o => o.CreatedAt)
-                .ToList();
+            try
+            {
+                var orders = _context.Orders
+                    .Where(o => o.ClientProfilId == userId.Value)
+                    .OrderByDescending(o => o.CreatedAt)
+                    .ToList();
 
-            // Précharger les lignes associées pour affichage rapide
-            var orderIds = orders.Select(o => o.Id).ToList();
-            var lines = _context.OrderLines
-                .Where(l => orderIds.Contains(l.OrderId))
-                .Include(l => l.Burger)
-                .Include(l => l.Menu)
-                .ToList();
+                // Précharger les lignes associées pour affichage rapide
+                var orderIds = orders.Select(o => o.Id).ToList();
+                var lines = _context.OrderLines
+                    .Where(l => orderIds.Contains(l.OrderId))
+                    .Include(l => l.Burger)
+                    .Include(l => l.Menu)
+                    .Include(l => l.Complement)
+                    .ToList();
 
-            var dict = lines.GroupBy(l => l.OrderId)
-                .ToDictionary(g => g.Key, g => g.ToList());
+                var dict = lines.GroupBy(l => l.OrderId)
+                    .ToDictionary(g => g.Key, g => g.ToList());
 
-            ViewBag.LinesByOrder = dict;
+                ViewBag.LinesByOrder = dict;
 
-            return View(orders);
+                return View(orders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de l'affichage des commandes pour userId={UserId}", userId);
+                TempData["error"] = "Impossible de charger vos commandes pour le moment.";
+                return RedirectToAction("Index", "Catalogue");
+            }
         }
 
         // ==========================
@@ -120,7 +133,7 @@ namespace Controllers
         {
             try
             {
-                var userId = HttpContext.Session.GetInt32("user_id");
+                var userId = GetCurrentUserId();
                 if (userId == null)
                 {
                     // Stocker les données de la commande en session pour après la connexion
@@ -189,7 +202,7 @@ namespace Controllers
                     AdresseLivraison = adresseLivraison,
                     TotalPrix = (prixItem * quantity) + complementsTotal,
                     CreatedAt = DateTime.Now,
-                    ClientProfilId = userId
+                    ClientProfilId = userId.Value
                 };
 
                 _context.Orders.Add(order);
@@ -226,12 +239,13 @@ namespace Controllers
                 if (selectedComplements.Count > 0)
                     _context.SaveChanges();
 
+                TempData["success"] = "Commande validée avec succès!";
                 return RedirectToAction("MyOrders");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erreur lors de la validation de la commande (Create POST) itemType={ItemType} itemId={ItemId}", itemType, itemId);
-                TempData["error"] = "Impossible de valider la commande. Veuillez réessayer.";
+                TempData["error"] = $"Impossible de valider la commande: {ex.Message}";
                 return RedirectToAction("Create", new { itemId, itemType });
             }
         }
@@ -247,7 +261,7 @@ namespace Controllers
 
             var order = _context.Orders
                 .Include(o => o.Payement)
-                .FirstOrDefault(o => o.Id == id && o.ClientProfilId == userId);
+                .FirstOrDefault(o => o.Id == id && o.ClientProfilId == userId.Value);
 
             if (order == null)
                 return NotFound();
@@ -274,7 +288,7 @@ namespace Controllers
                 return RedirectToAction("Index", "Catalogue");
 
             var order = _context.Orders
-                .FirstOrDefault(o => o.Id == id && o.ClientProfilId == userId);
+                .FirstOrDefault(o => o.Id == id && o.ClientProfilId == userId.Value);
 
             if (order == null)
                 return NotFound();
@@ -300,7 +314,7 @@ namespace Controllers
             if (userId == null)
                 return RedirectToAction("Index", "Catalogue");
 
-            var original = _context.Orders.FirstOrDefault(o => o.Id == id && o.ClientProfilId == userId);
+            var original = _context.Orders.FirstOrDefault(o => o.Id == id && o.ClientProfilId == userId.Value);
             if (original == null)
                 return NotFound();
 
@@ -313,7 +327,7 @@ namespace Controllers
                 AdresseLivraison = original.AdresseLivraison,
                 TotalPrix = original.TotalPrix,
                 CreatedAt = DateTime.Now,
-                ClientProfilId = userId
+                ClientProfilId = userId.Value
             };
 
             _context.Orders.Add(newOrder);
