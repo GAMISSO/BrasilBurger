@@ -20,14 +20,41 @@ namespace Controllers
         // ==========================
         // PAGE CATALOGUE GÉNÉRALE
         // ==========================
-        public IActionResult Index()
+        public IActionResult Index(string? filtre = null)
         {
-            ViewBag.Burgers = _context.Burgers.ToList();
-            ViewBag.Menus = _context.Menus
-                                    .Include(m => m.Burger)
-                                    .ToList();
-            ViewBag.Complements = _context.Complements.ToList();
-            ViewBag.CurrentFilter = "all";
+            // Initialiser avec des listes vides par défaut
+            ViewBag.Burgers = new List<Burger>();
+            ViewBag.Menus = new List<Menu>();
+            ViewBag.Complements = new List<Complement>();
+
+            // Si pas de filtre ou filtre = "tous", afficher tout
+            if (string.IsNullOrWhiteSpace(filtre) || filtre == "tous")
+            {
+                ViewBag.Burgers = _context.Burgers.ToList();
+                ViewBag.Menus = _context.Menus
+                                        .Include(m => m.Burger)
+                                        .Include(m => m.MenuComplements)
+                                        .ThenInclude(mc => mc.Complement)
+                                        .ToList();
+                ViewBag.Complements = _context.Complements.ToList();
+                ViewBag.CurrentFilter = "tous";
+            }
+            // Filtre burger
+            else if (filtre == "burger")
+            {
+                ViewBag.Burgers = _context.Burgers.ToList();
+                ViewBag.CurrentFilter = "burger";
+            }
+            // Filtre menu
+            else if (filtre == "menu")
+            {
+                ViewBag.Menus = _context.Menus
+                                        .Include(m => m.Burger)
+                                        .Include(m => m.MenuComplements)
+                                        .ThenInclude(mc => mc.Complement)
+                                        .ToList();
+                ViewBag.CurrentFilter = "menu";
+            }
 
             return View();
         }
