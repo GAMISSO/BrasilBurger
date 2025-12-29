@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Data;
 using Models;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System;
 using System.Security.Claims;
@@ -32,10 +31,8 @@ namespace Controllers
         {
             try
             {
-                string hash = HashPassword(password);
-
                 var user = _context.Users
-                    .FirstOrDefault(u => u.Login == login && u.PasswordHash == hash);
+                    .FirstOrDefault(u => u.Login == login && u.PasswordHash == password);
 
                 if (user == null)
                 {
@@ -110,7 +107,7 @@ namespace Controllers
                 var user = new User
                 {
                     Login = login,
-                    PasswordHash = HashPassword(password),
+                    PasswordHash = password,
                     RoleUsers = "Client"
                 };
 
@@ -179,16 +176,6 @@ namespace Controllers
             await HttpContext.SignOutAsync("BrasilBurgerAuth");
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Catalogue");
-        }
-
-        // =====================
-        // HASH PASSWORD
-        // =====================
-        private string HashPassword(string password)
-        {
-            using var sha = SHA256.Create();
-            var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(bytes);
         }
     }
 }
