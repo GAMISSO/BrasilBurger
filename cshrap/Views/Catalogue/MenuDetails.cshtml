@@ -42,14 +42,14 @@
                 </div>
             </div>
 
-            <h5 class="mb-3">🍽️ Ce menu comprend :</h5>
+            <h5 class="mb-3"> Ce menu comprend :</h5>
             <div class="list-group mb-4">
                 @if (burger != null)
                 {
                     <div class="list-group-item">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="mb-1">🍔 @burger.Nom</h6>
+                                <h6 class="mb-1"> @burger.Nom</h6>
                                 <small class="text-muted">Burger principal</small>
                             </div>
                             <span class="badge bg-success">@burger.Prix.ToString("N0") FCFA</span>
@@ -71,11 +71,11 @@
                                         }
                                         else if (comp.TypeComplement?.ToLower() == "frite")
                                         {
-                                            <span>🍟</span>
+                                            <span></span>
                                         }
                                         else
                                         {
-                                            <span>🍽️</span>
+                                            <span></span>
                                         }
                                         @comp.Nom
                                     </h6>
@@ -104,14 +104,14 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-brasil">
-                    <h5 class="mb-0">ℹ️ Informations</h5>
+                    <h5 class="mb-0">Informations</h5>
                 </div>
                 <div class="card-body">
                     <ul class="list-unstyled mb-0">
-                        <li>✅ Tous nos menus sont préparés à la commande</li>
-                        <li>✅ Ingrédients frais et de qualité</li>
-                        <li>✅ Possibilité de personnaliser votre menu</li>
-                        <li>✅ Livraison disponible</li>
+                        <li> Tous nos menus sont préparés à la commande</li>
+                        <li> Ingrédients frais et de qualité</li>
+                        <li> Possibilité de personnaliser votre menu</li>
+                        <li> Livraison disponible</li>
                     </ul>
                 </div>
             </div>
