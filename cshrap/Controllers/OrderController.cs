@@ -267,6 +267,9 @@ namespace Controllers
                 if (selectedComplements.Count > 0)
                     _context.SaveChanges();
 
+                // Simulate payment success (no external gateway)
+                SimulatePayment(order);
+
                 TempData["success"] = "Commande validée avec succès!";
                 return RedirectToAction("MyOrders");
             }
@@ -287,6 +290,25 @@ namespace Controllers
                 TempData["error"] = $"Impossible de valider la commande: {ex.Message}";
                 return RedirectToAction("Create", new { itemId, itemType });
             }
+        }
+
+        private void SimulatePayment(Order order)
+        {
+            var payment = new Payement
+            {
+                MethodePayement = "Simule",
+                Montant = order.TotalPrix,
+                TransactionRef = "SIM-" + Guid.NewGuid().ToString("N").Substring(0, 8),
+                StatutPayement = "Valider",
+                CreatedAt = DateTime.Now,
+                OrderId = order.Id
+            };
+
+            _context.Payements.Add(payment);
+            _context.SaveChanges();
+
+            order.PayementId = payment.Id;
+            _context.SaveChanges();
         }
 
         // ==========================
