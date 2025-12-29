@@ -5,6 +5,7 @@ using Models;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace Controllers
 {
@@ -24,7 +25,7 @@ namespace Controllers
         // ==========================
         public IActionResult MyOrders()
         {
-            var userId = HttpContext.Session.GetInt32("user_id");
+            var userId = GetCurrentUserId();
             if (userId == null)
                 return RedirectToAction("Index", "Catalogue");
 
@@ -240,7 +241,7 @@ namespace Controllers
         // ==========================
         public IActionResult Details(int id)
         {
-            var userId = HttpContext.Session.GetInt32("user_id");
+            var userId = GetCurrentUserId();
             if (userId == null)
                 return RedirectToAction("Index", "Catalogue");
 
@@ -268,7 +269,7 @@ namespace Controllers
         // ==========================
         public IActionResult Cancel(int id)
         {
-            var userId = HttpContext.Session.GetInt32("user_id");
+            var userId = GetCurrentUserId();
             if (userId == null)
                 return RedirectToAction("Index", "Catalogue");
 
@@ -295,7 +296,7 @@ namespace Controllers
         // ==========================
         public IActionResult Reorder(int id)
         {
-            var userId = HttpContext.Session.GetInt32("user_id");
+            var userId = GetCurrentUserId();
             if (userId == null)
                 return RedirectToAction("Index", "Catalogue");
 
@@ -337,6 +338,13 @@ namespace Controllers
 
             TempData["success"] = "Commande ré-enregistrée avec succès.";
             return RedirectToAction("MyOrders");
+        }
+
+        private int? GetCurrentUserId()
+        {
+            var claimVal = User.FindFirstValue("user_id") ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (int.TryParse(claimVal, out var id)) return id;
+            return HttpContext.Session.GetInt32("user_id");
         }
     }
 }
