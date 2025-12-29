@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Data;
 using Models;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System;
+using System.Security.Claims;
 
 namespace Controllers
 {
@@ -25,7 +28,7 @@ namespace Controllers
         // =====================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(string login, string password, string? returnUrl)
+        public async Task<IActionResult> Login(string login, string password, string? returnUrl)
         {
             try
             {
@@ -40,6 +43,29 @@ namespace Controllers
                     return RedirectToAction("Index", "Catalogue");
                 }
 
+                // Create claims for the authenticated user
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Login),
+                    new Claim(ClaimTypes.Role, user.RoleUsers),
+                    new Claim("user_id", user.Id.ToString())
+                };
+
+                var identity = new ClaimsIdentity(claims, "BrasilBurgerAuth");
+                var principal = new ClaimsPrincipal(identity);
+
+                // Sign in with cookie authentication
+                await HttpContext.SignInAsync(
+                    "BrasilBurgerAuth",
+                    principal,
+                    new AuthenticationProperties
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
+                    });
+
+                // Also set session for compatibility
                 HttpContext.Session.SetInt32("user_id", user.Id);
                 HttpContext.Session.SetString("role", user.RoleUsers);
 
@@ -61,7 +87,7 @@ namespace Controllers
         // =====================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Register(
+        public async Task<IActionResult> Register(
             string login,
             string password,
             string nom,
@@ -106,7 +132,29 @@ namespace Controllers
                 _context.ClientProfiles.Add(clientProfil);
                 _context.SaveChanges();
 
-                // Auto login
+                // Auto login with cookie authentication
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Login),
+                    new Claim(ClaimTypes.Role, "Client"),
+                    new Claim("user_id", user.Id.ToString())
+                };
+
+                var identity = new ClaimsIdentity(claims, "BrasilBurgerAuth");
+                var principal = new ClaimsPrincipal(identity);
+
+                // Sign in with cookie authentication
+                await HttpContext.SignInAsync(
+                    "BrasilBurgerAuth",
+                    principal,
+                    new AuthenticationProperties
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
+                    });
+
+                // Also set session for compatibility
                 HttpContext.Session.SetInt32("user_id", user.Id);
                 HttpContext.Session.SetString("role", "Client");
 
@@ -126,8 +174,9 @@ namespace Controllers
         // =====================
         // LOGOUT
         // =====================
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync("BrasilBurgerAuth");
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Catalogue");
         }

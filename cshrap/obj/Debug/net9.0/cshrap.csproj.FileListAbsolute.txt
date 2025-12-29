@@ -155,8 +155,6 @@ D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\y1fgxfon9d-2z0ns9nrw6.
 D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\j8dpn1bkfh-muycvpuwrr.gz
 D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\l65jgxultg-87fc7y1x7t.gz
 D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\zsniwqr71b-mlv21k5csn.gz
-D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\dnxw4hht21-iju7aru7ws.gz
-D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\w1ozey9tku-iju7aru7ws.gz
 D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\staticwebassets.build.json
 D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\staticwebassets.build.json.cache
 D:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\staticwebassets.development.json
@@ -174,4 +172,6 @@ d:\BrasilBurger\cshrap\cshrap\bin\Debug\net9.0\Newtonsoft.Json.dll
 d:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\i7gha2je8r-6eynvw37gg.gz
 d:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\gyuzkr31ed-5vgj46lt97.gz
 d:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\o265fcml04-uuydkdrudg.gz
-d:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\lxkebbqjhn-5eebwlfzbi.gz
+d:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\lxkebbqjhn-0ixtknbe1v.gz
+d:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\dnxw4hht21-uwu5prat1i.gz
+d:\BrasilBurger\cshrap\cshrap\obj\Debug\net9.0\compressed\w1ozey9tku-uwu5prat1i.gz

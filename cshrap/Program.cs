@@ -38,7 +38,24 @@ catch (Exception ex)
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-// Session support (used by controllers/views)
+
+// Cookie-based authentication (more robust than session)
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "BrasilBurgerAuth";
+    options.DefaultChallengeScheme = "BrasilBurgerAuth";
+})
+.AddCookie("BrasilBurgerAuth", options =>
+{
+    options.LoginPath = "/Auth/Login";
+    options.LogoutPath = "/Auth/Logout";
+    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
+// Keep session support as fallback (for compatibility)
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -85,7 +102,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// Add session middleware
+// Add authentication and session middleware
+app.UseAuthentication();
 app.UseSession();
 
 // Global exception logging for requests (helps capture errors in Render logs)
