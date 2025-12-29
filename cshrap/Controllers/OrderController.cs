@@ -53,17 +53,8 @@ namespace Controllers
         [HttpGet]
         public IActionResult Create(int? itemId = null, string? itemType = null)
         {
-            var userId = HttpContext.Session.GetInt32("user_id");
-            if (userId == null)
-            {
-                // Store the intended destination to prompt login / registration on the catalogue page
-                if (!string.IsNullOrWhiteSpace(itemType))
-                    TempData["promptLoginItemType"] = itemType;
-                if (itemId != null)
-                    TempData["promptLoginItemId"] = itemId.ToString();
-
-                return RedirectToAction("Index", "Catalogue");
-            }
+            // Permettre l'accès à la page sans être connecté
+            // La connexion sera demandée lors de la validation de la commande
 
             ViewBag.Burgers = _context.Burgers.ToList();
             ViewBag.Menus = _context.Menus.ToList();
@@ -85,7 +76,21 @@ namespace Controllers
         {
             var userId = HttpContext.Session.GetInt32("user_id");
             if (userId == null)
+            {
+                // Stocker les données de la commande en session pour après la connexion
+                HttpContext.Session.SetString("pending_order_itemType", itemType);
+                HttpContext.Session.SetInt32("pending_order_itemId", itemId);
+                HttpContext.Session.SetInt32("pending_order_quantity", quantity);
+                HttpContext.Session.SetString("pending_order_typeLivraison", typeLivraison);
+                if (!string.IsNullOrEmpty(adresseLivraison))
+                    HttpContext.Session.SetString("pending_order_adresseLivraison", adresseLivraison);
+                if (complementIds != null && complementIds.Length > 0)
+                    HttpContext.Session.SetString("pending_order_complementIds", string.Join(",", complementIds));
+
+                // Rediriger vers la page de connexion avec un message
+                TempData["message"] = "Veuillez vous connecter pour valider votre commande";
                 return RedirectToAction("Index", "Catalogue");
+            }
 
             // Validate main item
             if (itemType != "Burger" && itemType != "Menu")
