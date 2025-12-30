@@ -1,13 +1,16 @@
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
+        driver: 'pdo_pgsql'
+        charset: utf8
 
         # IMPORTANT: You MUST configure your server version,
         # either here or in the DATABASE_URL env var (see .env file)
         #server_version: '16'
         
         # Options SSL pour Neon/PostgreSQL
-        sslmode: require
+        options:
+            !php/const PDO::ATTR_ERRMODE: !php/const PDO::ERRMODE_EXCEPTION
 
         profiling_collect_backtrace: '%kernel.debug%'
     orm:
