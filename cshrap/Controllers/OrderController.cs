@@ -58,8 +58,8 @@ namespace Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erreur lors de l'affichage des commandes pour userId={UserId}", userId);
-                TempData["error"] = "Impossible de charger vos commandes pour le moment.";
-                return RedirectToAction("Index", "Catalogue");
+                ViewBag.LinesByOrder = new Dictionary<int, List<OrderLine>>();
+                return View(new List<Order>());
             }
         }
 
@@ -327,8 +327,8 @@ namespace Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erreur lors de l'affichage des commandes validées pour userId={UserId}", userId);
-                TempData["error"] = "Impossible d'afficher vos commandes validées pour le moment.";
-                return RedirectToAction("MyOrders");
+                ViewBag.LinesByOrder = new Dictionary<int, List<OrderLine>>();
+                return View("ValidatedOrders", new List<Order>());
             }
         }
 
