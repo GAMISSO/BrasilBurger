@@ -1,6 +1,6 @@
 <?php
 // src/Service/PaiementService.php
-namespace App\Service;
+namespace App\Service\Impl;
 
 use App\Entity\Payement;
 use App\Entity\OrderTable;
