@@ -70,9 +70,10 @@ class StatistiqueServiceImpl implements StatistiqueService
         $qb = $this->entityManager->getRepository(OrderTable::class)->createQueryBuilder('o');
         
         $result = $qb->select('COALESCE(SUM(o.total_prix), 0)')
+            ->leftJoin('o.payement', 'p')
             ->where('o.created_at = :date')
             ->andWhere('o.state_order != :cancelled')
-            ->andWhere('o.payement_id IS NOT NULL')
+            ->andWhere('p IS NOT NULL')
             ->setParameter('date', new \DateTimeImmutable($date))
             ->setParameter('cancelled', 'Terminee')
             ->getQuery()

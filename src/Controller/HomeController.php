@@ -11,7 +11,11 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
-        return $this->redirectToRoute('app_commande_index');
-        // ou : return $this->render('dashboard/index.html.twig');
+        // Si connecté, aller à la page des commandes
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_commande_index');
+        }
+        // Sinon, aller au login
+        return $this->redirectToRoute('app_login');
     }
 }

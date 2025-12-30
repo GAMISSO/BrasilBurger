@@ -121,7 +121,7 @@ class LivraisonServiceImpl implements LivraisonService
     {
         $qb = $this->entityManager->getRepository(DeliveryAssignment::class)->createQueryBuilder('da');
         
-        return $qb->where('da.livreur_id = :livreur')
+        return $qb->where('da.livreur = :livreur')
             ->andWhere('da.statut != :termine')
             ->setParameter('livreur', $livreurId)
             ->setParameter('termine', 'TERMINE')
