@@ -20,12 +20,18 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Dossier de travail
 WORKDIR /app
 
-# Copier composer.json (et composer.lock s'il existe)
+# Copier composer.json
 COPY composer.json ./
+
+# Copier composer.lock s'il existe
 COPY composer.lock* ./
 
-# Installer dépendances Symfony (sans scripts pour éviter erreurs)
-RUN composer install --no-scripts --no-autoloader --no-dev --prefer-dist
+# Installer dépendances Symfony
+RUN if [ ! -f composer.lock ]; then \
+    composer install --no-scripts --no-autoloader --no-dev --prefer-dist; \
+    else \
+    composer install --no-scripts --no-autoloader --no-dev --prefer-dist; \
+    fi
 
 # Copier le reste du projet
 COPY . .
