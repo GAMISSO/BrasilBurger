@@ -20,12 +20,22 @@ class ComplementController extends AbstractController
     ) {}
 
     #[Route('/', name: 'app_admin_complement_index')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $complements = $this->entityManager->getRepository(Complement::class)->findAll();
+        $page = max(1, $request->query->getInt('page', 1));
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        $repository = $this->entityManager->getRepository(Complement::class);
+        $total = count($repository->findAll());
+        $complements = $repository->findBy([], ['created_at' => 'DESC'], $limit, $offset);
+        $totalPages = ceil($total / $limit);
 
         return $this->render('admin/complement/index.html.twig', [
             'complements' => $complements,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'total' => $total,
         ]);
     }
 

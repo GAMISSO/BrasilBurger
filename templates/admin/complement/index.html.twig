@@ -26,8 +26,12 @@
             {% for complement in complements %}
             <tr>
                 <td>
-                    <img src="{{ asset('uploads/complements/' ~ complement.image) }}" alt="{{ complement.nom }}" 
-                         style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                    {% if complement.image %}
+                        <img src="{{ complement.image }}" alt="{{ complement.nom }}" 
+                             style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                    {% else %}
+                        <div style="width: 80px; height: 80px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center;">Pas d'image</div>
+                    {% endif %}
                 </td>
                 <td><strong>{{ complement.nom }}</strong></td>
                 <td><strong style="color: #4CAF50;">{{ complement.prix|number_format(0, ',', ' ') }} FCFA</strong></td>
@@ -52,5 +56,27 @@
             {% endfor %}
         </tbody>
     </table>
+    
+    {% if totalPages > 1 %}
+    <div style="padding: 1.5rem; border-top: 1px solid #e0e0e0; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+        {% if currentPage > 1 %}
+            <a href="{{ path('app_admin_complement_index', {page: currentPage - 1}) }}" class="btn" style="padding: 0.5rem 1rem;">← Précédent</a>
+        {% endif %}
+        
+        {% for p in 1..totalPages %}
+            {% if p == currentPage %}
+                <span class="btn btn-primary" style="padding: 0.5rem 1rem;">{{ p }}</span>
+            {% elseif p == 1 or p == totalPages or (p >= currentPage - 2 and p <= currentPage + 2) %}
+                <a href="{{ path('app_admin_complement_index', {page: p}) }}" class="btn" style="padding: 0.5rem 1rem;">{{ p }}</a>
+            {% elseif p == currentPage - 3 or p == currentPage + 3 %}
+                <span style="padding: 0.5rem;">...</span>
+            {% endif %}
+        {% endfor %}
+        
+        {% if currentPage < totalPages %}
+            <a href="{{ path('app_admin_complement_index', {page: currentPage + 1}) }}" class="btn" style="padding: 0.5rem 1rem;">Suivant →</a>
+        {% endif %}
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

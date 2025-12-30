@@ -20,12 +20,22 @@ class MenuController extends AbstractController
     ) {}
 
     #[Route('/', name: 'app_admin_menu_index')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $menus = $this->entityManager->getRepository(Menu::class)->findAll();
+        $page = max(1, $request->query->getInt('page', 1));
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        $repository = $this->entityManager->getRepository(Menu::class);
+        $total = count($repository->findAll());
+        $menus = $repository->findBy([], ['created_at' => 'DESC'], $limit, $offset);
+        $totalPages = ceil($total / $limit);
 
         return $this->render('admin/menu/index.html.twig', [
             'menus' => $menus,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'total' => $total,
         ]);
     }
 

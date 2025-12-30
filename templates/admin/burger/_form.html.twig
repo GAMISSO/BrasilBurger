@@ -18,7 +18,7 @@
     {{ form_errors(form.image_url) }}
     {% if burger is defined and burger.image_url %}
         <div style="margin-top: 1rem;">
-            <img src="{{ asset('uploads/burgers/' ~ burger.image_url) }}" alt="{{ burger.nom }}" 
+            <img src="{{ burger.image_url }}" alt="{{ burger.nom }}" 
                  style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
         </div>
     {% endif %}

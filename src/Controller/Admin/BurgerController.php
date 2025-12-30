@@ -21,12 +21,22 @@ class BurgerController extends AbstractController
     ) {}
 
     #[Route('/', name: 'app_admin_burger_index' )]
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $burgers = $this->entityManager->getRepository(Burger::class)->findAll();
+        $page = max(1, $request->query->getInt('page', 1));
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        $repository = $this->entityManager->getRepository(Burger::class);
+        $total = count($repository->findAll());
+        $burgers = $repository->findBy([], ['created_at' => 'DESC'], $limit, $offset);
+        $totalPages = ceil($total / $limit);
 
         return $this->render('admin/burger/index.html.twig', [
             'burgers' => $burgers,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'total' => $total,
         ]);
     }
 
