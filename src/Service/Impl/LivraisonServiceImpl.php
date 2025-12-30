@@ -19,58 +19,42 @@ class LivraisonServiceImpl implements LivraisonService
      */
     public function getCommandesParZone(): array
     {
-        $qb = $this->entityManager->getRepository(OrderTable::class)->createQueryBuilder('o');
-        
-        $commandes = $qb->where('o.type_livraison = :type')
-            ->andWhere('o.state_order IN (:states)')
-            ->setParameter('type', 'A_livrer')
-            ->setParameter('states', ['En_cours'])
-            ->orderBy('o.zone_id', 'ASC')
-            ->addOrderBy('o.created_at', 'ASC')
-            ->getQuery()
-            ->getResult();
+        try {
+            // Récupérer les commandes à livrer
+            $qb = $this->entityManager->getRepository(OrderTable::class)->createQueryBuilder('o');
+            
+            $commandes = $qb->where('o.type_livraison = :type')
+                ->andWhere('o.state_order IN (:states)')
+                ->setParameter('type', 'A_livrer')
+                ->setParameter('states', ['En_cours'])
+                ->orderBy('o.zone_id', 'ASC')
+                ->addOrderBy('o.created_at', 'ASC')
+                ->getQuery()
+                ->getResult();
 
-        // Grouper par zone avec les objets complets
-        $commandesParZone = [];
-        foreach ($commandes as $commande) {
-            $zoneId = $commande->getZone_id();
-            if ($zoneId) {
-                // Récupérer l'objet zone complet
-                $zone = $this->entityManager->getRepository(\App\Entity\Zones::class)->find($zoneId);
-                if ($zone) {
-                    $zoneKey = $zone->getNom();
-                    if (!isset($commandesParZone[$zoneKey])) {
-                        $commandesParZone[$zoneKey] = [
-                            'zone' => $zone,
-                            'commandes' => []
-                        ];
-                    }
-                    
-                    // Enrichir la commande avec les données du client et livreur
-                    $clientProfilId = $commande->getClient_profil_id();
-                    if ($clientProfilId) {
-                        $clientProfil = $this->entityManager->getRepository(\App\Entity\ClientProfil::class)->find($clientProfilId);
-                        if ($clientProfil) {
-                            $commande->clientProfil = $clientProfil;
+            // Grouper par zone
+            $commandesParZone = [];
+            foreach ($commandes as $commande) {
+                $zoneId = $commande->getZone_id();
+                if ($zoneId) {
+                    $zone = $this->entityManager->getRepository(\App\Entity\Zones::class)->find($zoneId);
+                    if ($zone) {
+                        $zoneKey = $zone->getNom();
+                        if (!isset($commandesParZone[$zoneKey])) {
+                            $commandesParZone[$zoneKey] = [
+                                'zone' => $zone,
+                                'commandes' => []
+                            ];
                         }
+                        $commandesParZone[$zoneKey]['commandes'][] = $commande;
                     }
-                    
-                    // Chercher l'affectation de livreur
-                    $assignment = $this->entityManager->getRepository(DeliveryAssignment::class)
-                        ->findOneBy(['id' => $commande->getId()]);
-                    if ($assignment && $assignment->getLivreur()->getId()) {
-                        $livreur = $this->entityManager->getRepository(Livreur::class)->find($assignment->getLivreur()->getId());
-                        if ($livreur) {
-                            $commande->livreur = $livreur;
-                        }
-                    }
-                    
-                    $commandesParZone[$zoneKey]['commandes'][] = $commande;
                 }
             }
-        }
 
-        return $commandesParZone;
+            return $commandesParZone;
+        } catch (\Exception $e) {
+            throw new \Exception('Erreur lors de la récupération des commandes: ' . $e->getMessage());
+        }
     }
 
     /**
