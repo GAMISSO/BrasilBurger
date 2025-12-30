@@ -58,8 +58,8 @@ class LivraisonServiceImpl implements LivraisonService
                     // Chercher l'affectation de livreur
                     $assignment = $this->entityManager->getRepository(DeliveryAssignment::class)
                         ->findOneBy(['id' => $commande->getId()]);
-                    if ($assignment && $assignment->getLivreur_id()) {
-                        $livreur = $this->entityManager->getRepository(Livreur::class)->find($assignment->getLivreur_id());
+                    if ($assignment && $assignment->getLivreur()->getId()) {
+                        $livreur = $this->entityManager->getRepository(Livreur::class)->find($assignment->getLivreur()->getId());
                         if ($livreur) {
                             $commande->livreur = $livreur;
                         }
@@ -90,9 +90,9 @@ class LivraisonServiceImpl implements LivraisonService
             if ($commande && $commande->getType_livraison() === 'A_livrer') {
                 // Créer l'affectation
                 $assignment = new DeliveryAssignment();
-                $assignment->setLivreur_id($livreurId);
+                $assignment->setLivreur($livreur);
                 $assignment->setAssigned_at(new \DateTime());
-                $assignment->setStatut('AFFECTE');
+                $assignment->setStatus('AFFECTE');
                 
                 $this->entityManager->persist($assignment);
                 
