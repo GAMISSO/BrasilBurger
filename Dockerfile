@@ -1,4 +1,7 @@
-FROM php:8.4-cli
+FROM php:8.2-apache
+WORKDIR /var/www/html
+RUN ls -la
+
 
 # Installer dépendances système et extensions PHP
 RUN apt-get update && apt-get install -y \
@@ -22,7 +25,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 
 # Copier uniquement composer.json (composer.lock peut être absent sur Render)
-COPY composer.json ./
+COPY composer.json composer.lock ./
 
 # Installer dépendances Symfony (tolère l'absence de composer.lock)
 RUN composer install \
