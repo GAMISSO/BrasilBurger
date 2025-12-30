@@ -34,10 +34,14 @@ namespace Controllers
 
             try
             {
+                _logger.LogInformation("MyOrders - userId={UserId}", userId);
+
                 var orders = _context.Orders
                     .Where(o => o.ClientProfilId == userId.Value)
                     .OrderByDescending(o => o.CreatedAt)
                     .ToList();
+
+                _logger.LogInformation("MyOrders - Found {Count} orders for userId={UserId}", orders.Count, userId);
 
                 // Précharger les lignes associées pour affichage rapide
                 var orderIds = orders.Select(o => o.Id).ToList();
