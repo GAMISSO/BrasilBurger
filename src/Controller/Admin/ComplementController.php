@@ -23,7 +23,7 @@ class ComplementController extends AbstractController
     public function index(Request $request): Response
     {
         $page = max(1, $request->query->getInt('page', 1));
-        $limit = 10;
+        $limit = 5;
         $offset = ($page - 1) * $limit;
 
         $repository = $this->entityManager->getRepository(Complement::class);
