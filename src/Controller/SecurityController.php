@@ -17,7 +17,7 @@ class SecurityController extends AbstractController
     {
         // Si déjà connecté, rediriger
         if ($this->getUser()) {
-            return $this->redirectToRoute('app_dashboard');
+            return $this->redirectToRoute('app_commande_index');
         }
 
         // Récupérer l'erreur de login s'il y en a une
