@@ -13,10 +13,21 @@ if [ -z "$DATABASE_URL" ]; then
     exit 1
 fi
 
+# Vérifier que DATABASE_URL ne pointe pas vers localhost
+if [[ "$DATABASE_URL" == *"localhost"* ]] || [[ "$DATABASE_URL" == *"127.0.0.1"* ]]; then
+    echo "❌ ERROR: DATABASE_URL points to localhost!"
+    echo "   You need to set the DATABASE_URL to your Render PostgreSQL Internal URL"
+    echo "   Current value: $DATABASE_URL"
+    exit 1
+fi
+
 if [ -z "$APP_SECRET" ]; then
     echo "❌ ERROR: APP_SECRET is not set!"
     exit 1
 fi
+
+echo "✅ Environment variables validated"
+echo "📦 Database URL: ${DATABASE_URL%%@*}@..." # Show partial URL for security
 
 # Clear cache
 echo "🧹 Clearing cache..."
