@@ -267,11 +267,9 @@ namespace Controllers
                 if (selectedComplements.Count > 0)
                     _context.SaveChanges();
 
-                // Simulate payment success (no external gateway)
-                SimulatePayment(order);
-
-                TempData["success"] = "Commande validée avec succès!";
-                return RedirectToAction("ValidatedOrders");
+                // NE PAS simuler le paiement automatiquement - l'utilisateur doit le valider
+                TempData["success"] = "Commande créée avec succès! Validez le paiement pour finaliser.";
+                return RedirectToAction("MyOrders");
             }
             catch (Exception ex)
             {
@@ -287,8 +285,8 @@ namespace Controllers
                 }
                 _logger.LogError("Détails complets: {ErrorDetails}", errorDetails);
 
-                // Ne pas afficher d'erreur à l'utilisateur, renvoyer vers les commandes validées
-                return RedirectToAction("ValidatedOrders");
+                // Ne pas afficher d'erreur à l'utilisateur, renvoyer vers les commandes
+                return RedirectToAction("MyOrders");
             }
         }
 
@@ -332,23 +330,60 @@ namespace Controllers
             }
         }
 
-        private void SimulatePayment(Order order)
+        // ==========================
+        // VALIDER LE PAIEMENT (SIMULATION)
+        // ==========================
+        [HttpPost]
+        public IActionResult ValidatePayment(int orderId)
         {
-            var payment = new Payement
+            var userId = GetCurrentUserId();
+            if (userId == null)
+                return RedirectToAction("Index", "Catalogue");
+
+            try
             {
-                MethodePayement = "Simule",
-                Montant = order.TotalPrix,
-                TransactionRef = "SIM-" + Guid.NewGuid().ToString("N").Substring(0, 8),
-                StatutPayement = "Valider",
-                CreatedAt = DateTime.Now,
-                OrderId = order.Id
-            };
+                var order = _context.Orders
+                    .Include(o => o.Payement)
+                    .FirstOrDefault(o => o.Id == orderId && o.ClientProfilId == userId.Value);
 
-            _context.Payements.Add(payment);
-            _context.SaveChanges();
+                if (order == null)
+                {
+                    TempData["error"] = "Commande introuvable";
+                    return RedirectToAction("MyOrders");
+                }
 
-            order.PayementId = payment.Id;
-            _context.SaveChanges();
+                if (order.Payement != null)
+                {
+                    TempData["error"] = "Cette commande a déjà été payée";
+                    return RedirectToAction("ValidatedOrders");
+                }
+
+                // Simuler le paiement
+                var payment = new Payement
+                {
+                    MethodePayement = "Simule",
+                    Montant = order.TotalPrix,
+                    TransactionRef = "SIM-" + Guid.NewGuid().ToString("N").Substring(0, 8),
+                    StatutPayement = "Valider",
+                    CreatedAt = DateTime.Now,
+                    OrderId = order.Id
+                };
+
+                _context.Payements.Add(payment);
+                _context.SaveChanges();
+
+                order.PayementId = payment.Id;
+                _context.SaveChanges();
+
+                TempData["success"] = "Paiement validé avec succès!";
+                return RedirectToAction("ValidatedOrders");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de la validation du paiement pour orderId={OrderId}", orderId);
+                TempData["error"] = "Erreur lors de la validation du paiement";
+                return RedirectToAction("MyOrders");
+            }
         }
 
         // ==========================
