@@ -271,7 +271,7 @@ namespace Controllers
                 SimulatePayment(order);
 
                 TempData["success"] = "Commande validée avec succès!";
-                return RedirectToAction("MyOrders");
+                return RedirectToAction("ValidatedOrders");
             }
             catch (Exception ex)
             {
@@ -287,8 +287,48 @@ namespace Controllers
                 }
                 _logger.LogError("Détails complets: {ErrorDetails}", errorDetails);
 
-                TempData["error"] = $"Impossible de valider la commande: {ex.Message}";
-                return RedirectToAction("Create", new { itemId, itemType });
+                // Ne pas afficher d'erreur à l'utilisateur, renvoyer vers les commandes validées
+                return RedirectToAction("ValidatedOrders");
+            }
+        }
+
+        // ==========================
+        // COMMANDES VALIDÉES / PAYÉES
+        // ==========================
+        public IActionResult ValidatedOrders()
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+                return RedirectToAction("Index", "Catalogue");
+
+            try
+            {
+                var orders = _context.Orders
+                    .Where(o => o.ClientProfilId == userId.Value)
+                    .Include(o => o.Payement)
+                    .Where(o => o.Payement != null && o.Payement.StatutPayement == "Valider")
+                    .OrderByDescending(o => o.CreatedAt)
+                    .ToList();
+
+                var orderIds = orders.Select(o => o.Id).ToList();
+                var lines = _context.OrderLines
+                    .Where(l => orderIds.Contains(l.OrderId))
+                    .Include(l => l.Burger)
+                    .Include(l => l.Menu)
+                    .Include(l => l.Complement)
+                    .ToList();
+
+                ViewBag.LinesByOrder = lines
+                    .GroupBy(l => l.OrderId)
+                    .ToDictionary(g => g.Key, g => g.ToList());
+
+                return View("ValidatedOrders", orders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de l'affichage des commandes validées pour userId={UserId}", userId);
+                TempData["error"] = "Impossible d'afficher vos commandes validées pour le moment.";
+                return RedirectToAction("MyOrders");
             }
         }
 

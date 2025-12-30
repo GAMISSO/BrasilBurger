@@ -20,6 +20,10 @@ build_property._RazorSourceGeneratorDebug =
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
+[d:/BrasilBurger/cshrap/cshrap/Views/Auth/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxQcm9maWxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [d:/BrasilBurger/cshrap/cshrap/Views/Catalogue/BurgerDetails.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ3VlXEJ1cmdlckRldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -50,6 +54,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [d:/BrasilBurger/cshrap/cshrap/Views/Order/Paiement.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcUGFpZW1lbnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[d:/BrasilBurger/cshrap/cshrap/Views/Order/ValidatedOrders.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT3JkZXJcVmFsaWRhdGVkT3JkZXJzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [d:/BrasilBurger/cshrap/cshrap/Views/Shared/Error.cshtml]

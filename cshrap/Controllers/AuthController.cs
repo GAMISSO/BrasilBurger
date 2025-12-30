@@ -169,6 +169,24 @@ namespace Controllers
         }
 
         // =====================
+        // PROFIL UTILISATEUR
+        // =====================
+        public IActionResult Profile()
+        {
+            var userIdStr = User.FindFirstValue("user_id") ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdStr, out var userId))
+                return RedirectToAction("Index", "Catalogue");
+
+            var user = _context.Users.Find(userId);
+            var profil = _context.ClientProfiles.Find(userId);
+
+            ViewBag.User = user;
+            ViewBag.Profile = profil;
+
+            return View();
+        }
+
+        // =====================
         // LOGOUT
         // =====================
         public async Task<IActionResult> Logout()

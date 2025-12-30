@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Mon profil";
+    var user = ViewBag.User as Models.User;
+    var profile = ViewBag.Profile as Models.ClientProfil;
+}
+
+<div class="container my-5">
+    <h1 class="mb-4"><i class="bi bi-person-circle"></i> Mon profil</h1>
+
+    @if (user == null)
+    {
+        <p class="text-muted">Utilisateur introuvable.</p>
+    }
+    else
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Compte</h5>
+                <p class="mb-1"><strong>Login :</strong> @user.Login</p>
+                <p class="mb-1"><strong>Rôle :</strong> @user.RoleUsers</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Profil</h5>
+                @if (profile == null)
+                {
+                    <p class="text-muted">Aucun profil client enregistré.</p>
+                }
+                else
+                {
+                    <p class="mb-1"><strong>Nom :</strong> @profile.Nom</p>
+                    <p class="mb-1"><strong>Prénom :</strong> @profile.Prenom</p>
+                    <p class="mb-1"><strong>Téléphone :</strong> @profile.Telephone</p>
+                    <p class="mb-1"><strong>Email :</strong> @profile.Email</p>
+                    <p class="mb-1"><strong>Adresse :</strong> @profile.Adresse</p>
+                    <p class="mb-1"><strong>Créé le :</strong> @profile.CreatedAt.ToString("dd/MM/yyyy")</p>
+                }
+            </div>
+        </div>
+    }
+</div>
