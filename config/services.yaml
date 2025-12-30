@@ -24,6 +24,12 @@ services:
     # Alias pour les interfaces de services
     App\Service\LivraisonService:
         alias: App\Service\Impl\LivraisonServiceImpl
+    
+    App\Service\OrderService:
+        alias: App\Service\Impl\OrderServiceImpl
+    
+    App\Service\PaiementService:
+        alias: App\Service\Impl\PaiementServiceImpl
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
