@@ -167,8 +167,8 @@ class OrderServiceImpl implements OrderService
                 $date = is_string($filters['date']) 
                     ? new \DateTime($filters['date']) 
                     : $filters['date'];
-                // Comparer la date (ignorer l'heure)
-                $qb->andWhere('DATE(o.created_at) = :date')
+                // Comparer la date en utilisant CAST pour PostgreSQL
+                $qb->andWhere('CAST(o.created_at AS DATE) = :date')
                    ->setParameter('date', $date->format('Y-m-d'));
             } catch (\Exception $e) {
                 // Ignorer le filtre de date si invalide

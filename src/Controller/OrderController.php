@@ -27,20 +27,32 @@ class OrderController extends AbstractController
     #[Route('/', name: 'app_commande_index')]
     public function index(Request $request): Response
     {
-        $filterDTO = new OrderFilterDTO();
-        
-        $form = $this->createForm(OrderFilterType::class, $filterDTO);
-        $form->handleRequest($request);
+        try {
+            $filterDTO = new OrderFilterDTO();
+            
+            $form = $this->createForm(OrderFilterType::class, $filterDTO);
+            $form->handleRequest($request);
 
-        $commandes = $this->commandeService->getCommandesFilters(
-            $filterDTO->toArray()
-        );
+            $commandes = $this->commandeService->getCommandesFilters(
+                $filterDTO->toArray()
+            );
 
-        return $this->render('commande/index.html.twig', [
-            'commandes' => $commandes,
-            'form' => $form->createView(),
-            'hasFilters' => $filterDTO->hasFiltresActifs(),
-        ]);
+            return $this->render('commande/index.html.twig', [
+                'commandes' => $commandes,
+                'form' => $form->createView(),
+                'hasFilters' => $filterDTO->hasFiltresActifs(),
+            ]);
+        } catch (\Exception $e) {
+            // Log l'erreur pour debugging
+            $this->addFlash('error', 'Erreur: ' . $e->getMessage());
+            
+            // Retourner une page vide en cas d'erreur
+            return $this->render('commande/index.html.twig', [
+                'commandes' => [],
+                'form' => $this->createForm(OrderFilterType::class, new OrderFilterDTO())->createView(),
+                'hasFilters' => false,
+            ]);
+        }
     }
 
     #[Route('/{id}', name: 'app_commande_show', requirements: ['id' => '\d+'])]
