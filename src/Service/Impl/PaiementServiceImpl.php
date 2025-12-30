@@ -28,8 +28,8 @@ class PaiementServiceImpl implements PaiementService
 
         $this->entityManager->persist($paiement);
         
-        // Mettre à jour la commande
-        $commande->setPayement_id($paiement->getId());
+        // Mettre à jour la commande avec la relation Payement
+        $commande->setPayement($paiement);
         
         if ($paiement->getStatut_payement() === 'Valider') {
             $commande->setState_order('En_cours');
@@ -63,11 +63,11 @@ class PaiementServiceImpl implements PaiementService
      */
     public function estPayee(OrderTable $commande): bool
     {
-        if (!$commande->getPayement_id()) {
+        if (!$commande->getPayement()) {
             return false;
         }
 
-        $paiement = $this->entityManager->getRepository(Payement::class)->find($commande->getPayement_id());
+        $paiement = $this->entityManager->getRepository(Payement::class)->find($commande->getPayement()->getId());
         
         return $paiement && $paiement->getStatut_payement() === 'VALIDE';
     }

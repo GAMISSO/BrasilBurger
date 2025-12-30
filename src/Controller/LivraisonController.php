@@ -28,16 +28,10 @@ class LivraisonController extends AbstractController
         ]);
     }
 
-    #[Route('/affecter', name: 'app_livraison_affecter', methods: ['POST'])]
-    public function affecter(Request $request): Response
+    #[Route('/{id}/affecter', name: 'app_livraison_affecter', methods: ['POST'])]
+    public function affecter(Request $request, $id): Response
     {
-        $commandeIds = $request->request->all('commandes') ?? [];
         $livreurId = $request->request->get('livreur_id');
-
-        if (empty($commandeIds)) {
-            $this->addFlash('error', 'Veuillez sélectionner au moins une commande.');
-            return $this->redirectToRoute('app_livraison_index');
-        }
 
         if (!$livreurId) {
             $this->addFlash('error', 'Veuillez sélectionner un livreur.');
@@ -45,8 +39,8 @@ class LivraisonController extends AbstractController
         }
 
         try {
-            $this->livraisonService->affecterLivreur($commandeIds, $livreurId);
-            $this->addFlash('success', sprintf('%d commande(s) affectée(s) avec succès.', count($commandeIds)));
+            $this->livraisonService->affecterLivreur([$id], $livreurId);
+            $this->addFlash('success', 'Commande affectée avec succès.');
         } catch (\Exception $e) {
             $this->addFlash('error', 'Erreur lors de l\'affectation: ' . $e->getMessage());
         }

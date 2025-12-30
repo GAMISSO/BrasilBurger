@@ -13,6 +13,20 @@ class DeliveryAssignment
     #[ORM\Column(type: 'integer')]
     private int $id;
 
+    #[ORM\ManyToOne(targetEntity: OrderTable::class)]
+    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id')]
+    private OrderTable $order;
+
+    #[ORM\ManyToOne(targetEntity: Livreur::class)]
+    #[ORM\JoinColumn(name: 'livreur_id', referencedColumnName: 'id')]
+    private Livreur $livreur;
+
+    #[ORM\Column(type: 'datetime')]
+    private \DateTimeInterface $assigned_at;
+
+    #[ORM\Column(type: 'string')]
+    private string $status;
+
     public function getId(): int {
         return $this->id;
     }
@@ -22,20 +36,23 @@ class DeliveryAssignment
         return $this;
     }
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $livreur_id = null;
-
-    public function getLivreur_id(): ?int {
-        return $this->livreur_id;
+    public function getOrder(): OrderTable {
+        return $this->order;
     }
 
-    public function setLivreur_id(?int $livreur_id): self {
-        $this->livreur_id = $livreur_id;
+    public function setOrder(OrderTable $order): self {
+        $this->order = $order;
         return $this;
     }
 
-    #[ORM\Column(type: 'date')]
-    private \DateTimeInterface $assigned_at;
+    public function getLivreur(): Livreur {
+        return $this->livreur;
+    }
+
+    public function setLivreur(Livreur $livreur): self {
+        $this->livreur = $livreur;
+        return $this;
+    }
 
     public function getAssigned_at(): \DateTimeInterface {
         return $this->assigned_at;
@@ -46,15 +63,12 @@ class DeliveryAssignment
         return $this;
     }
 
-    #[ORM\Column(type: 'string')]
-    private string $statut;
-
-    public function getStatut(): string {
-        return $this->statut;
+    public function getStatus(): string {
+        return $this->status;
     }
 
-    public function setStatut(string $statut): self {
-        $this->statut = $statut;
+    public function setStatus(string $status): self {
+        $this->status = $status;
         return $this;
     }
 

@@ -24,17 +24,14 @@
             <strong>{{ zoneData.commandes|length }} commande(s) à livrer</strong>
         </div>
 
+        {% if zoneData.commandes|length > 0 %}
         {% for commande in zoneData.commandes %}
         <div style="border: 2px solid #f0f0f0; border-radius: 8px; padding: 1rem; margin-bottom: 0.8rem; background: #fafafa;">
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
                 <div>
                     <strong style="font-size: 1.1rem;">Commande #{{ commande.id }}</strong><br>
                     <span style="color: #666; font-size: 0.9rem;">
-                        {% if commande.clientProfil is defined %}
-                            Client ID: {{ commande.client_profil_id }}
-                        {% else %}
-                            Client ID: {{ commande.client_profil_id }}
-                        {% endif %}
+                        Client ID: {{ commande.client_profil_id }}
                     </span>
                 </div>
                 <span class="badge badge-warning">{{ commande.total_prix|number_format(0, ',', ' ') }} FCFA</span>
@@ -44,7 +41,7 @@
             </p>
             <div style="display: flex; gap: 0.5rem;">
                 <a href="{{ path('app_commande_show', {id: commande.id}) }}" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Voir</a>
-                {% if commande.livreur is not defined %}
+                {% if commande.livreur is null %}
                 <form method="post" action="{{ path('app_livraison_affecter', {id: commande.id}) }}" style="display: inline;">
                     <select name="livreur_id" required style="padding: 0.4rem; border-radius: 6px; border: 2px solid #ddd; margin-right: 0.3rem;">
                         <option value="">Choisir livreur</option>
@@ -60,8 +57,7 @@
             </div>
         </div>
         {% endfor %}
-
-        {% if zoneData.commandes|length == 0 %}
+        {% else %}
         <p style="text-align: center; color: #999; padding: 2rem;">Aucune commande dans cette zone</p>
         {% endif %}
     </div>
