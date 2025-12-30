@@ -37,7 +37,8 @@ RUN composer install \
 COPY . .
 
 # Créer un fichier .env minimal pour la production (les vraies valeurs viennent des variables d'environnement)
-RUN echo "APP_ENV=prod" > .env
+RUN echo "APP_ENV=prod" > .env && \
+    echo "DEFAULT_URI=http://localhost" >> .env
 
 # Finaliser l'installation de Composer
 RUN composer dump-autoload \
