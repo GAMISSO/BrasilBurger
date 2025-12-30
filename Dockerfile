@@ -1,9 +1,18 @@
-FROM php:8.2-cli
+FROM php:8.4-cli
 
-# Installer dépendances système
+# Installer dépendances système et extensions PHP
 RUN apt-get update && apt-get install -y \
-    git unzip libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql
+    git \
+    unzip \
+    libpq-dev \
+    libzip-dev \
+    libicu-dev \
+    && docker-php-ext-install \
+    pdo \
+    pdo_pgsql \
+    zip \
+    intl \
+    opcache
 
 # Installer Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -11,17 +20,32 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Dossier de travail
 WORKDIR /app
 
-# Copier le projet
+# Copier composer.json et composer.lock en premier (cache Docker)
+COPY composer.json composer.lock ./
+
+# Installer dépendances Symfony (sans scripts pour éviter erreurs)
+RUN composer install --no-scripts --no-autoloader --no-dev --prefer-dist
+
+# Copier le reste du projet
 COPY . .
 
-# Installer dépendances Symfony
-RUN composer install --no-dev --optimize-autoloader
+# Finaliser l'installation de Composer
+RUN composer dump-autoload --optimize --no-dev
 
-RUN php bin/console doctrine:migrations:migrate --no-interaction
+# Créer les répertoires nécessaires et définir les permissions
+RUN mkdir -p var/cache var/log var/share \
+    && chmod -R 777 var
 
+# Configurer PHP pour la production
+RUN echo 'memory_limit = 256M' >> /usr/local/etc/php/conf.d/docker-php.ini \
+    && echo 'upload_max_filesize = 20M' >> /usr/local/etc/php/conf.d/docker-php.ini \
+    && echo 'post_max_size = 20M' >> /usr/local/etc/php/conf.d/docker-php.ini
+
+# Rendre le script de démarrage exécutable
+RUN chmod +x start.sh
 
 # Exposer le port Render
 EXPOSE 8080
 
-# Lancer Symfony
-CMD php -S 0.0.0.0:8080 -t public
+# Lancer l'application via le script de démarrage
+CMD ["./start.sh"]

@@ -1,0 +1,49 @@
+services:
+  # Service Web Symfony
+  - type: web
+    name: brasilburger-symfony
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: symfony
+    
+    # Variables d'environnement
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: APP_DEBUG
+        value: "0"
+      - key: APP_SECRET
+        generateValue: true
+      - key: APP_SHARE_DIR
+        value: var/share
+      - key: DATABASE_URL
+        fromDatabase:
+          name: brasilburger-db
+          property: connectionString
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: MESSENGER_TRANSPORT_DSN
+        value: doctrine://default?auto_setup=0
+      - key: MAILER_DSN
+        value: null://null
+    
+    # Commandes de build
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      php bin/console cache:clear --no-warmup
+      php bin/console cache:warmup
+    
+    # Healthcheck
+    healthCheckPath: /
+
+databases:
+  # Base de données PostgreSQL
+  - name: brasilburger-db
+    plan: free
+    databaseName: brasilburger
+    user: brasilburger

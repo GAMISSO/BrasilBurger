@@ -1,5 +1,42 @@
+# Git
 .git
-vendor
-node_modules
-.env
-.env.*
+.gitignore
+
+# Environnement local
+.env.local
+.env.*.local
+
+# Cache et logs (seront recréés)
+var/cache/*
+var/log/*
+!var/cache/.gitkeep
+!var/log/.gitkeep
+
+# Vendor sera installé dans le build
+# vendor/
+
+# Node modules
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tests
+tests/
+phpunit.xml.dist
+phpunit.dist.xml
+
+# Documentation
+docs/
+README.md
+*.md
+
+# Scripts de développement
+scripts/
