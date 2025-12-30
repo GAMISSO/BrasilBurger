@@ -136,14 +136,12 @@ HELP
             $colName = $column->getName();
             $isAutoincrement = $column->getAutoincrement();
             $typeObj = $column->getType();
-            if (method_exists($typeObj, 'getName')) {
-                $type = $typeObj->getName();
-            } else {
-                // Fallback: derive a short name from the class name, e.g. IntegerType => integer
-                $class = get_class($typeObj);
-                $short = substr($class, strrpos($class, '\\') + 1);
-                $type = strtolower(preg_replace('/Type$/', '', $short));
-            }
+            
+            // Derive type name from the class name, e.g. IntegerType => integer
+            $class = get_class($typeObj);
+            $short = substr($class, strrpos($class, '\\') + 1);
+            $type = strtolower(preg_replace('/Type$/', '', $short));
+            
             $nullable = !$column->getNotnull();
             $length = $column->getLength();
 

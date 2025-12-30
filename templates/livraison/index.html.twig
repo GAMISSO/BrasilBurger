@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="page-header">
-    <h1 class="page-title">🚚 Gestion des Livraisons</h1>
+    <h1 class="page-title"> Gestion des Livraisons</h1>
     <p class="page-subtitle">Affectation des commandes par zone</p>
 </div>
 
@@ -13,7 +13,7 @@
     <div class="card">
         <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); padding: 1rem; border-radius: 8px 8px 0 0; margin: -1.5rem -1.5rem 1rem -1.5rem;">
             <h3 style="font-size: 1.3rem; font-weight: 900; color: #000; margin-bottom: 0.3rem;">
-                📍 Zone: {{ zoneData.zone.nom }}
+                 Zone: {{ zoneData.zone.nom }}
             </h3>
             <p style="color: #333; font-size: 0.9rem;">
                 Prix livraison: {{ zoneData.zone.prix_zone|number_format(0, ',', ' ') }} FCFA
@@ -40,7 +40,7 @@
                 <span class="badge badge-warning">{{ commande.total_prix|number_format(0, ',', ' ') }} FCFA</span>
             </div>
             <p style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem;">
-                📍 {{ commande.adresse_livraison }}
+                 {{ commande.adresse_livraison }}
             </p>
             <div style="display: flex; gap: 0.5rem;">
                 <a href="{{ path('app_commande_show', {id: commande.id}) }}" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Voir</a>

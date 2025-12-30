@@ -1,15 +1,15 @@
 security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'plaintext'
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         users_in_memory:
             memory:
                 users:
-                    gestionnaire:
-                        password: '$2y$13$R2R2R2R2R2R2R2R2R2R2Reu0kqC7zTQ0Q5o6bCwQbHq2W8PwBsdC' # bcrypt for 'admin'
+                    admin1:
+                        password: 'Admin01'
                         roles: ['ROLE_GESTIONNAIRE']
 
     firewalls:

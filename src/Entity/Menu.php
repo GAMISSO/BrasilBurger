@@ -46,6 +46,16 @@ class Menu
         return $this;
     }
 
+    // Alias camelCase pour l'accès depuis Twig/Form
+    public function getBurgerId(): ?int {
+        return $this->burger_id;
+    }
+
+    public function setBurgerId(?int $burgerId): self {
+        $this->burger_id = $burgerId;
+        return $this;
+    }
+
     #[ORM\Column(type: 'integer')]
     private int $prix_total;
 
@@ -58,6 +68,16 @@ class Menu
         return $this;
     }
 
+    // Alias camelCase pour l'accès depuis Twig/Form
+    public function getPrixTotal(): int {
+        return $this->prix_total;
+    }
+
+    public function setPrixTotal(int $prixTotal): self {
+        $this->prix_total = $prixTotal;
+        return $this;
+    }
+
     #[ORM\Column(type: 'date')]
     private \DateTimeInterface $created_at;
 
@@ -67,6 +87,16 @@ class Menu
 
     public function setCreated_at(\DateTimeInterface $created_at): self {
         $this->created_at = $created_at;
+        return $this;
+    }
+
+    // Alias camelCase pour l'accès depuis Twig/Form
+    public function getCreatedAt(): \DateTimeInterface {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self {
+        $this->created_at = $createdAt;
         return $this;
     }
 

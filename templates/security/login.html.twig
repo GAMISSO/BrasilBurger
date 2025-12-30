@@ -8,7 +8,7 @@
         <div class="col-md-5">
             <div class="card shadow-lg">
                 <div class="card-header bg-warning text-center py-4">
-                    <h2 class="mb-0">🍔 Brasil Burger</h2>
+                    <h2 class="mb-0"> Brasil Burger</h2>
                     <p class="mb-0">Espace Gestionnaire</p>
                 </div>
                 <div class="card-body p-4">
@@ -19,7 +19,11 @@
                     {% endif %}
 
                     {{ form_start(form) }}
-                        {{ form_row(form.login) }}
+                        {{ form_row(form.login, {
+                            'attr': {
+                                'value': last_username
+                            }
+                        }) }}
                         {{ form_row(form.password) }}
                         {{ form_row(form.remember_me) }}
                         

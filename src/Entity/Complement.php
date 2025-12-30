@@ -58,6 +58,16 @@ class Complement
         return $this;
     }
 
+    // Alias camelCase pour l'accès depuis Twig/Form
+    public function getTypeComplement(): string {
+        return $this->type_complement;
+    }
+
+    public function setTypeComplement(string $typeComplement): self {
+        $this->type_complement = $typeComplement;
+        return $this;
+    }
+
     #[ORM\Column(type: 'date')]
     private \DateTimeInterface $created_at;
 
@@ -67,6 +77,16 @@ class Complement
 
     public function setCreated_at(\DateTimeInterface $created_at): self {
         $this->created_at = $created_at;
+        return $this;
+    }
+
+    // Alias camelCase pour l'accès depuis Twig/Form
+    public function getCreatedAt(): \DateTimeInterface {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self {
+        $this->created_at = $createdAt;
         return $this;
     }
 

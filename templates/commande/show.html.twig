@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="page-header">
-    <h1 class="page-title">📦 Commande N°{{ commande.id }}</h1>
+    <h1 class="page-title"> Commande N°{{ commande.id }}</h1>
     <p class="page-subtitle">Créée le {{ commande.created_at|date('d/m/Y') }}</p>
 </div>
 
@@ -86,22 +86,22 @@
     <div>
         {# Informations commande #}
         <div class="card" style="margin-bottom:1rem;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">📊 État</h3>
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;"> État</h3>
             {% if commande.state_order == 'En_cours' %}
-                <span class="badge badge-warning" style="font-size: 1.2rem; padding: 0.6rem 1.2rem;">⏳ En cours</span>
+                <span class="badge badge-warning" style="font-size: 1.2rem; padding: 0.6rem 1.2rem;"> En cours</span>
             {% elseif commande.state_order == 'Terminee' %}
                 <span class="badge badge-success" style="font-size: 1.2rem; padding: 0.6rem 1.2rem;">✓ Terminée</span>
             {% endif %}
         </div>
 
         <div class="card" style="margin-bottom:1rem;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">📋 Type de livraison</h3>
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;"> Type de livraison</h3>
             {% if commande.type_livraison == 'Sur_place' %}
-                <span class="badge badge-info" style="font-size: 1rem; padding: 0.5rem 1rem;">🪑 Sur place</span>
+                <span class="badge badge-info" style="font-size: 1rem; padding: 0.5rem 1rem;"> Sur place</span>
             {% elseif commande.type_livraison == 'A_retirer' %}
-                <span class="badge badge-warning" style="font-size: 1rem; padding: 0.5rem 1rem;">📦 À retirer</span>
+                <span class="badge badge-warning" style="font-size: 1rem; padding: 0.5rem 1rem;"> À retirer</span>
             {% else %}
-                <span class="badge" style="background: #9C27B0; color: white; font-size: 1rem; padding: 0.5rem 1rem;">🚚 À livrer</span>
+                <span class="badge" style="background: #9C27B0; color: white; font-size: 1rem; padding: 0.5rem 1rem;"> À livrer</span>
                 {% if commande.adresse_livraison %}
                     <p style="margin-top: 1rem;"><strong>Adresse:</strong><br>{{ commande.adresse_livraison }}</p>
                 {% endif %}
@@ -109,12 +109,12 @@
         </div>
 
         <div class="card" style="margin-bottom:1rem;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">👤 Client</h3>
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;"> Client</h3>
             <p><strong>Client ID:</strong> {{ commande.client_profil_id ?? 'N/A' }}</p>
         </div>
 
         <div class="card">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;">💳 Paiement</h3>
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;"> Paiement</h3>
             {% if commande.payement_id %}
                 <div style="background: #d4edda; padding: 1rem; border-radius: 8px; border: 2px solid #4CAF50;">
                     <p style="color: #155724; font-weight: 700; margin-bottom: 0.5rem;">✓ Commande payée</p>

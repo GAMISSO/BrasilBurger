@@ -17,7 +17,7 @@ class StatistiqueDTO
 
     public \DateTime $date;
 
-    public function __construct(\DateTime $date = null)
+    public function __construct(?\DateTime $date = null)
     {
         $this->date = $date ?? new \DateTime();
     }

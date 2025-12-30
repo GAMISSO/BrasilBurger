@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="page-header">
-    <h1 class="page-title">📦 Gestion des Commandes</h1>
+    <h1 class="page-title"> Gestion des Commandes</h1>
     <p class="page-subtitle">{{ commandes|length }} commande(s)</p>
 </div>
 
@@ -33,11 +33,11 @@
                 <td>Client ID: {{ commande.client_profil_id ?? 'N/A' }}</td>
                 <td>
                     {% if commande.type_livraison == 'Sur_place' %}
-                        <span class="badge badge-info">🪑 Sur place</span>
+                        <span class="badge badge-info"> Sur place</span>
                     {% elseif commande.type_livraison == 'A_retirer' %}
-                        <span class="badge badge-warning">📦 À retirer</span>
+                        <span class="badge badge-warning"> À retirer</span>
                     {% else %}
-                        <span class="badge" style="background: #9C27B0; color: white;">🚚 À livrer</span>
+                        <span class="badge" style="background: #9C27B0; color: white;"> À livrer</span>
                     {% endif %}
                 </td>
                 <td><strong>{{ commande.total_prix|number_format(0, ',', ' ') }} FCFA</strong></td>
@@ -50,7 +50,7 @@
                 </td>
                 <td>
                     {% if commande.state_order == 'En_cours' %}
-                        <span class="badge badge-warning">⏳ En cours</span>
+                        <span class="badge badge-warning"> En cours</span>
                     {% elseif commande.state_order == 'Terminee' %}
                         <span class="badge badge-success">✓ Terminée</span>
                     {% endif %}
@@ -82,18 +82,5 @@
 
 <div style="margin-top: 1rem;">
     <a href="{{ path('app_home') }}" class="btn" style="background: #ddd; color: #333;">← Retour</a>
-</div>
-                    </div>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="8" style="text-align: center; padding: 2rem; color: #999;">
-                    Aucune commande trouvée
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 </div>
 {% endblock %}

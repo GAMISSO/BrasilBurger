@@ -19,6 +19,14 @@ admin_burger_file:
     resource: ../src/Controller/Admin/BurgerController.php
     type: attribute
 
+# Rediriger l'accueil vers la page de connexion
+home_redirect:
+    path: /
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: app_login
+        permanent: false
+
 app_admin_complement_index:
     path: /admin/complement/
     controller: App\Controller\Admin\ComplementController::index

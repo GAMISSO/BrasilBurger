@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques - Brasil Burger{% endblock %}
+
+{% block body %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+	<div>
+		<h1 class="page-title"> Statistiques du jour</h1>
+		<p class="page-subtitle">Date: {{ date|date('d/m/Y') }}</p>
+	</div>
+	<div style="display:flex; gap:0.5rem; align-items:center;">
+		<form method="get" action="{{ path('app_statistiques_index') }}" style="display:flex; gap:0.5rem; align-items:center;">
+			<input type="date" name="date" value="{{ date|date('Y-m-d') }}" class="form-control" style="max-width: 180px;" />
+			<button class="btn btn-primary">Mettre à jour</button>
+		</form>
+		<a class="btn btn-success" href="{{ path('app_statistiques_export', { date: date|date('Y-m-d') }) }}">Exporter CSV</a>
+	</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
+	<div class="card" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white;">
+		<div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem;">Commandes en cours</div>
+		<div style="font-size: 2.2rem; font-weight: 900;">{{ stats.commandes_en_cours }}</div>
+		<div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.5rem;">Aujourd'hui</div>
+	</div>
+
+	<div class="card" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); color: white;">
+		<div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem;">Commandes validées</div>
+		<div style="font-size: 2.2rem; font-weight: 900;">{{ stats.commandes_validees }}</div>
+		<div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.5rem;">Aujourd'hui</div>
+	</div>
+
+	<div class="card" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #000;">
+		<div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem;">Recettes</div>
+		<div style="font-size: 2.2rem; font-weight: 900;">{{ stats.recettes_journalieres|number_format(0, ',', ' ') }} FCFA</div>
+		<div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.5rem;">Aujourd'hui</div>
+	</div>
+
+	<div class="card" style="background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%); color: white;">
+		<div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem;">Commandes annulées</div>
+		<div style="font-size: 2.2rem; font-weight: 900;">{{ stats.commandes_annulees }}</div>
+		<div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.5rem;">Aujourd'hui</div>
+	</div>
+</div>
+
+{# Section détaillée si dispo: top produits, etc. On garde simple ici #}
+
+{% endblock %}

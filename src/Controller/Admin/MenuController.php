@@ -4,20 +4,19 @@ namespace App\Controller\Admin;
 
 use App\Entity\Menu;
 use App\Form\MenuType;
+use App\Service\CloudinaryService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-// use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/admin/menu')]
 class MenuController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private CloudinaryService $cloudinaryService
     ) {}
 
     #[Route('/', name: 'app_admin_menu_index')]
@@ -31,27 +30,23 @@ class MenuController extends AbstractController
     }
 
     #[Route('/new', name: 'app_admin_menu_new')]
-    public function new(Request $request, SluggerInterface $slugger): Response
+    public function new(Request $request): Response
     {
         $menu = new Menu();
         $form = $this->createForm(MenuType::class, $menu);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Handle file upload
+            // Handle file upload with Cloudinary
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
                 try {
-                    $imageFile->move(
-                        $this->getParameter('menus_directory'),
-                        $newFilename
+                    $result = $this->cloudinaryService->upload(
+                        $imageFile->getRealPath(),
+                        ['folder' => 'burgerBrasil/menus']
                     );
-                    $menu->setImage($newFilename);
-                } catch (FileException $e) {
+                    $menu->setImage($result['secure_url']);
+                } catch (\Exception $e) {
                     $this->addFlash('error', 'Erreur lors de l\'upload de l\'image');
                 }
             }
@@ -77,26 +72,22 @@ class MenuController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_admin_menu_edit')]
-    public function edit(Request $request, Menu $menu, SluggerInterface $slugger): Response
+    public function edit(Request $request, Menu $menu): Response
     {
         $form = $this->createForm(MenuType::class, $menu);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Handle file upload
+            // Handle file upload with Cloudinary
             $imageFile = $form->get('image')->getData();
             if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
                 try {
-                    $imageFile->move(
-                        $this->getParameter('menus_directory'),
-                        $newFilename
+                    $result = $this->cloudinaryService->upload(
+                        $imageFile->getRealPath(),
+                        ['folder' => 'burgerBrasil/menus']
                     );
-                    $menu->setImage($newFilename);
-                } catch (FileException $e) {
+                    $menu->setImage($result['secure_url']);
+                } catch (\Exception $e) {
                     $this->addFlash('error', 'Erreur lors de l\'upload de l\'image');
                 }
             }
