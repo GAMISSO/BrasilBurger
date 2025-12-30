@@ -8,27 +8,31 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'zone_client_profil')]
 class ZoneClientProfil
 {
-    #[ORM\Column(type: 'integer')]
-    private int $zone_id;
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: Zones::class)]
+    #[ORM\JoinColumn(name: 'zone_id', referencedColumnName: 'id')]
+    private Zones $zone;
 
-    public function getZone_id(): int {
-        return $this->zone_id;
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: ClientProfil::class)]
+    #[ORM\JoinColumn(name: 'client_profil_id', referencedColumnName: 'id')]
+    private ClientProfil $clientProfil;
+
+    public function getZone(): Zones {
+        return $this->zone;
     }
 
-    public function setZone_id(int $zone_id): self {
-        $this->zone_id = $zone_id;
+    public function setZone(Zones $zone): self {
+        $this->zone = $zone;
         return $this;
     }
 
-    #[ORM\Column(type: 'integer')]
-    private int $client_profil_id;
-
-    public function getClient_profil_id(): int {
-        return $this->client_profil_id;
+    public function getClientProfil(): ClientProfil {
+        return $this->clientProfil;
     }
 
-    public function setClient_profil_id(int $client_profil_id): self {
-        $this->client_profil_id = $client_profil_id;
+    public function setClientProfil(ClientProfil $clientProfil): self {
+        $this->clientProfil = $clientProfil;
         return $this;
     }
 
