@@ -21,10 +21,10 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Dossier de travail
 WORKDIR /app
 
-# Copier les fichiers composer en premier
-COPY composer.json composer.lock* ./
+# Copier uniquement composer.json (composer.lock peut être absent sur Render)
+COPY composer.json ./
 
-# Installer dépendances Symfony
+# Installer dépendances Symfony (tolère l'absence de composer.lock)
 RUN composer install \
     --no-scripts \
     --no-autoloader \
