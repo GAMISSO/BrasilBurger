@@ -36,6 +36,9 @@ RUN composer install \
 # Copier le reste du projet
 COPY . .
 
+# Créer un fichier .env minimal pour la production (les vraies valeurs viennent des variables d'environnement)
+RUN echo "APP_ENV=prod" > .env
+
 # Finaliser l'installation de Composer
 RUN composer dump-autoload \
     --optimize \
