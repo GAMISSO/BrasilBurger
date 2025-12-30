@@ -50,7 +50,7 @@ class OrderServiceImpl implements OrderService
         $commande->setTotal_prix($data['total_prix']);
         $commande->setCreated_at(new \DateTime());
         $commande->setClient_profil_id($data['client_profil_id'] ?? null);
-        $commande->setZone($data['zone'] ?? null);
+        $commande->setZone_id($data['zone'] ?? null);
 
         $this->entityManager->persist($commande);
         $this->entityManager->flush();
@@ -139,8 +139,8 @@ class OrderServiceImpl implements OrderService
         }
 
         // Ajouter frais de livraison si nécessaire
-        if ($commande->getType_livraison() === 'A_livrer' && $commande->getZone()->getId()) {
-            $zone = $this->entityManager->getRepository('App\Entity\Zones')->find($commande->getZone()->getId());
+        if ($commande->getType_livraison() === 'A_livrer' && $commande->getZone_id()) {
+            $zone = $this->entityManager->getRepository('App\Entity\Zones')->find($commande->getZone_id());
             if ($zone) {
                 $total += $zone->getPrix_zone();
             }

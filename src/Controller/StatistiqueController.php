@@ -20,15 +20,23 @@ class StatistiqueController extends AbstractController
     #[Route('/', name: 'app_statistiques_index')]
     public function index(Request $request): Response
     {
-        $dateStr = $request->query->get('date', date('Y-m-d'));
-        $date = new \DateTime($dateStr);
+        try {
+            $dateStr = $request->query->get('date', date('Y-m-d'));
+            $date = new \DateTime($dateStr);
 
-        $statistiques = $this->statistiqueService->getStatistiquesJour($date);
+            $statistiques = $this->statistiqueService->getStatistiquesJour($date);
 
-        return $this->render('statistiques/index.html.twig', [
-            'date' => $date,
-            'stats' => $statistiques,
-        ]);
+            return $this->render('statistiques/index.html.twig', [
+                'date' => $date,
+                'stats' => $statistiques,
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Erreur statistiques: ' . $e->getMessage());
+            return $this->render('statistiques/index.html.twig', [
+                'date' => new \DateTime(),
+                'stats' => [],
+            ]);
+        }
     }
 
     #[Route('/periode', name: 'app_statistiques_periode')]

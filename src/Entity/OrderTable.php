@@ -97,17 +97,15 @@ class OrderTable
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $client_profil_id = null;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $zone_id = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $livreur_id = null;
+
     #[ORM\ManyToOne(targetEntity: ClientProfil::class)]
     #[ORM\JoinColumn(name: 'client_profil_id', referencedColumnName: 'id', nullable: true)]
     private ?ClientProfil $clientProfil = null;
-
-    #[ORM\ManyToOne(targetEntity: Zones::class)]
-    #[ORM\JoinColumn(name: 'zone_id', referencedColumnName: 'id', nullable: true)]
-    private ?Zones $zone = null;
-
-    #[ORM\ManyToOne(targetEntity: Livreur::class)]
-    #[ORM\JoinColumn(name: 'livreur_id', referencedColumnName: 'id', nullable: true)]
-    private ?Livreur $livreur = null;
 
     #[ORM\ManyToOne(targetEntity: Payement::class)]
     #[ORM\JoinColumn(name: 'payement_id', referencedColumnName: 'id', nullable: true)]
@@ -131,21 +129,21 @@ class OrderTable
         return $this;
     }
 
-    public function getZone(): ?Zones {
-        return $this->zone;
+    public function getZone_id(): ?int {
+        return $this->zone_id;
     }
 
-    public function setZone(?Zones $zone): self {
-        $this->zone = $zone;
+    public function setZone_id(?int $zone_id): self {
+        $this->zone_id = $zone_id;
         return $this;
     }
 
-    public function getLivreur(): ?Livreur {
-        return $this->livreur;
+    public function getLivreur_id(): ?int {
+        return $this->livreur_id;
     }
 
-    public function setLivreur(?Livreur $livreur): self {
-        $this->livreur = $livreur;
+    public function setLivreur_id(?int $livreur_id): self {
+        $this->livreur_id = $livreur_id;
         return $this;
     }
 

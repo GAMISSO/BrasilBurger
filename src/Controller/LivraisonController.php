@@ -19,13 +19,21 @@ class LivraisonController extends AbstractController
     #[Route('/', name: 'app_livraison_index')]
     public function index(): Response
     {
-        $commandesParZone = $this->livraisonService->getCommandesParZone();
-        $livreurs = $this->livraisonService->getLivreursDisponibles();
+        try {
+            $commandesParZone = $this->livraisonService->getCommandesParZone();
+            $livreurs = $this->livraisonService->getLivreursDisponibles();
 
-        return $this->render('livraison/index.html.twig', [
-            'commandesParZone' => $commandesParZone,
-            'livreurs' => $livreurs,
-        ]);
+            return $this->render('livraison/index.html.twig', [
+                'commandesParZone' => $commandesParZone,
+                'livreurs' => $livreurs,
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Erreur livraison: ' . $e->getMessage());
+            return $this->render('livraison/index.html.twig', [
+                'commandesParZone' => [],
+                'livreurs' => [],
+            ]);
+        }
     }
 
     #[Route('/{id}/affecter', name: 'app_livraison_affecter', methods: ['POST'])]
