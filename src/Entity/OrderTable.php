@@ -97,6 +97,10 @@ class OrderTable
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $client_profil_id = null;
 
+    #[ORM\ManyToOne(targetEntity: ClientProfil::class)]
+    #[ORM\JoinColumn(name: 'client_profil_id', referencedColumnName: 'id', nullable: true)]
+    private ?ClientProfil $clientProfil = null;
+
     #[ORM\ManyToOne(targetEntity: Zones::class)]
     #[ORM\JoinColumn(name: 'zone_id', referencedColumnName: 'id', nullable: true)]
     private ?Zones $zone = null;
@@ -115,6 +119,15 @@ class OrderTable
 
     public function setClient_profil_id(?int $client_profil_id): self {
         $this->client_profil_id = $client_profil_id;
+        return $this;
+    }
+
+    public function getClientProfil(): ?ClientProfil {
+        return $this->clientProfil;
+    }
+
+    public function setClientProfil(?ClientProfil $clientProfil): self {
+        $this->clientProfil = $clientProfil;
         return $this;
     }
 

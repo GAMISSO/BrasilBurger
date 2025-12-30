@@ -163,13 +163,21 @@ class OrderServiceImpl implements OrderService
         }
 
         if (!empty($filters['date'])) {
-            $qb->andWhere('o.created_at = :date')
-               ->setParameter('date', new \DateTimeImmutable($filters['date']));
+            try {
+                $date = is_string($filters['date']) 
+                    ? new \DateTime($filters['date']) 
+                    : $filters['date'];
+                // Comparer la date (ignorer l'heure)
+                $qb->andWhere('DATE(o.created_at) = :date')
+                   ->setParameter('date', $date->format('Y-m-d'));
+            } catch (\Exception $e) {
+                // Ignorer le filtre de date si invalide
+            }
         }
 
         if (!empty($filters['client_id'])) {
             $qb->andWhere('o.client_profil_id = :client')
-               ->setParameter('client', $filters['client_id']);
+               ->setParameter('client', (int)$filters['client_id']);
         }
 
         $qb->orderBy('o.created_at', 'DESC');
