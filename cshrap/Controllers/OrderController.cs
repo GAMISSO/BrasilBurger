@@ -36,8 +36,11 @@ namespace Controllers
             {
                 _logger.LogInformation("MyOrders - userId={UserId}", userId);
 
+                // Joindre avec ClientProfil pour vérifier que le ClientProfil appartient à cet utilisateur
                 var orders = _context.Orders
-                    .Where(o => o.ClientProfilId == userId.Value)
+                    .Include(o => o.ClientProfil)
+                    .ThenInclude(cp => cp.User)
+                    .Where(o => o.ClientProfil != null && o.ClientProfil.User.Id == userId.Value)
                     .OrderByDescending(o => o.CreatedAt)
                     .ToList();
 
@@ -305,9 +308,12 @@ namespace Controllers
 
             try
             {
+                // Joindre avec ClientProfil pour vérifier que le ClientProfil appartient à cet utilisateur
                 var orders = _context.Orders
-                    .Where(o => o.ClientProfilId == userId.Value)
+                    .Include(o => o.ClientProfil)
+                    .ThenInclude(cp => cp.User)
                     .Include(o => o.Payement)
+                    .Where(o => o.ClientProfil != null && o.ClientProfil.User.Id == userId.Value)
                     .Where(o => o.Payement != null && o.Payement.StatutPayement == "Valider")
                     .OrderByDescending(o => o.CreatedAt)
                     .ToList();
