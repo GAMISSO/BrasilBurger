@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'menu_complement')]
 class MenuComplement
 {
+    #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     private int $menu_id;
 
@@ -20,6 +21,7 @@ class MenuComplement
         return $this;
     }
 
+    #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     private int $complement_id;
 
