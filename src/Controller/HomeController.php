@@ -11,11 +11,17 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
-        // Si connecté, aller à la page des commandes
-        if ($this->getUser()) {
-            return $this->redirectToRoute('app_commande_index');
+        try {
+            // Si connecté, aller à la page des commandes
+            if ($this->getUser()) {
+                return $this->redirectToRoute('app_commande_index');
+            }
+            // Sinon, aller au login
+            return $this->redirectToRoute('app_login');
+        } catch (\Exception $e) {
+            // En cas d'erreur, rediriger vers login avec message
+            $this->addFlash('error', 'Erreur: ' . $e->getMessage());
+            return $this->redirectToRoute('app_login');
         }
-        // Sinon, aller au login
-        return $this->redirectToRoute('app_login');
     }
 }

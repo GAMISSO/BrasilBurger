@@ -154,34 +154,39 @@ class OrderServiceImpl implements OrderService
      */
     public function getCommandesFilters(array $filters = []): array
     {
-        $qb = $this->entityManager->getRepository(OrderTable::class)->createQueryBuilder('o');
+        try {
+            $qb = $this->entityManager->getRepository(OrderTable::class)->createQueryBuilder('o');
 
-        if (!empty($filters['state_order'])) {
-            $mappedState = $this->mapStateToDatabase($filters['state_order']);
-            $qb->andWhere('o.state_order = :state')
-               ->setParameter('state', $mappedState);
-        }
-
-        if (!empty($filters['date'])) {
-            try {
-                $date = is_string($filters['date']) 
-                    ? new \DateTime($filters['date']) 
-                    : $filters['date'];
-                // Comparer la date en utilisant CAST pour PostgreSQL
-                $qb->andWhere('CAST(o.created_at AS DATE) = :date')
-                   ->setParameter('date', $date->format('Y-m-d'));
-            } catch (\Exception $e) {
-                // Ignorer le filtre de date si invalide
+            if (!empty($filters['state_order'])) {
+                $mappedState = $this->mapStateToDatabase($filters['state_order']);
+                $qb->andWhere('o.state_order = :state')
+                   ->setParameter('state', $mappedState);
             }
+
+            if (!empty($filters['date'])) {
+                try {
+                    $date = is_string($filters['date']) 
+                        ? new \DateTime($filters['date']) 
+                        : $filters['date'];
+                    // Comparer la date en utilisant CAST pour PostgreSQL
+                    $qb->andWhere('CAST(o.created_at AS DATE) = :date')
+                       ->setParameter('date', $date->format('Y-m-d'));
+                } catch (\Exception $e) {
+                    // Ignorer le filtre de date si invalide
+                }
+            }
+
+            if (!empty($filters['client_id'])) {
+                $qb->andWhere('o.client_profil_id = :client')
+                   ->setParameter('client', (int)$filters['client_id']);
+            }
+
+            $qb->orderBy('o.created_at', 'DESC');
+
+            return $qb->getQuery()->getResult();
+        } catch (\Exception $e) {
+            // En cas d'erreur, retourner un tableau vide
+            return [];
         }
-
-        if (!empty($filters['client_id'])) {
-            $qb->andWhere('o.client_profil_id = :client')
-               ->setParameter('client', (int)$filters['client_id']);
-        }
-
-        $qb->orderBy('o.created_at', 'DESC');
-
-        return $qb->getQuery()->getResult();
     }
 }
