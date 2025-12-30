@@ -115,10 +115,12 @@
 
         <div class="card">
             <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem;"> Paiement</h3>
-            {% if commande.payement_id %}
+            {% if commande.payement %}
                 <div style="background: #d4edda; padding: 1rem; border-radius: 8px; border: 2px solid #4CAF50;">
                     <p style="color: #155724; font-weight: 700; margin-bottom: 0.5rem;">✓ Commande payée</p>
-                    <p><strong>Référence paiement ID:</strong> {{ commande.payement_id }}</p>
+                    <p><strong>Montant:</strong> {{ commande.payement.montant|number_format(0, ',', ' ') }} FCFA</p>
+                    <p><strong>Méthode:</strong> {{ commande.payement.methode_payement }}</p>
+                    <p><strong>Statut:</strong> {{ commande.payement.statut_payement }}</p>
                 </div>
             {% else %}
                 <div style="background: #f8d7da; padding: 1rem; border-radius: 8px; border: 2px solid #f44336;">

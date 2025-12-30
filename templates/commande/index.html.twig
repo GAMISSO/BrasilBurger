@@ -42,7 +42,7 @@
                 </td>
                 <td><strong>{{ commande.total_prix|number_format(0, ',', ' ') }} FCFA</strong></td>
                 <td>
-                    {% if commande.payement_id %}
+                    {% if commande.payement %}
                         <span class="badge badge-success">✓ Payé</span>
                     {% else %}
                         <span class="badge badge-danger">✗ Non payé</span>
