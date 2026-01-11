@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Data;
 using Models;
 using System;
@@ -25,6 +26,7 @@ namespace Controllers
                 return RedirectToAction("Index", "Catalogue");
 
             var order = _context.Orders
+                .Include(o => o.ClientProfil)
                 .FirstOrDefault(o => o.Id == orderId && o.ClientProfilId == userId);
 
             if (order == null)

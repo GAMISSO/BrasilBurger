@@ -13,8 +13,9 @@
                 </div>
                 <div class="card-body">
                     <div class="alert alert-info">
-                        <i class="bi bi-info-circle"></i> 
-                        <strong>Si votre commande est à livrer, veuillez payer avant d'appuyer sur le bouton commander</strong>
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Si votre commande est à livrer, veuillez payer avant d'appuyer sur le bouton
+                            commander</strong>
                     </div>
 
                     <div class="mb-4">
@@ -22,7 +23,7 @@
                         <div class="card bg-light">
                             <div class="card-body">
                                 <p><strong>Numéro:</strong> @Model.Id</p>
-                                <p><strong>Type:</strong> 
+                                <p><strong>Type:</strong>
                                     @switch (Model.TypeLivraison)
                                     {
                                         case "SUR_PLACE":
@@ -53,10 +54,11 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-bold">Choisissez votre mode de paiement</label>
-                            
+
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <input type="radio" class="btn-check" name="methodePayement" id="wave" value="WAVE" checked>
+                                    <input type="radio" class="btn-check" name="methodePayement" id="wave" value="WAVE"
+                                        checked>
                                     <label class="btn btn-outline-primary w-100 p-4" for="wave">
                                         <div class="text-center">
                                             <i class="bi bi-phone" style="font-size: 2rem;"></i>
@@ -81,7 +83,7 @@
 
                         <div class="alert alert-warning">
                             <i class="bi bi-exclamation-triangle"></i>
-                            <strong>Important:</strong> Après avoir cliqué sur "Confirmer le paiement", 
+                            <strong>Important:</strong> Après avoir cliqué sur "Confirmer le paiement",
                             vous recevrez un message sur votre téléphone pour valider la transaction.
                         </div>
 
@@ -89,7 +91,7 @@
                             <button type="submit" class="btn btn-success btn-lg">
                                 <i class="bi bi-check-circle"></i> Confirmer le paiement
                             </button>
-                            <a href="@Url.Action("MesCommandes", "Commande")" class="btn btn-outline-secondary">
+                            <a href="@Url.Action("MyOrders", "Order")" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left"></i> Annuler
                             </a>
                         </div>
@@ -101,7 +103,7 @@
                 <div class="card-body">
                     <h6><i class="bi bi-shield-check"></i> Paiement 100% sécurisé</h6>
                     <small class="text-muted">
-                        Vos informations de paiement sont protégées et cryptées. 
+                        Vos informations de paiement sont protégées et cryptées.
                         Brasil Burger ne stocke jamais vos coordonnées bancaires.
                     </small>
                 </div>
