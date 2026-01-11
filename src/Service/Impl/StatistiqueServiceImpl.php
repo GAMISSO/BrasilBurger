@@ -69,13 +69,10 @@ class StatistiqueServiceImpl implements StatistiqueService
     {
         $qb = $this->entityManager->getRepository(OrderTable::class)->createQueryBuilder('o');
         
+        // Additionne tous les montants du jour (même si le paiement est en attente)
         $result = $qb->select('COALESCE(SUM(o.total_prix), 0)')
-            ->leftJoin('o.payement', 'p')
             ->where('o.created_at = :date')
-            ->andWhere('o.state_order != :cancelled')
-            ->andWhere('p IS NOT NULL')
             ->setParameter('date', new \DateTimeImmutable($date))
-            ->setParameter('cancelled', 'Terminee')
             ->getQuery()
             ->getSingleScalarResult();
 
@@ -147,12 +144,11 @@ class StatistiqueServiceImpl implements StatistiqueService
     {
         $qb = $this->entityManager->getRepository(OrderTable::class)->createQueryBuilder('o');
         
+        // Additionne tous les montants sur la période
         $result = $qb->select('COALESCE(SUM(o.total_prix), 0)')
             ->where('o.created_at BETWEEN :debut AND :fin')
-            ->andWhere('o.state_order != :cancelled')
             ->setParameter('debut', $debut)
             ->setParameter('fin', $fin)
-            ->setParameter('cancelled', 'Terminee')
             ->getQuery()
             ->getSingleScalarResult();
 

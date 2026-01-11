@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
@@ -36,11 +37,12 @@ class MenuType extends AbstractType
                 'class' => Complement::class,
                 'choice_label' => 'nom',
                 'label' => 'Complements inclus',
-                'attr' => ['class' => 'form-select', 'multiple' => 'multiple', 'data-price' => 'complements'],
+                'attr' => ['class' => 'form-check-input', 'id' => 'complements_select'],
                 'placeholder' => 'Sélectionnez des complements',
                 'mapped' => false,
                 'required' => false,
-                'multiple' => true
+                'multiple' => true,
+                'expanded' => true
             ])
             ->add('prix_total', IntegerType::class, [
                 'label' => 'Prix total (FCFA)',

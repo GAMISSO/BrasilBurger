@@ -10,8 +10,15 @@
 </div>
 <div class="form-group">
     {{ form_label(form.complements, 'Complements inclus', {'label_attr': {'class': 'form-label'}}) }}
-    {{ form_widget(form.complements, {'attr': {'class': 'form-select', 'size': 6, 'id': 'complements_select'}}) }}
-    <small class="text-muted">Vous pouvez sélectionner plusieurs complements (Ctrl+Click)</small>
+    <div class="complements-checkboxes">
+        {% for checkbox in form.complements %}
+            <div class="form-check">
+                {{ form_widget(checkbox, {'attr': {'class': 'form-check-input', 'data-complement-id': checkbox.vars.value}}) }}
+                {{ form_label(checkbox, checkbox.vars.label, {'label_attr': {'class': 'form-check-label'}}) }}
+            </div>
+        {% endfor %}
+    </div>
+    <small class="text-muted">Sélectionnez les complements inclus dans ce menu</small>
 </div>
 <div class="form-group">
     {{ form_label(form.prix_total, 'Prix total (FCFA)', {'label_attr': {'class': 'form-label'}}) }}
@@ -28,7 +35,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const burgerSelect = document.getElementById('burger_select');
-    const complementsSelect = document.getElementById('complements_select');
+    const complementCheckboxes = document.querySelectorAll('.complements-checkboxes input[type="checkbox"]');
     const prixTotalInput = document.querySelector('[name*="prix_total"]');
     
     // Fonction pour calculer le prix total
@@ -48,12 +55,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Ajouter les prix des complements sélectionnés
-        if (complementsSelect && complementsSelect.selectedOptions) {
-            for (let option of complementsSelect.selectedOptions) {
-                if (option.value) {
+        // Ajouter les prix des complements cochés
+        if (complementCheckboxes.length > 0) {
+            for (let checkbox of complementCheckboxes) {
+                if (checkbox.checked && checkbox.value) {
                     try {
-                        const response = await fetch('{{ path("app_admin_api_complement_price") }}?id=' + option.value);
+                        const response = await fetch('{{ path("app_admin_api_complement_price") }}?id=' + checkbox.value);
                         const data = await response.json();
                         if (data.prix) {
                             total += data.prix;
@@ -76,8 +83,10 @@ document.addEventListener('DOMContentLoaded', function() {
         burgerSelect.addEventListener('change', calculateTotal);
     }
     
-    if (complementsSelect) {
-        complementsSelect.addEventListener('change', calculateTotal);
+    if (complementCheckboxes.length > 0) {
+        complementCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', calculateTotal);
+        });
     }
 });
 </script>
@@ -91,6 +100,33 @@ document.addEventListener('DOMContentLoaded', function() {
         font-weight: 500;
         margin-bottom: 0.5rem;
         display: block;
+    }
+    
+    .complements-checkboxes {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .form-check-input {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        cursor: pointer;
+        accent-color: #ffc107;
+    }
+    
+    .form-check-label {
+        margin: 0;
+        cursor: pointer;
+        user-select: none;
     }
     
     .text-muted {

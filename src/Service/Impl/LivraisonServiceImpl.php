@@ -20,16 +20,14 @@ class LivraisonServiceImpl implements LivraisonService
     public function getCommandesParZone(): array
     {
         try {
-            // Récupérer les commandes à livrer avec des critères simples
-            $dql = "SELECT o FROM App\Entity\OrderTable o 
-                    WHERE o.type_livraison = :type 
-                    AND o.state_order = :state 
-                    ORDER BY o.zone_id ASC, o.created_at ASC";
+            // Récupérer toutes les commandes à livrer (peu importe l'état) pour les afficher
+            $dql = "SELECT o FROM App\\Entity\\OrderTable o 
+                WHERE o.type_livraison = :type
+                ORDER BY o.zone_id ASC, o.created_at ASC";
             
             $commandes = $this->entityManager->createQuery($dql)
-                ->setParameter('type', 'A_livrer')
-                ->setParameter('state', 'En_cours')
-                ->getResult();
+            ->setParameter('type', 'A_livrer')
+            ->getResult();
 
             // Grouper par zone
             $commandesParZone = [];
