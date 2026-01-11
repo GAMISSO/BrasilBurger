@@ -40,6 +40,7 @@ namespace Controllers
                 var orders = _context.Orders
                     .Include(o => o.ClientProfil)
                     .ThenInclude(cp => cp!.User)
+                    .Include(o => o.Payement) // pour afficher le statut payé dans MyOrders
                     .Where(o => o.ClientProfil != null && o.ClientProfil.User != null && o.ClientProfil.User.Id == userId.Value)
                     .OrderByDescending(o => o.CreatedAt)
                     .ToList();
