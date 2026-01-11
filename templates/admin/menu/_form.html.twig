@@ -5,7 +5,18 @@
 </div>
 <div class="form-group">
     {{ form_label(form.burger_id, 'Burger', {'label_attr': {'class': 'form-label'}}) }}
-    {{ form_widget(form.burger_id, {'attr': {'class': 'form-control'}}) }}
+    {{ form_widget(form.burger_id, {'attr': {'class': 'form-select', 'id': 'burger_select'}}) }}
+    <small class="text-muted">Sélectionnez un burger pour voir son prix</small>
+</div>
+<div class="form-group">
+    {{ form_label(form.complements, 'Complements inclus', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.complements, {'attr': {'class': 'form-select', 'size': 6, 'id': 'complements_select'}}) }}
+    <small class="text-muted">Vous pouvez sélectionner plusieurs complements (Ctrl+Click)</small>
+</div>
+<div class="form-group">
+    {{ form_label(form.prix_total, 'Prix total (FCFA)', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.prix_total, {'attr': {'class': 'form-control', 'readonly': 'readonly'}}) }}
+    <small class="text-muted">Calculé automatiquement</small>
 </div>
 <div class="form-group">
     {{ form_label(form.image, 'Image', {'label_attr': {'class': 'form-label'}}) }}
@@ -13,3 +24,97 @@
 </div>
 <button type="submit" class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
 {{ form_end(form) }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const burgerSelect = document.getElementById('burger_select');
+    const complementsSelect = document.getElementById('complements_select');
+    const prixTotalInput = document.querySelector('[name*="prix_total"]');
+    
+    // Fonction pour calculer le prix total
+    async function calculateTotal() {
+        let total = 0;
+        
+        // Ajouter le prix du burger sélectionné
+        if (burgerSelect && burgerSelect.value) {
+            try {
+                const response = await fetch('{{ path("app_admin_api_burger_price") }}?id=' + burgerSelect.value);
+                const data = await response.json();
+                if (data.prix) {
+                    total += data.prix;
+                }
+            } catch (error) {
+                console.error('Erreur lors de la récupération du prix du burger:', error);
+            }
+        }
+        
+        // Ajouter les prix des complements sélectionnés
+        if (complementsSelect && complementsSelect.selectedOptions) {
+            for (let option of complementsSelect.selectedOptions) {
+                if (option.value) {
+                    try {
+                        const response = await fetch('{{ path("app_admin_api_complement_price") }}?id=' + option.value);
+                        const data = await response.json();
+                        if (data.prix) {
+                            total += data.prix;
+                        }
+                    } catch (error) {
+                        console.error('Erreur lors de la récupération du prix du complément:', error);
+                    }
+                }
+            }
+        }
+        
+        // Mettre à jour le champ prix total
+        if (prixTotalInput) {
+            prixTotalInput.value = total;
+        }
+    }
+    
+    // Ajouter les écouteurs d'événements
+    if (burgerSelect) {
+        burgerSelect.addEventListener('change', calculateTotal);
+    }
+    
+    if (complementsSelect) {
+        complementsSelect.addEventListener('change', calculateTotal);
+    }
+});
+</script>
+
+<style>
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .text-muted {
+        font-size: 0.875rem;
+        color: #6c757d;
+        display: block;
+        margin-top: 0.25rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 1.5rem;
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+    
+    .btn-primary {
+        background-color: #ffc107;
+        color: #000;
+        font-weight: 600;
+    }
+    
+    .btn-primary:hover {
+        background-color: #ffb300;
+    }
+</style>

@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Menu;
+use App\Entity\MenuComplement;
 use App\Form\MenuType;
 use App\Service\CloudinaryService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -67,9 +68,23 @@ class MenuController extends AbstractController
                 $menu->setBurger_id($burgerId->getId());
             }
 
+            // Handle complements
+            $complements = $form->get('complements')->getData();
+            
             $menu->setCreated_at(new \DateTime());
             $this->entityManager->persist($menu);
             $this->entityManager->flush();
+            
+            // Add complements to menu
+            if ($complements) {
+                foreach ($complements as $complement) {
+                    $menuComplement = new MenuComplement();
+                    $menuComplement->setMenu($menu);
+                    $menuComplement->setComplement($complement);
+                    $this->entityManager->persist($menuComplement);
+                }
+                $this->entityManager->flush();
+            }
 
             $this->addFlash('success', 'Menu créé avec succès !');
 
@@ -105,6 +120,24 @@ class MenuController extends AbstractController
             $burgerId = $form->get('burger_id')->getData();
             if ($burgerId) {
                 $menu->setBurger_id($burgerId->getId());
+            }
+
+            // Handle complements - remove old ones and add new ones
+            $menuComplementRepository = $this->entityManager->getRepository(MenuComplement::class);
+            $oldComplements = $menuComplementRepository->findBy(['menu' => $menu]);
+            
+            foreach ($oldComplements as $oldComplement) {
+                $this->entityManager->remove($oldComplement);
+            }
+            
+            $complements = $form->get('complements')->getData();
+            if ($complements) {
+                foreach ($complements as $complement) {
+                    $menuComplement = new MenuComplement();
+                    $menuComplement->setMenu($menu);
+                    $menuComplement->setComplement($complement);
+                    $this->entityManager->persist($menuComplement);
+                }
             }
 
             $this->entityManager->flush();

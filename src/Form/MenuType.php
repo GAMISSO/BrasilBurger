@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Menu;
 use App\Entity\Burger;
+use App\Entity\Complement;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -26,14 +27,25 @@ class MenuType extends AbstractType
                 'class' => Burger::class,
                 'choice_label' => 'nom',
                 'label' => 'Burger inclus',
-                'attr' => ['class' => 'form-select'],
+                'attr' => ['class' => 'form-select', 'data-price' => 'burger'],
                 'placeholder' => 'Sélectionnez un burger',
                 'mapped' => false,
                 'required' => false
             ])
+            ->add('complements', EntityType::class, [
+                'class' => Complement::class,
+                'choice_label' => 'nom',
+                'label' => 'Complements inclus',
+                'attr' => ['class' => 'form-select', 'multiple' => 'multiple', 'data-price' => 'complements'],
+                'placeholder' => 'Sélectionnez des complements',
+                'mapped' => false,
+                'required' => false,
+                'multiple' => true
+            ])
             ->add('prix_total', IntegerType::class, [
                 'label' => 'Prix total (FCFA)',
-                'attr' => ['class' => 'form-control', 'placeholder' => '8000']
+                'attr' => ['class' => 'form-control', 'placeholder' => '8000', 'id' => 'prix_total', 'readonly' => 'readonly'],
+                'required' => true
             ])
             ->add('image', FileType::class, [
                 'label' => 'Image du menu',
