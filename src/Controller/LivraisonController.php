@@ -1,37 +1,82 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\Zones;
+use App\Entity\Livreur;
 use App\Form\LivraisonAffectationType;
 use App\Service\LivraisonService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-// use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/livraison')]
 class LivraisonController extends AbstractController
 {
     public function __construct(
-        private LivraisonService $livraisonService
+        private LivraisonService $livraisonService,
+        private EntityManagerInterface $entityManager
     ) {}
 
     #[Route('/', name: 'app_livraison_index')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
         try {
+            // Créer une zone
+            if ($request->request->has('creer_zone')) {
+                $nomZone = $request->request->get('nom_zone');
+                $prixZone = (int) $request->request->get('prix_zone');
+                
+                if ($nomZone && $prixZone > 0) {
+                    $zone = new Zones();
+                    $zone->setNom($nomZone);
+                    $zone->setPrix_zone($prixZone);
+                    $zone->setCreated_at(new \DateTime());
+                    
+                    $this->entityManager->persist($zone);
+                    $this->entityManager->flush();
+                    
+                    $this->addFlash('success', "Zone '$nomZone' créée avec succès!");
+                }
+            }
+            
+            // Créer un livreur
+            if ($request->request->has('creer_livreur')) {
+                $nomLivreur = $request->request->get('nom_livreur');
+                $disponibilite = $request->request->get('disponibilite_livreur', 'Disponible');
+                
+                if ($nomLivreur) {
+                    $livreur = new Livreur();
+                    $livreur->setNom($nomLivreur);
+                    $livreur->setDisponibilite($disponibilite);
+                    
+                    $this->entityManager->persist($livreur);
+                    $this->entityManager->flush();
+                    
+                    $this->addFlash('success', "Livreur '$nomLivreur' créé avec succès!");
+                }
+            }
+            
+            // Récupérer les données
             $commandesParZone = $this->livraisonService->getCommandesParZone();
             $livreurs = $this->livraisonService->getLivreursDisponibles();
+            $zones = $this->entityManager->getRepository(Zones::class)->findAll();
+            $tousLivreurs = $this->entityManager->getRepository(Livreur::class)->findAll();
 
             return $this->render('livraison/index.html.twig', [
                 'commandesParZone' => $commandesParZone,
                 'livreurs' => $livreurs,
+                'zones' => $zones,
+                'tousLivreurs' => $tousLivreurs,
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', 'Erreur livraison: ' . $e->getMessage());
             return $this->render('livraison/index.html.twig', [
                 'commandesParZone' => [],
                 'livreurs' => [],
+                'zones' => [],
+                'tousLivreurs' => [],
             ]);
         }
     }
