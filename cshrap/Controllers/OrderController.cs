@@ -342,62 +342,6 @@ namespace Controllers
         }
 
         // ==========================
-        // VALIDER LE PAIEMENT (SIMULATION)
-        // ==========================
-        [HttpPost]
-        public IActionResult ValidatePayment(int orderId)
-        {
-            var userId = GetCurrentUserId();
-            if (userId == null)
-                return RedirectToAction("Index", "Catalogue");
-
-            try
-            {
-                var order = _context.Orders
-                    .Include(o => o.Payement)
-                    .FirstOrDefault(o => o.Id == orderId && o.ClientProfilId == userId.Value);
-
-                if (order == null)
-                {
-                    TempData["error"] = "Commande introuvable";
-                    return RedirectToAction("MyOrders");
-                }
-
-                if (order.Payement != null)
-                {
-                    TempData["error"] = "Cette commande a déjà été payée";
-                    return RedirectToAction("ValidatedOrders");
-                }
-
-                // Simuler le paiement
-                var payment = new Payement
-                {
-                    MethodePayement = "Simule",
-                    Montant = order.TotalPrix,
-                    TransactionRef = "SIM-" + Guid.NewGuid().ToString("N").Substring(0, 8),
-                    StatutPayement = "Valider",
-                    CreatedAt = DateTime.Now,
-                    OrderId = order.Id
-                };
-
-                _context.Payements.Add(payment);
-                _context.SaveChanges();
-
-                order.PayementId = payment.Id;
-                _context.SaveChanges();
-
-                TempData["success"] = "Paiement validé avec succès!";
-                return RedirectToAction("ValidatedOrders");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erreur lors de la validation du paiement pour orderId={OrderId}", orderId);
-                TempData["error"] = "Erreur lors de la validation du paiement";
-                return RedirectToAction("MyOrders");
-            }
-        }
-
-        // ==========================
         // DÉTAIL COMMANDE
         // ==========================
         public IActionResult Details(int id)

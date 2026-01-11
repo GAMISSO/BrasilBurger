@@ -81,7 +81,8 @@ namespace Controllers
 
             _context.SaveChanges();
 
-            return RedirectToAction("Details", "Order", new { id = order.Id });
+            TempData["success"] = "Paiement effectué avec succès ! Votre commande a été validée.";
+            return RedirectToAction("MyOrders", "Order");
         }
     }
 }

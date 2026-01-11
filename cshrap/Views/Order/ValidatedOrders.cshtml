@@ -44,23 +44,20 @@
                         @foreach (var item in thisLines)
                         {
                             <li class="mb-1">
-                                <strong>@(item.ItemType)</strong>
-                                @if (item.Burger != null)
+                                @if (item.ItemType == "Menu" && item.Menu != null)
                                 {
-                                    <text>@item.Burger.Nom</text>
-                                    ;
+                                    <i class="bi bi-box"></i>
+                                    <strong>Menu @item.Menu.Nom</strong>
                                 }
-                                else if (item.Menu != null)
+                                else if (item.ItemType == "Burger" && item.Burger != null)
                                 {
-
-                                    <text>@item.Menu.Nom</text>
-                                    ;
+                                    <i class="bi bi-basket"></i>
+                                    <strong>@item.Burger.Nom</strong>
                                 }
-                                else if (item.Complement != null)
+                                else if (item.ItemType == "Complement" && item.Complement != null)
                                 {
-
-                                    <text>@item.Complement.Nom</text>
-                                    ;
+                                    <i class="bi bi-plus-circle"></i>
+                                    <strong>@item.Complement.Nom</strong>
                                 }
                                 <span>x@item.Quantity</span>
                                 <span class="text-success"> - @item.Prix.ToString("N0") FCFA</span>

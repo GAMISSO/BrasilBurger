@@ -66,17 +66,18 @@
                                 @foreach (var item in thisLines)
                                 {
                                     <li class="mb-2">
-                                        @if (item.ItemType == "Menu")
+                                        @if (item.ItemType == "Menu" && item.Menu != null)
                                         {
-                                            <span> <strong>@item.Burger?.Nom</strong> x@item.Quantity</span>
+                                            <span><i class="bi bi-box"></i> <strong>Menu @item.Menu.Nom</strong> x@item.Quantity</span>
                                         }
-                                        else if (item.ItemType == "Burger")
+                                        else if (item.ItemType == "Burger" && item.Burger != null)
                                         {
-                                            <span> <strong>@item.Burger?.Nom</strong> x@item.Quantity</span>
+                                            <span><i class="bi bi-basket"></i> <strong>@item.Burger.Nom</strong> x@item.Quantity</span>
                                         }
-                                        else if (item.ItemType == "Complement")
+                                        else if (item.ItemType == "Complement" && item.Complement != null)
                                         {
-                                            <span> <strong>@item.Complement?.Nom</strong> x@item.Quantity</span>
+                                            <span><i class="bi bi-plus-circle"></i> <strong>@item.Complement.Nom</strong>
+                                                x@item.Quantity</span>
                                         }
                                         <span class="text-success"> - @item.Prix.ToString("N0") FCFA</span>
                                     </li>
@@ -104,14 +105,11 @@
                         </div>
                         <div class="col-md-4 text-end">
                             <h3 class="text-success">@order.TotalPrix.ToString("N0") FCFA</h3>
-                            @if (!isPaye && order.StateOrder != "Annulee")
+                            @if (!isPaye && order.StateOrder == "En_cours")
                             {
-                                <form method="post" action="@Url.Action("ValidatePayment", "Order")" class="d-inline">
-                                    <input type="hidden" name="orderId" value="@order.Id" />
-                                    <button type="submit" class="btn btn-success btn-sm">
-                                        <i class="bi bi-check-circle"></i> Valider le paiement
-                                    </button>
-                                </form>
+                                <a href="@Url.Action("Pay", "Payment", new { orderId = order.Id })" class="btn btn-success btn-sm">
+                                    <i class="bi bi-credit-card"></i> Payer maintenant
+                                </a>
                             }
                             @if (isPaye)
                             {
@@ -124,5 +122,15 @@
                 </div>
             </div>
         }
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Vous n'avez aucune commande pour le moment.
+            <br>
+            <a href="@Url.Action("Index", "Catalogue")" class="btn btn-primary mt-2">
+                <i class="bi bi-shop"></i> Voir le catalogue
+            </a>
+        </div>
     }
 </div>
