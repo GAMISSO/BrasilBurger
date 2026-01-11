@@ -309,15 +309,17 @@ namespace Controllers
 
             try
             {
-                // Joindre avec ClientProfil et User
+                _logger.LogInformation("ValidatedOrders - userId={UserId}", userId);
+
+                // Récupérer les commandes payées de l'utilisateur
                 var orders = _context.Orders
-                    .Include(o => o.ClientProfil)
-                    .ThenInclude(cp => cp!.User)
                     .Include(o => o.Payement)
-                    .Where(o => o.ClientProfil != null && o.ClientProfil.User != null && o.ClientProfil.User.Id == userId.Value)
+                    .Where(o => o.ClientProfilId == userId.Value)  // Filtrer par ClientProfilId directement
                     .Where(o => o.Payement != null && o.Payement.StatutPayement == "Valider")
                     .OrderByDescending(o => o.CreatedAt)
                     .ToList();
+
+                _logger.LogInformation("ValidatedOrders - Found {Count} paid orders for userId={UserId}", orders.Count, userId);
 
                 var orderIds = orders.Select(o => o.Id).ToList();
                 var lines = _context.OrderLines
@@ -330,6 +332,8 @@ namespace Controllers
                 ViewBag.LinesByOrder = lines
                     .GroupBy(l => l.OrderId)
                     .ToDictionary(g => g.Key, g => g.ToList());
+
+                _logger.LogInformation("ValidatedOrders - Loaded {LineCount} order lines", lines.Count);
 
                 return View("ValidatedOrders", orders);
             }
@@ -443,6 +447,41 @@ namespace Controllers
 
             TempData["success"] = "Commande ré-enregistrée avec succès.";
             return RedirectToAction("MyOrders");
+        }
+
+        // DEBUG: Vérifier les données de l'utilisateur
+        public IActionResult Debug()
+        {
+            var userId = GetCurrentUserId();
+            if (userId == null)
+                return Content("Non connecté");
+
+            var clientProfil = _context.ClientProfiles.Find(userId.Value);
+            var orders = _context.Orders.Where(o => o.ClientProfilId == userId.Value).ToList();
+            var paidOrders = _context.Orders
+                .Include(o => o.Payement)
+                .Where(o => o.ClientProfilId == userId.Value && o.Payement != null && o.Payement.StatutPayement == "Valider")
+                .ToList();
+
+            var debug = $@"
+<h2>DEBUG INFO</h2>
+<p><strong>UserId:</strong> {userId}</p>
+<p><strong>ClientProfil:</strong> {(clientProfil != null ? $"ID={clientProfil.Id}, Nom={clientProfil.Nom}" : "NOT FOUND")}</p>
+<p><strong>Total Orders:</strong> {orders.Count}</p>
+<p><strong>Paid Orders:</strong> {paidOrders.Count}</p>
+
+<h3>Toutes les commandes</h3>
+<ul>
+{string.Join("", orders.Select(o => $"<li>ID={o.Id}, StateOrder={o.StateOrder}, PayementId={o.PayementId}</li>"))}
+</ul>
+
+<h3>Commandes payées</h3>
+<ul>
+{string.Join("", paidOrders.Select(o => $"<li>ID={o.Id}, StatutPayement={o.Payement?.StatutPayement}, Montant={o.Payement?.Montant}</li>"))}
+</ul>
+";
+
+            return Content(debug, "text/html");
         }
 
         private int? GetCurrentUserId()
