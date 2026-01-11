@@ -31,28 +31,35 @@
                 <div>
                     <strong style="font-size: 1.1rem;">Commande #{{ commande.id }}</strong><br>
                     <span style="color: #666; font-size: 0.9rem;">
-                        Client ID: {{ commande.client_profil_id }}
+                        Client: {{ commande.clientProfil ? commande.clientProfil.nom ~ ' ' ~ commande.clientProfil.prenom : 'ID ' ~ commande.client_profil_id }}
                     </span>
                 </div>
-                <span class="badge badge-warning">{{ commande.total_prix|number_format(0, ',', ' ') }} FCFA</span>
+                <div style="text-align: right;">
+                    <span class="badge badge-warning">{{ commande.total_prix|number_format(0, ',', ' ') }} FCFA</span><br>
+                    {% if commande.state_order == 'En_cours' %}
+                        <small class="badge badge-info" style="margin-top: 4px;">En cours</small>
+                    {% elseif commande.state_order == 'Terminee' %}
+                        <small class="badge badge-success" style="margin-top: 4px;">Terminée</small>
+                    {% endif %}
+                </div>
             </div>
             <p style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem;">
-                 {{ commande.adresse_livraison }}
+                 {{ commande.adresse_livraison ?? 'Adresse non spécifiée' }}
             </p>
-            <div style="display: flex; gap: 0.5rem;">
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
                 <a href="{{ path('app_commande_show', {id: commande.id}) }}" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Voir</a>
                 {% if commande.livreur is null %}
-                <form method="post" action="{{ path('app_livraison_affecter', {id: commande.id}) }}" style="display: inline;">
-                    <select name="livreur_id" required style="padding: 0.4rem; border-radius: 6px; border: 2px solid #ddd; margin-right: 0.3rem;">
+                <form method="post" action="{{ path('app_livraison_affecter', {id: commande.id}) }}" style="display: inline-flex; gap: 0.3rem; align-items: center;">
+                    <select name="livreur_id" required style="padding: 0.4rem; border-radius: 6px; border: 2px solid #ddd; font-size: 0.85rem;">
                         <option value="">Choisir livreur</option>
                         {% for livreur in livreurs %}
-                        <option value="{{ livreur.id }}">{{ livreur.nom }}</option>
+                        <option value="{{ livreur.id }}">{{ livreur.nom }} ({{ livreur.disponibilite }})</option>
                         {% endfor %}
                     </select>
                     <button type="submit" class="btn btn-success" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Affecter</button>
                 </form>
                 {% else %}
-                <span class="badge badge-success">Affecté à: {{ commande.livreur.nom }}</span>
+                <span class="badge badge-success"> Affecté à: {{ commande.livreur.nom }}</span>
                 {% endif %}
             </div>
         </div>

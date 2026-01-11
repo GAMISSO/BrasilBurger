@@ -41,40 +41,58 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fonction pour calculer le prix total
     async function calculateTotal() {
         let total = 0;
+        let promises = [];
         
-        // Ajouter le prix du burger sélectionné
+        // Récupérer le prix du burger sélectionné
         if (burgerSelect && burgerSelect.value) {
-            try {
-                const response = await fetch('{{ path("app_admin_api_burger_price") }}?id=' + burgerSelect.value);
-                const data = await response.json();
-                if (data.prix) {
-                    total += data.prix;
-                }
-            } catch (error) {
-                console.error('Erreur lors de la récupération du prix du burger:', error);
-            }
-        }
-        
-        // Ajouter les prix des complements cochés
-        if (complementCheckboxes.length > 0) {
-            for (let checkbox of complementCheckboxes) {
-                if (checkbox.checked && checkbox.value) {
-                    try {
-                        const response = await fetch('{{ path("app_admin_api_complement_price") }}?id=' + checkbox.value);
-                        const data = await response.json();
-                        if (data.prix) {
-                            total += data.prix;
-                        }
-                    } catch (error) {
-                        console.error('Erreur lors de la récupération du prix du complément:', error);
+            const burgerPromise = fetch('{{ path("app_admin_api_burger_price") }}?id=' + burgerSelect.value)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.prix) {
+                        return data.prix;
                     }
-                }
-            }
+                    return 0;
+                })
+                .catch(error => {
+                    console.error('Erreur burger:', error);
+                    return 0;
+                });
+            promises.push(burgerPromise);
         }
         
-        // Mettre à jour le champ prix total
-        if (prixTotalInput) {
-            prixTotalInput.value = total;
+        // Récupérer les prix des complements cochés
+        if (complementCheckboxes.length > 0) {
+            complementCheckboxes.forEach(checkbox => {
+                if (checkbox.checked && checkbox.value) {
+                    const complementPromise = fetch('{{ path("app_admin_api_complement_price") }}?id=' + checkbox.value)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.prix) {
+                                return data.prix;
+                            }
+                            return 0;
+                        })
+                        .catch(error => {
+                            console.error('Erreur complement:', error);
+                            return 0;
+                        });
+                    promises.push(complementPromise);
+                }
+            });
+        }
+        
+        // Attendre toutes les réponses et calculer le total
+        try {
+            const prices = await Promise.all(promises);
+            total = prices.reduce((sum, price) => sum + price, 0);
+            
+            // Mettre à jour le champ prix total
+            if (prixTotalInput) {
+                prixTotalInput.value = total;
+                console.log('Prix total calculé:', total, 'FCFA');
+            }
+        } catch (error) {
+            console.error('Erreur lors du calcul du total:', error);
         }
     }
     
@@ -88,6 +106,9 @@ document.addEventListener('DOMContentLoaded', function() {
             checkbox.addEventListener('change', calculateTotal);
         });
     }
+    
+    // Calculer au chargement si des valeurs sont déjà sélectionnées
+    calculateTotal();
 });
 </script>
 

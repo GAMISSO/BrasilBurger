@@ -77,7 +77,9 @@ class LivraisonServiceImpl implements LivraisonService
                 
                 $this->entityManager->persist($assignment);
                 
-                // Changer l'état de la commande à En_cours
+                // Affecter le livreur à la commande
+                $commande->setLivreur($livreur);
+                $commande->setLivreur_id($livreurId);
                 $commande->setState_order('En_cours');
                 $commande->setUpdated_at(new \DateTime());
             }

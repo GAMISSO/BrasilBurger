@@ -107,6 +107,14 @@ class OrderTable
     #[ORM\JoinColumn(name: 'client_profil_id', referencedColumnName: 'id', nullable: true)]
     private ?ClientProfil $clientProfil = null;
 
+    #[ORM\ManyToOne(targetEntity: Zones::class)]
+    #[ORM\JoinColumn(name: 'zone_id', referencedColumnName: 'id', nullable: true)]
+    private ?Zones $zone = null;
+
+    #[ORM\ManyToOne(targetEntity: Livreur::class)]
+    #[ORM\JoinColumn(name: 'livreur_id', referencedColumnName: 'id', nullable: true)]
+    private ?Livreur $livreur = null;
+
     #[ORM\ManyToOne(targetEntity: Payement::class)]
     #[ORM\JoinColumn(name: 'payement_id', referencedColumnName: 'id', nullable: true)]
     private ?Payement $payement = null;
@@ -144,6 +152,24 @@ class OrderTable
 
     public function setLivreur_id(?int $livreur_id): self {
         $this->livreur_id = $livreur_id;
+        return $this;
+    }
+
+    public function getZone(): ?Zones {
+        return $this->zone;
+    }
+
+    public function setZone(?Zones $zone): self {
+        $this->zone = $zone;
+        return $this;
+    }
+
+    public function getLivreur(): ?Livreur {
+        return $this->livreur;
+    }
+
+    public function setLivreur(?Livreur $livreur): self {
+        $this->livreur = $livreur;
         return $this;
     }
 
