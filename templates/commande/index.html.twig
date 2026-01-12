@@ -32,21 +32,35 @@
                 <td>{{ commande.created_at|date('d/m/Y') }}</td>
                 <td>Client ID: {{ commande.client_profil_id ?? 'N/A' }}</td>
                 <td>
-                    {% if commande.type_livraison == 'Sur_place' %}
-                        <span class="badge badge-info"> Sur place</span>
-                    {% elseif commande.type_livraison == 'A_retirer' %}
-                        <span class="badge badge-warning"> À retirer</span>
+                    {% set type = commande.type_livraison %}
+                    {% if type == 'Sur_place' %}
+                        <span class="badge badge-info">Sur place</span>
+                    {% elseif type == 'A_retirer' %}
+                        <span class="badge badge-warning">À retirer</span>
+                    {% elseif type == 'A_livrer' %}
+                        <span class="badge" style="background: #9C27B0; color: white;">À livrer</span>
                     {% else %}
-                        <span class="badge" style="background: #9C27B0; color: white;"> À livrer</span>
+                        <span class="badge" style="background:#ccc; color:#333;">—</span>
                     {% endif %}
                 </td>
                 <td><strong>{{ commande.total_prix|number_format(0, ',', ' ') }} FCFA</strong></td>
                 <td>
                     {% if commande.payement %}
-                        <div style="display:flex;flex-direction:column;gap:4px;">
-                            <span class="badge badge-success">{{ commande.payement.statut_payement|default('Payé') }}</span>
-                            <small style="color:#555;">{{ commande.payement.methode_payement|default('') }}</small>
-                        </div>
+                        {% set statut = commande.payement.statut_payement %}
+                        {% set methode = commande.payement.methode_payement %}
+                        {% if statut == 'Valider' %}
+                            {% if methode == 'Orange_Money' %}
+                                <span class="badge badge-success">OM</span>
+                            {% elseif methode == 'Wave' %}
+                                <span class="badge badge-success">Wave</span>
+                            {% else %}
+                                <span class="badge badge-success">Payé</span>
+                            {% endif %}
+                        {% elseif statut == 'Annuler' %}
+                            <span class="badge badge-danger">Annulé</span>
+                        {% else %}
+                            <span class="badge badge-info">{{ statut|default('En attente') }}</span>
+                        {% endif %}
                     {% else %}
                         <span class="badge badge-danger">✗ Non payé</span>
                     {% endif %}
@@ -73,13 +87,18 @@
                         {% endif %}
                     </div>
                 </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="8" style="text-align: center; color: #999; padding: 2rem;">
-                    Aucune commande trouvée.
+                <td>
+                    {% set etat = commande.state_order %}
+                    {% if etat == 'En_cours' %}
+                        <span class="badge badge-warning">En cours</span>
+                    {% elseif etat == 'Terminee' %}
+                        <span class="badge badge-success">✓ Terminée</span>
+                    {% elseif etat %}
+                        <span class="badge badge-info">{{ etat }}</span>
+                    {% else %}
+                        <span class="badge" style="background:#ccc; color:#333;">—</span>
+                    {% endif %}
                 </td>
-            </tr>
             {% endfor %}
         </tbody>
     </table>
