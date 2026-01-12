@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Entity\Zones;
 use App\Entity\Livreur;
+use App\Entity\LivreurZone;
 use App\Form\LivraisonAffectationType;
 use App\Service\LivraisonService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -57,18 +58,54 @@ class LivraisonController extends AbstractController
                     $this->addFlash('success', "Livreur '$nomLivreur' créé avec succès!");
                 }
             }
+
+            // Affecter livreur à zone
+            if ($request->request->has('affecter_zone')) {
+                $livreurId = (int) $request->request->get('livreur_id');
+                $zoneIds = $request->request->all()['zone_ids'] ?? [];
+                
+                if ($livreurId > 0) {
+                    $livreur = $this->entityManager->getRepository(Livreur::class)->find($livreurId);
+                    
+                    if ($livreur) {
+                        // Supprimer les affectations existantes
+                        $existants = $this->entityManager->getRepository(LivreurZone::class)->findBy(['livreur' => $livreur]);
+                        foreach ($existants as $existant) {
+                            $this->entityManager->remove($existant);
+                        }
+                        
+                        // Ajouter les nouvelles affectations
+                        foreach ($zoneIds as $zoneId) {
+                            $zone = $this->entityManager->getRepository(Zones::class)->find($zoneId);
+                            if ($zone) {
+                                $lz = new LivreurZone();
+                                $lz->setLivreur($livreur);
+                                $lz->setZone($zone);
+                                $this->entityManager->persist($lz);
+                            }
+                        }
+                        
+                        $this->entityManager->flush();
+                        $this->addFlash('success', "Zones affectées au livreur '{$livreur->getNom()}'!");
+                    }
+                }
+            }
             
             // Récupérer les données
             $commandesParZone = $this->livraisonService->getCommandesParZone();
             $livreurs = $this->livraisonService->getLivreursDisponibles();
             $zones = $this->entityManager->getRepository(Zones::class)->findAll();
             $tousLivreurs = $this->entityManager->getRepository(Livreur::class)->findAll();
+            
+            // Récupérer les affectations livreur-zone
+            $affectationsLivreurZone = $this->entityManager->getRepository(LivreurZone::class)->findAll();
 
             return $this->render('livraison/index.html.twig', [
                 'commandesParZone' => $commandesParZone,
                 'livreurs' => $livreurs,
                 'zones' => $zones,
                 'tousLivreurs' => $tousLivreurs,
+                'affectationsLivreurZone' => $affectationsLivreurZone,
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', 'Erreur livraison: ' . $e->getMessage());
@@ -77,6 +114,7 @@ class LivraisonController extends AbstractController
                 'livreurs' => [],
                 'zones' => [],
                 'tousLivreurs' => [],
+                'affectationsLivreurZone' => [],
             ]);
         }
     }

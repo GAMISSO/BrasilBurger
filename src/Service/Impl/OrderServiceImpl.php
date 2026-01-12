@@ -156,6 +156,12 @@ class OrderServiceImpl implements OrderService
     {
         try {
             $qb = $this->entityManager->getRepository(OrderTable::class)->createQueryBuilder('o');
+            
+            // Charger les relations pour éviter les requêtes supplémentaires
+            $qb->leftJoin('o.clientProfil', 'c')->addSelect('c')
+               ->leftJoin('o.payement', 'p')->addSelect('p')
+               ->leftJoin('o.livreur', 'l')->addSelect('l')
+               ->leftJoin('o.zone', 'z')->addSelect('z');
 
             if (!empty($filters['state_order'])) {
                 $mappedState = $this->mapStateToDatabase($filters['state_order']);

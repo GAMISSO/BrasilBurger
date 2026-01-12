@@ -13,7 +13,8 @@
     <div class="tabs-nav">
         <button class="tab-button active" data-tab="tab-zones"> Zones</button>
         <button class="tab-button" data-tab="tab-livreurs"> Livreurs</button>
-        <button class="tab-button" data-tab="tab-affectations"> Affectations</button>
+        <button class="tab-button" data-tab="tab-zones-livreurs"> Affectations Zones-Livreurs</button>
+        <button class="tab-button" data-tab="tab-affectations"> Affectations Commandes</button>
     </div>
 
     <!-- TAB 1: ZONES -->
@@ -89,39 +90,81 @@
         <div class="card">
             <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Livreurs existants ({{ tousLivreurs|length }})</h2>
             {% if tousLivreurs|length > 0 %}
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>N°</th>
-                        <th>Nom</th>
-                        <th>Disponibilité</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for livreur in tousLivreurs %}
-                    <tr>
-                        <td><strong>#{{ livreur.id }}</strong></td>
-                        <td>{{ livreur.nom }}</td>
-                        <td>{{ livreur.disponibilite }}</td>
-                        <td>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1rem;">
+                {% for livreur in tousLivreurs %}
+                <div style="border: 2px solid #f0f0f0; border-radius: 8px; padding: 1rem; background: #fafafa;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.8rem;">
+                        <div>
+                            <strong style="font-size: 1.1rem;">#{{ livreur.id }} - {{ livreur.nom }}</strong><br>
                             {% if livreur.disponibilite == 'Disponible' %}
                                 <span class="badge badge-success">✓ Disponible</span>
                             {% else %}
                                 <span class="badge badge-warning">⚠ Non disponible</span>
                             {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Bouton pour affecter zones -->
+                    <form method="post" style="margin-top: 0.8rem;">
+                        <input type="hidden" name="livreur_id" value="{{ livreur.id }}">
+                        <label class="form-label" style="margin-bottom: 0.5rem; font-size: 0.9rem;">Assigner des zones:</label>
+                        <div style="display: flex; flex-direction: column; gap: 0.4rem; max-height: 150px; overflow-y: auto; margin-bottom: 0.8rem; padding: 0.5rem; background: white; border: 1px solid #ddd; border-radius: 4px;">
+                            {% for zone in zones %}
+                            <label style="display: flex; gap: 0.5rem; align-items: center; cursor: pointer; font-size: 0.9rem; margin: 0;">
+                                <input type="checkbox" name="zone_ids[]" value="{{ zone.id }}" style="width: 16px; height: 16px; cursor: pointer; accent-color: #ffc107;">
+                                <span>{{ zone.nom }} ({{ zone.prix_zone|number_format(0, ',', ' ') }} FCFA)</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        <button type="submit" name="affecter_zone" class="btn btn-success" style="width: 100%; font-size: 0.9rem; padding: 0.5rem;">Affecter zones</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
             {% else %}
             <p style="text-align: center; color: #999; padding: 2rem;">Aucun livreur créé pour le moment</p>
             {% endif %}
         </div>
     </div>
 
-    <!-- TAB 3: AFFECTATIONS -->
+    <!-- TAB 3: AFFECTATIONS ZONES-LIVREURS -->
+    <div id="tab-zones-livreurs" class="tab-content">
+        <div class="card">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Affectations Zones → Livreurs ({{ affectationsLivreurZone|length }})</h2>
+            {% if affectationsLivreurZone|length > 0 %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Livreur</th>
+                        <th>Disponibilité</th>
+                        <th>Zone affectée</th>
+                        <th>Prix zone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for affectation in affectationsLivreurZone %}
+                    <tr>
+                        <td><strong>{{ affectation.livreur.nom }}</strong></td>
+                        <td>
+                            {% if affectation.livreur.disponibilite == 'Disponible' %}
+                                <span class="badge badge-success">Disponible</span>
+                            {% else %}
+                                <span class="badge badge-warning">Non disponible</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ affectation.zone.nom }}</td>
+                        <td><strong>{{ affectation.zone.prix_zone|number_format(0, ',', ' ') }} FCFA</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="text-align: center; color: #999; padding: 2rem;">Aucune affectation zone-livreur pour le moment</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- TAB 4: AFFECTATIONS COMMANDES -->
     <div id="tab-affectations" class="tab-content">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             {% for zoneName, zoneData in commandesParZone %}
