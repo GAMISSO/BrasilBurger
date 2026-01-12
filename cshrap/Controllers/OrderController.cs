@@ -36,6 +36,26 @@ namespace Controllers
             {
                 _logger.LogInformation("MyOrders - userId={UserId}", userId);
 
+                //  DÉBOGAGE : Vérifier si ClientProfil existe
+                var clientProfil = _context.ClientProfiles.Find(userId.Value);
+                _logger.LogInformation("MyOrders - ClientProfil trouvé : {HasProfile}, Nom: {Nom}",
+                    clientProfil != null, clientProfil?.Nom ?? "N/A");
+
+                //  DÉBOGAGE : Compter TOUTES les commandes dans la base
+                var totalOrders = _context.Orders.Count();
+                _logger.LogInformation("MyOrders - Total commandes dans la base : {TotalOrders}", totalOrders);
+
+                //  DÉBOGAGE : Afficher toutes les commandes avec leur client_profil_id
+                var allOrdersDebug = _context.Orders
+                    .Select(o => new { o.Id, o.ClientProfilId, o.StateOrder })
+                    .Take(20)
+                    .ToList();
+                foreach (var od in allOrdersDebug)
+                {
+                    _logger.LogInformation("  → Order #{OrderId}, ClientProfilId={ClientProfilId}, State={State}",
+                        od.Id, od.ClientProfilId, od.StateOrder);
+                }
+
                 // Charger les commandes de l'utilisateur courant
                 var orders = _context.Orders
                     .Where(o => o.ClientProfilId == userId.Value)
@@ -60,6 +80,9 @@ namespace Controllers
                 ViewBag.LinesByOrder = dict;
 
                 _logger.LogInformation("MyOrders - Loaded {LineCount} order lines", lines.Count);
+
+                //  Passer le count total pour la vue
+                ViewBag.TotalOrdersCount = totalOrders;
 
                 return View(orders);
             }

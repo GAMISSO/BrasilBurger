@@ -21,7 +21,9 @@
         UserId (Claims): <code>@(userIdClaim ?? "NULL")</code><br>
         UserId (Session): <code>@(sessionUserId?.ToString() ?? "NULL")</code><br>
         IsAuthenticated: <code>@(User?.Identity?.IsAuthenticated ?? false)</code><br>
-        Commandes chargées: <span class="badge bg-primary">@(Model?.Count ?? 0)</span>
+        <strong>Commandes chargées:</strong> <span class="badge bg-primary">@(Model?.Count ?? 0)</span><br>
+        <strong>Total commandes (toutes):</strong> <span class="badge bg-warning">@(ViewBag.TotalOrdersCount ??
+                        0)</span>
     </div>
 
     @if (Model != null && Model.Any())
