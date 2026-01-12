@@ -8,10 +8,21 @@
     <h1 class="mb-2">
         <i class="bi bi-bag-check"></i> Mon Panier - Mes Commandes
     </h1>
-    <p class="text-muted mb-4">
-        Connecté en tant que <strong>@(User?.Identity?.Name ?? "invité")</strong> —
-        <span class="badge bg-secondary">@Model?.Count commande(s)</span>
-    </p>
+
+    @{
+        var userIdClaim = User?.FindFirst("user_id")?.Value ??
+        User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var sessionUserId = Context.Session.GetInt32("user_id");
+    }
+
+    <div class="alert alert-info mb-3">
+        <strong>🔍 DEBUG INFO:</strong><br>
+        Login: <code>@(User?.Identity?.Name ?? "NON CONNECTÉ")</code><br>
+        UserId (Claims): <code>@(userIdClaim ?? "NULL")</code><br>
+        UserId (Session): <code>@(sessionUserId?.ToString() ?? "NULL")</code><br>
+        IsAuthenticated: <code>@(User?.Identity?.IsAuthenticated ?? false)</code><br>
+        Commandes chargées: <span class="badge bg-primary">@(Model?.Count ?? 0)</span>
+    </div>
 
     @if (Model != null && Model.Any())
     {

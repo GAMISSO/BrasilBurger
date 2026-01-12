@@ -457,32 +457,105 @@ namespace Controllers
         public IActionResult Debug()
         {
             var userId = GetCurrentUserId();
-            if (userId == null)
-                return Content("Non connecté");
+            var claimUserId = User.FindFirstValue("user_id");
+            var claimNameId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var sessionUserId = HttpContext.Session.GetInt32("user_id");
+            var userName = User?.Identity?.Name;
+            var isAuth = User?.Identity?.IsAuthenticated ?? false;
 
+            if (userId == null)
+            {
+                return Content($@"
+<html><body style='font-family: monospace; padding: 20px;'>
+<h2 style='color: red;'>❌ NON CONNECTÉ</h2>
+<p><strong>User.Identity.Name:</strong> {userName ?? "NULL"}</p>
+<p><strong>IsAuthenticated:</strong> {isAuth}</p>
+<p><strong>Claim user_id:</strong> {claimUserId ?? "NULL"}</p>
+<p><strong>Claim NameIdentifier:</strong> {claimNameId ?? "NULL"}</p>
+<p><strong>Session user_id:</strong> {sessionUserId?.ToString() ?? "NULL"}</p>
+<hr>
+<a href='/Auth/Login'>Se connecter</a> | <a href='/Catalogue'>Catalogue</a>
+</body></html>
+", "text/html");
+            }
+
+            // Charger les données
+            var user = _context.Users.Find(userId.Value);
             var clientProfil = _context.ClientProfiles.Find(userId.Value);
-            var orders = _context.Orders.Where(o => o.ClientProfilId == userId.Value).ToList();
-            var paidOrders = _context.Orders
+
+            // TOUTES les commandes dans la base (pour comparaison)
+            var allOrders = _context.Orders.ToList();
+            var allOrdersForUser = _context.Orders.Where(o => o.ClientProfilId == userId.Value).ToList();
+
+            var orders = _context.Orders
                 .Include(o => o.Payement)
-                .Where(o => o.ClientProfilId == userId.Value && o.Payement != null && o.Payement.StatutPayement == "Valider")
+                .Where(o => o.ClientProfilId == userId.Value)
                 .ToList();
 
+            var paidOrders = orders.Where(o => o.Payement != null && o.Payement.StatutPayement == "Valider").ToList();
+
             var debug = $@"
-<h2>DEBUG INFO</h2>
-<p><strong>UserId:</strong> {userId}</p>
-<p><strong>ClientProfil:</strong> {(clientProfil != null ? $"ID={clientProfil.Id}, Nom={clientProfil.Nom}" : "NOT FOUND")}</p>
-<p><strong>Total Orders:</strong> {orders.Count}</p>
-<p><strong>Paid Orders:</strong> {paidOrders.Count}</p>
+<html><body style='font-family: monospace; padding: 20px;'>
+<h2>🔍 DEBUG INFO - {userName}</h2>
 
-<h3>Toutes les commandes</h3>
-<ul>
-{string.Join("", orders.Select(o => $"<li>ID={o.Id}, StateOrder={o.StateOrder}, PayementId={o.PayementId}</li>"))}
-</ul>
+<div style='background: #f0f0f0; padding: 10px; margin: 10px 0;'>
+<h3>👤 Authentification</h3>
+<p><strong>UserId (GetCurrentUserId):</strong> <code>{userId}</code></p>
+<p><strong>User.Identity.Name:</strong> <code>{userName ?? "NULL"}</code></p>
+<p><strong>IsAuthenticated:</strong> <code>{isAuth}</code></p>
+<p><strong>Claim user_id:</strong> <code>{claimUserId ?? "NULL"}</code></p>
+<p><strong>Claim NameIdentifier:</strong> <code>{claimNameId ?? "NULL"}</code></p>
+<p><strong>Session user_id:</strong> <code>{sessionUserId?.ToString() ?? "NULL"}</code></p>
+</div>
 
-<h3>Commandes payées</h3>
-<ul>
-{string.Join("", paidOrders.Select(o => $"<li>ID={o.Id}, StatutPayement={o.Payement?.StatutPayement}, Montant={o.Payement?.Montant}</li>"))}
-</ul>
+<div style='background: #fff3cd; padding: 10px; margin: 10px 0;'>
+<h3>📋 Données Utilisateur</h3>
+<p><strong>User dans DB:</strong> {(user != null ? $"ID={user.Id}, Login={user.Login}, Role={user.RoleUsers}" : "❌ NOT FOUND")}</p>
+<p><strong>ClientProfil dans DB:</strong> {(clientProfil != null ? $"ID={clientProfil.Id}, Nom={clientProfil.Nom} {clientProfil.Prenom}" : "❌ NOT FOUND")}</p>
+</div>
+
+<div style='background: #d1ecf1; padding: 10px; margin: 10px 0;'>
+<h3>📦 Commandes (Total dans la base: {allOrders.Count})</h3>
+<p><strong>Commandes pour userId={userId}:</strong> {allOrdersForUser.Count}</p>
+<p><strong>Commandes chargées (avec Payement):</strong> {orders.Count}</p>
+<p><strong>Commandes payées:</strong> {paidOrders.Count}</p>
+</div>
+
+<h3>📋 Détail des commandes pour ClientProfilId={userId}</h3>
+<table border='1' cellpadding='5' style='border-collapse: collapse;'>
+<tr style='background: #333; color: white;'>
+    <th>Order ID</th>
+    <th>ClientProfilId</th>
+    <th>StateOrder</th>
+    <th>TotalPrix</th>
+    <th>PayementId</th>
+    <th>Statut Paiement</th>
+    <th>CreatedAt</th>
+</tr>
+{string.Join("", orders.Select(o => $@"
+<tr>
+    <td>{o.Id}</td>
+    <td>{o.ClientProfilId}</td>
+    <td><strong>{o.StateOrder}</strong></td>
+    <td>{o.TotalPrix} FCFA</td>
+    <td>{o.PayementId?.ToString() ?? "NULL"}</td>
+    <td>{(o.Payement != null ? o.Payement.StatutPayement : "Aucun")}</td>
+    <td>{o.CreatedAt:dd/MM/yyyy HH:mm}</td>
+</tr>
+"))}
+</table>
+
+{(allOrdersForUser.Count == 0 ? @"
+<div style='background: #f8d7da; color: #721c24; padding: 10px; margin: 20px 0;'>
+<h3>⚠️ PROBLÈME DÉTECTÉ</h3>
+<p>Aucune commande trouvée pour ClientProfilId={userId}</p>
+<p>Vérifiez dans la base de données PostgreSQL que les commandes de 'mamou' ont bien <code>client_profil_id = {userId}</code></p>
+</div>
+" : "")}
+
+<hr>
+<p><a href='/Order/MyOrders'>← Retour à Mes Commandes</a></p>
+</body></html>
 ";
 
             return Content(debug, "text/html");
