@@ -4,16 +4,30 @@ using Data;
 using Models;
 using System;
 using System.Linq;
+using System.Security.Claims;
+using Microsoft.Extensions.Logging;
 
 namespace Controllers
 {
     public class PaymentController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<PaymentController> _logger;
 
-        public PaymentController(ApplicationDbContext context)
+        public PaymentController(ApplicationDbContext context, ILogger<PaymentController> logger)
         {
             _context = context;
+            _logger = logger;
+        }
+
+        // ==========================
+        // OBTENIR L'ID DE L'UTILISATEUR
+        // ==========================
+        private int? GetCurrentUserId()
+        {
+            var claimVal = User.FindFirstValue("user_id") ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (int.TryParse(claimVal, out var id)) return id;
+            return HttpContext.Session.GetInt32("user_id");
         }
 
         // ==========================
@@ -21,16 +35,23 @@ namespace Controllers
         // ==========================
         public IActionResult Pay(int orderId)
         {
-            var userId = HttpContext.Session.GetInt32("user_id");
+            var userId = GetCurrentUserId();
             if (userId == null)
+            {
+                TempData["error"] = "Veuillez vous connecter pour accéder à cette page";
                 return RedirectToAction("Index", "Catalogue");
+            }
 
             var order = _context.Orders
-                .Include(o => o.ClientProfil)
-                .FirstOrDefault(o => o.Id == orderId && o.ClientProfilId == userId);
+                .FirstOrDefault(o => o.Id == orderId && o.ClientProfilId == userId.Value);
 
             if (order == null)
-                return NotFound();
+            {
+                TempData["error"] = "Commande introuvable";
+                return RedirectToAction("MyOrders", "Order");
+            }
+
+            _logger.LogInformation("Pay - Affichage page paiement pour orderId={OrderId}, userId={UserId}", orderId, userId);
 
             return View(order);
         }
@@ -43,15 +64,21 @@ namespace Controllers
             int orderId,
             string methodePayement)
         {
-            var userId = HttpContext.Session.GetInt32("user_id");
+            var userId = GetCurrentUserId();
             if (userId == null)
+            {
+                TempData["error"] = "Veuillez vous connecter pour payer";
                 return RedirectToAction("Index", "Catalogue");
+            }
 
             var order = _context.Orders
-                .FirstOrDefault(o => o.Id == orderId && o.ClientProfilId == userId);
+                .FirstOrDefault(o => o.Id == orderId && o.ClientProfilId == userId.Value);
 
             if (order == null)
-                return NotFound();
+            {
+                TempData["error"] = "Commande introuvable";
+                return RedirectToAction("MyOrders", "Order");
+            }
 
             if (order.StateOrder != "En_cours")
             {
@@ -62,27 +89,40 @@ namespace Controllers
             // ==========================
             // SIMULATION DU PAIEMENT
             // ==========================
-            var payement = new Payement
+            try
             {
-                MethodePayement = methodePayement, // Wave | Orange_Money
-                Montant = order.TotalPrix,
-                TransactionRef = Guid.NewGuid().ToString(),
-                StatutPayement = "Valider",
-                CreatedAt = DateTime.Now,
-                OrderId = order.Id
-            };
+                var payement = new Payement
+                {
+                    MethodePayement = methodePayement == "OM" ? "Orange_Money" : "Wave",
+                    Montant = order.TotalPrix,
+                    TransactionRef = "SIM-" + Guid.NewGuid().ToString("N").Substring(0, 8),
+                    StatutPayement = "Valider",
+                    CreatedAt = DateTime.Now,
+                    OrderId = order.Id
+                };
 
-            _context.Payements.Add(payement);
-            _context.SaveChanges();
+                _context.Payements.Add(payement);
+                _context.SaveChanges();
 
-            // Lier le paiement à la commande
-            order.PayementId = payement.Id;
-            order.StateOrder = "Terminee";
+                _logger.LogInformation("Payement créé: id={PayementId}, orderId={OrderId}, montant={Montant}", payement.Id, order.Id, payement.Montant);
 
-            _context.SaveChanges();
+                // Lier le paiement à la commande
+                order.PayementId = payement.Id;
+                order.StateOrder = "Terminee";
 
-            TempData["success"] = "Paiement effectué avec succès ! Votre commande a été validée.";
-            return RedirectToAction("MyOrders", "Order");
+                _context.SaveChanges();
+
+                _logger.LogInformation("Order mise à jour: orderId={OrderId}, state=Terminee, payementId={PayementId}", order.Id, payement.Id);
+
+                TempData["success"] = "✓ Paiement effectué avec succès ! Votre commande a été validée.";
+                return RedirectToAction("MyOrders", "Order");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors du paiement: orderId={OrderId}, userId={UserId}", orderId, userId);
+                TempData["error"] = "Une erreur est survenue lors du paiement. Veuillez réessayer.";
+                return RedirectToAction("Pay", new { orderId });
+            }
         }
     }
 }

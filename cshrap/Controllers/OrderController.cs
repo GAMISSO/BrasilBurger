@@ -36,12 +36,10 @@ namespace Controllers
             {
                 _logger.LogInformation("MyOrders - userId={UserId}", userId);
 
-                // Joindre avec ClientProfil et User
+                // Charger les commandes de l'utilisateur courant
                 var orders = _context.Orders
-                    .Include(o => o.ClientProfil)
-                    .ThenInclude(cp => cp!.User)
-                    .Include(o => o.Payement) // pour afficher le statut payé dans MyOrders
-                    .Where(o => o.ClientProfil != null && o.ClientProfil.User != null && o.ClientProfil.User.Id == userId.Value)
+                    .Where(o => o.ClientProfilId == userId.Value)
+                    .Include(o => o.Payement)
                     .OrderByDescending(o => o.CreatedAt)
                     .ToList();
 
@@ -60,6 +58,8 @@ namespace Controllers
                     .ToDictionary(g => g.Key, g => g.ToList());
 
                 ViewBag.LinesByOrder = dict;
+
+                _logger.LogInformation("MyOrders - Loaded {LineCount} order lines", lines.Count);
 
                 return View(orders);
             }
@@ -272,11 +272,15 @@ namespace Controllers
                     };
                     _context.OrderLines.Add(compLine);
                 }
+
+                // Sauvegarder aussi les compléments s'il y en a
                 if (selectedComplements.Count > 0)
                     _context.SaveChanges();
 
+                _logger.LogInformation("Order created: orderId={OrderId}, clientProfilId={ClientProfilId}, total={Total}", order.Id, userId.Value, order.TotalPrix);
+
                 // NE PAS simuler le paiement automatiquement - l'utilisateur doit le valider
-                TempData["success"] = "Commande créée avec succès! Validez le paiement pour finaliser.";
+                TempData["success"] = "Commande créée avec succès! Cliquez sur 'Payer maintenant' pour continuer.";
                 return RedirectToAction("MyOrders");
             }
             catch (Exception ex)
