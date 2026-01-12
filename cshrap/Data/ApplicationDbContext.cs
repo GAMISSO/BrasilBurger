@@ -29,41 +29,66 @@ namespace Data
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-{
-    // User <-> ClientProfil (1–1)
-    modelBuilder.Entity<ClientProfil>()
-        .HasOne(cp => cp.User)
-        .WithOne()
-        .HasForeignKey<ClientProfil>(cp => cp.Id);
+        {
+            // 🔧 ENUM PostgreSQL Configuration
+            // Les colonnes ENUM doivent être traitées comme des strings avec le type ENUM spécifié
 
-    // Menu -> Burger
-    modelBuilder.Entity<Menu>()
-        .HasOne(m => m.Burger)
-        .WithMany()
-        .HasForeignKey(m => m.BurgerId);
+            // Order ENUMS
+            modelBuilder.Entity<Order>()
+                .Property(o => o.StateOrder)
+                .HasColumnType("state_order_enum");
 
-    // Order -> Payement (1–1)
-    modelBuilder.Entity<Order>()
-        .HasOne(o => o.Payement)
-        .WithOne(p => p.Order)
-        .HasForeignKey<Payement>(p => p.OrderId);
+            modelBuilder.Entity<Order>()
+                .Property(o => o.TypeLivraison)
+                .HasColumnType("type_livraison_enum");
 
-    modelBuilder.Entity<MenuComplement>()
-        .HasKey(mc => new { mc.MenuId, mc.ComplementId });
+            // Payement ENUMS
+            modelBuilder.Entity<Payement>()
+                .Property(p => p.MethodePayement)
+                .HasColumnType("methode_payement_enum");
 
-    modelBuilder.Entity<MenuComplement>()
-        .HasOne(mc => mc.Menu)
-        .WithMany(m => m.MenuComplements)
-        .HasForeignKey(mc => mc.MenuId);
+            modelBuilder.Entity<Payement>()
+                .Property(p => p.StatutPayement)
+                .HasColumnType("statut_payement_enum");
 
-    modelBuilder.Entity<MenuComplement>()
-        .HasOne(mc => mc.Complement)
-        .WithMany(c => c.MenuComplements)
-        .HasForeignKey(mc => mc.ComplementId);
+            // OrderLine ENUM
+            modelBuilder.Entity<OrderLine>()
+                .Property(ol => ol.ItemType)
+                .HasColumnType("item_type_enum");
 
-    base.OnModelCreating(modelBuilder);
+            // User <-> ClientProfil (1–1)
+            modelBuilder.Entity<ClientProfil>()
+                .HasOne(cp => cp.User)
+                .WithOne()
+                .HasForeignKey<ClientProfil>(cp => cp.Id);
 
-}
+            // Menu -> Burger
+            modelBuilder.Entity<Menu>()
+                .HasOne(m => m.Burger)
+                .WithMany()
+                .HasForeignKey(m => m.BurgerId);
+
+            // Order -> Payement (1–1)
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Payement)
+                .WithOne(p => p.Order)
+                .HasForeignKey<Payement>(p => p.OrderId);
+
+            modelBuilder.Entity<MenuComplement>()
+                .HasKey(mc => new { mc.MenuId, mc.ComplementId });
+
+            modelBuilder.Entity<MenuComplement>()
+                .HasOne(mc => mc.Menu)
+                .WithMany(m => m.MenuComplements)
+                .HasForeignKey(mc => mc.MenuId);
+
+            modelBuilder.Entity<MenuComplement>()
+                .HasOne(mc => mc.Complement)
+                .WithMany(c => c.MenuComplements)
+                .HasForeignKey(mc => mc.ComplementId);
+
+            base.OnModelCreating(modelBuilder);
+        }
 
     }
 }
