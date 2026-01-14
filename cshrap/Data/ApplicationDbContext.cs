@@ -33,6 +33,11 @@ namespace Data
             // 🔧 ENUM PostgreSQL Configuration
             // Les colonnes ENUM doivent être traitées comme des strings avec le type ENUM spécifié
 
+            // User ENUM
+            modelBuilder.Entity<User>()
+                .Property(u => u.RoleUsers)
+                .HasColumnType("role_enum");
+
             // Order ENUMS
             modelBuilder.Entity<Order>()
                 .Property(o => o.StateOrder)
@@ -55,6 +60,11 @@ namespace Data
             modelBuilder.Entity<OrderLine>()
                 .Property(ol => ol.ItemType)
                 .HasColumnType("item_type_enum");
+
+            // Complement ENUM
+            modelBuilder.Entity<Complement>()
+                .Property(c => c.TypeComplement)
+                .HasColumnType("type_complement_enum");
 
             // User <-> ClientProfil (1–1)
             modelBuilder.Entity<ClientProfil>()
